@@ -22,6 +22,7 @@ public class XMLCustomerDataAccess {
         return null;
     }
     
+    // Just commit
     public static void depositMoney(Customer customer, double money){
         
     }
