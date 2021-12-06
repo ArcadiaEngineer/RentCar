@@ -85,6 +85,11 @@ public class Login extends javax.swing.JFrame {
         mail_JText.setText("ibr.glmz19@gmail.com");
         mail_JText.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         mail_JText.setOpaque(true);
+        mail_JText.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                mail_JTextKeyReleased(evt);
+            }
+        });
 
         pass_JPass.setBackground(new java.awt.Color(50, 45, 44));
         pass_JPass.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -142,11 +147,6 @@ public class Login extends javax.swing.JFrame {
         checkEmail_JLabel.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         checkEmail_JLabel.setForeground(new java.awt.Color(255, 0, 0));
         checkEmail_JLabel.setText("           ");
-        checkEmail_JLabel.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                checkEmail_JLabelKeyReleased(evt);
-            }
-        });
 
         javax.swing.GroupLayout biligi_jPanelLayout = new javax.swing.GroupLayout(biligi_jPanel);
         biligi_jPanel.setLayout(biligi_jPanelLayout);
@@ -323,14 +323,14 @@ public class Login extends javax.swing.JFrame {
         
     }//GEN-LAST:event_guest_JLabelMouseClicked
 
-    private void checkEmail_JLabelKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_checkEmail_JLabelKeyReleased
+    private void mail_JTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_mail_JTextKeyReleased
         // TODO add your handling code here:
         if ( !HelperMethods.checkEmailWriting( mail_JText.getText() ) ) {
             checkEmail_JLabel.setText("Invalid email!");
         } else {
             checkEmail_JLabel.setText("              ");
         }
-    }//GEN-LAST:event_checkEmail_JLabelKeyReleased
+    }//GEN-LAST:event_mail_JTextKeyReleased
 
     /**
      * @param args the command line arguments
