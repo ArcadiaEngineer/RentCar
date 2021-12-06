@@ -1,7 +1,6 @@
 package GUI;
 
 import helpers.HelperMethods;
-import java.awt.Font;
 import java.awt.event.ItemEvent;
 import javax.swing.ImageIcon;
 
@@ -112,6 +111,11 @@ public class Login extends javax.swing.JFrame {
         register_btn.setBackground(new java.awt.Color(51, 204, 0));
         register_btn.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         register_btn.setText("REGISTER");
+        register_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                register_btnActionPerformed(evt);
+            }
+        });
 
         login_btn.setBackground(new java.awt.Color(51, 204, 255));
         login_btn.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
@@ -138,6 +142,7 @@ public class Login extends javax.swing.JFrame {
         guest_JLabel.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         guest_JLabel.setForeground(new java.awt.Color(255, 255, 255));
         guest_JLabel.setText("Enter application as a guest");
+        guest_JLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         guest_JLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 guest_JLabelMouseClicked(evt);
@@ -331,6 +336,13 @@ public class Login extends javax.swing.JFrame {
             checkEmail_JLabel.setText("              ");
         }
     }//GEN-LAST:event_mail_JTextKeyReleased
+
+    private void register_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_register_btnActionPerformed
+        // TODO add your handling code here:
+        Register registerPanel = new Register();
+        registerPanel.setVisible( true );
+        registerPanel.setLocationRelativeTo( null );
+    }//GEN-LAST:event_register_btnActionPerformed
 
     /**
      * @param args the command line arguments
