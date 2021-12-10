@@ -1,7 +1,7 @@
 package GUI;
 
+import Business.RentCarSystem;
 import helpers.HelperMethods;
-import java.awt.event.ItemEvent;
 import javax.swing.ImageIcon;
 
 /**
@@ -10,35 +10,10 @@ import javax.swing.ImageIcon;
  */
 
 public class Login extends javax.swing.JFrame {
-
-    /**
-     * Creates new form Login
-     */
     
-    public void changePics() {
-        
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                int i = 2;
-                while ( true ) {
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException ex) {
-                        System.out.println(ex);
-                    }
-                    girisGorsel.setIcon(new ImageIcon(getClass().getResource("/images/girisGorsel" + i + ".png")));
-                    
-                    i++;
-                    if ( i == 4 )
-                        i = 1;
-                }
-            }
-            
-        }).start();
-    }
     
     public Login() {
+        RentCarSystem.getDataFromDatabase();
         initComponents();
         pass_JPass.setEchoChar((char)'\u2022');
         changePics();
@@ -99,8 +74,9 @@ public class Login extends javax.swing.JFrame {
         pass_JPass.setOpaque(true);
 
         hideShowPass_Btn.setBackground(new java.awt.Color(50, 45, 44));
-        hideShowPass_Btn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/closeEye.png"))); // NOI18N
+        hideShowPass_Btn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/closeEye2.png"))); // NOI18N
         hideShowPass_Btn.setBorder(null);
+        hideShowPass_Btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         hideShowPass_Btn.setOpaque(true);
         hideShowPass_Btn.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -111,14 +87,32 @@ public class Login extends javax.swing.JFrame {
         register_btn.setBackground(new java.awt.Color(51, 204, 0));
         register_btn.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         register_btn.setText("REGISTER");
+        register_btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        register_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                register_btnActionPerformed(evt);
+            }
+        });
 
         login_btn.setBackground(new java.awt.Color(51, 204, 255));
         login_btn.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         login_btn.setText("LOGIN");
+        login_btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        login_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                login_btnActionPerformed(evt);
+            }
+        });
 
         resetPassword_btn.setBackground(new java.awt.Color(255, 102, 102));
         resetPassword_btn.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         resetPassword_btn.setText("RESET PASSWORD");
+        resetPassword_btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        resetPassword_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetPassword_btnActionPerformed(evt);
+            }
+        });
 
         jSeparator1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 7, 1, 7));
 
@@ -137,6 +131,7 @@ public class Login extends javax.swing.JFrame {
         guest_JLabel.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         guest_JLabel.setForeground(new java.awt.Color(255, 255, 255));
         guest_JLabel.setText("Enter application as a guest");
+        guest_JLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         guest_JLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 guest_JLabelMouseClicked(evt);
@@ -257,7 +252,9 @@ public class Login extends javax.swing.JFrame {
         closeLogin_JLabel.setForeground(new java.awt.Color(255, 255, 255));
         closeLogin_JLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         closeLogin_JLabel.setText("X");
+        closeLogin_JLabel.setToolTipText("");
         closeLogin_JLabel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        closeLogin_JLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         closeLogin_JLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 closeLogin_JLabelMouseClicked(evt);
@@ -303,13 +300,7 @@ public class Login extends javax.swing.JFrame {
 
     private void hideShowPass_BtnİtemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_hideShowPass_BtnİtemStateChanged
         // TODO add your handling code here:
-        if ( evt.getStateChange() == ItemEvent.SELECTED ) {
-            hideShowPass_Btn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/openEye.png")));
-            pass_JPass.setEchoChar((char)0);
-        } else if ( evt.getStateChange() == ItemEvent.DESELECTED ) {
-            hideShowPass_Btn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/closeEye.png")));
-            pass_JPass.setEchoChar((char)'\u2022');
-        }
+        HelperMethods.hideShowPass(evt, hideShowPass_Btn, pass_JPass);
     }//GEN-LAST:event_hideShowPass_BtnİtemStateChanged
 
     private void closeLogin_JLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLogin_JLabelMouseClicked
@@ -331,6 +322,47 @@ public class Login extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_mail_JTextKeyReleased
 
+    private void register_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_register_btnActionPerformed
+        // TODO add your handling code here:
+        RegisterPanel registerPanel = new RegisterPanel();
+        registerPanel.setVisible( true );
+        registerPanel.setLocationRelativeTo( null );
+    }//GEN-LAST:event_register_btnActionPerformed
+
+    private void login_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_login_btnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_login_btnActionPerformed
+
+    private void resetPassword_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetPassword_btnActionPerformed
+        // TODO add your handling code here:
+        ResetPasswordPanel panel = new ResetPasswordPanel();
+        panel.setVisible( true );
+        panel.setLocationRelativeTo( null );
+    }//GEN-LAST:event_resetPassword_btnActionPerformed
+
+    private void changePics() {
+        
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int i = 2;
+                while ( true ) {
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException ex) {
+                        System.out.println(ex);
+                    }
+                    girisGorsel.setIcon(new ImageIcon(getClass().getResource("/images/girisGorsel" + i + ".png")));
+                    
+                    i++;
+                    if ( i == 4 )
+                        i = 1;
+                }
+            }
+            
+        }).start();
+    }
+    
     /**
      * @param args the command line arguments
      */

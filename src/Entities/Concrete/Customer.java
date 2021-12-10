@@ -1,30 +1,27 @@
 package Entities.Concrete;
 
-import Entities.Abstract.Person;
+import Entities.Abstract.User;
 
-public class Customer extends Person {
+public class Customer extends User {
     
-    private int CustomerId;
+    private int customer_id;
     private double totalCash;
     
     private static int total_customer = 0;
+    public static int current_database_customer_id;
 
-    public Customer(double totalCash, 
-            String fullName, String gender, int age, String imgPath, 
-            String phoneNumber, Mail mailAdress, String Username, String Password, 
-            String resetPasswordQuestion, String resetPasswordAnswer) 
-    {
+    public Customer(String fullName, String gender, int age, String imgPath, String phoneNumber, 
+            Mail mailAdress, String Username, String Password, String resetPasswordQuestion, 
+            String resetPasswordAnswer, double totalCash) 
+    {    
         super(fullName, gender, age, imgPath, phoneNumber, mailAdress, Username, Password, resetPasswordQuestion, resetPasswordAnswer);
-        this.CustomerId = total_customer++;
+        this.customer_id = current_database_customer_id;
         this.totalCash = totalCash;
+        total_customer++;
     }
 
     public int getCustomerId() {
-        return CustomerId;
-    }
-
-    public void setCustomerId(int CustomerId) {
-        this.CustomerId = CustomerId;
+        return customer_id;
     }
 
     public double getTotalCash() {
@@ -35,10 +32,19 @@ public class Customer extends Person {
         this.totalCash = totalCash;
     }
 
+    public static int getTotal_customer() {
+        return total_customer;
+    }
+
     @Override
     public String toString() {
         return super.toString() + "\n" +
                "Total Cash: " + totalCash + "\n" ;
+    }
+
+    @Override
+    public void printOrder() {
+        
     }
     
 }

@@ -1,16 +1,16 @@
 package Entities.Concrete;
 
-
 public class Mail {
     
     private int mail_id;
     private String name;
     
-    private static int total_mail;
+    private static int total_mail = 0;
     
-    public Mail(String name) {
+    public Mail(int mail_id, String name) {
         this.name = name;
-        mail_id = total_mail++;
+        this.mail_id = mail_id;
+        total_mail++;
     }
 
     public int getMail_id() {

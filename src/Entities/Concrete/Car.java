@@ -1,42 +1,33 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Entities.Concrete;
 
 /**
  *
  * @author Lian La-Fey
  */
-public class Car {
+public class Car implements Comparable<Object> {
     
     private int id;
     private String brand;
     private String model;
-    private String modelYear;
+    private int year;
     private double price;
-    private boolean isNew;
     private int km;
+    private String imgPath;
     
     private static int total_id = 0;
 
-    public Car(String brand, String model, String modelYear, double price, boolean isNew, int km) {
-        this.id = total_id++;
+    public Car(String brand, String model, int year, double price, int km, int id) {
+        this.id = id;
         this.brand = brand;
         this.model = model;
-        this.modelYear = modelYear;
+        this.year = year;
         this.price = price;
-        this.isNew = isNew;
         this.km = km;
+        total_id++;
     }
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getBrand() {
@@ -55,12 +46,20 @@ public class Car {
         this.model = model;
     }
 
-    public String getModelYear() {
-        return modelYear;
+    public int getYear() {
+        return year;
     }
 
-    public void setModelYear(String modelYear) {
-        this.modelYear = modelYear;
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public int getKm() {
+        return km;
+    }
+
+    public void setKm(int km) {
+        this.km = km;
     }
 
     public double getPrice() {
@@ -71,22 +70,22 @@ public class Car {
         this.price = price;
     }
 
-    public boolean isIsNew() {
-        return isNew;
-    }
-
-    public void setIsNew(boolean isNew) {
-        this.isNew = isNew;
+    public static int getTotal_id() {
+        return total_id;
     }
 
     @Override
     public String toString() {
         return "Brand: " + brand + "\n" +
                "Model: " + model + "\n" +
-               "Model Year: " + modelYear + "\n" + 
-               "Price: " + price + "\n" + 
-               (isNew == true ? "New Car" : "Used Car") + "\n" ;
+               "Model Year: " + year + "\n" + 
+               "Price: " + price + "\n";
                 
+    }
+
+    @Override
+    public int compareTo(Object obj) {
+        return brand.compareToIgnoreCase( ((Car)obj).getBrand() );
     }
     
 }
