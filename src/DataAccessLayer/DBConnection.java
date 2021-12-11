@@ -1,4 +1,4 @@
-package database_access;
+package DataAccessLayer;
 
 import java.sql.*;
 

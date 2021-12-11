@@ -7,8 +7,8 @@ package GUI;
 
 import Business.RentCarSystem;
 import Entities.Concrete.Customer;
-import database_access.DBConnection;
-import helpers.HelperMethods;
+import DataAccessLayer.DBConnection;
+import Helper.HelperMethods;
 import java.sql.*;
 
 /**

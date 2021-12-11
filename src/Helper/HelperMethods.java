@@ -1,4 +1,4 @@
-package helpers;
+package Helper;
 
 import java.io.File;
 import java.net.MalformedURLException;

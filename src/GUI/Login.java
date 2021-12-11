@@ -1,7 +1,7 @@
 package GUI;
 
 import Business.RentCarSystem;
-import helpers.HelperMethods;
+import Helper.HelperMethods;
 import javax.swing.ImageIcon;
 
 /**
@@ -13,7 +13,7 @@ public class Login extends javax.swing.JFrame {
     
     
     public Login() {
-        RentCarSystem.getDataFromDatabase();
+        //RentCarSystem.getDataFromDatabase();
         initComponents();
         pass_JPass.setEchoChar((char)'\u2022');
         changePics();
