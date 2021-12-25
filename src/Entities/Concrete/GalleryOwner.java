@@ -1,6 +1,7 @@
 package Entities.Concrete;
 
 import Entities.Abstract.User;
+import java.util.ArrayList;
 
 /**
  *
@@ -9,36 +10,33 @@ import Entities.Abstract.User;
 public class GalleryOwner extends User {
     
     private int galleryOwner_id;
-    private Gallery gallery;
+    private ArrayList<Gallery> galleries = new ArrayList<>();
     
-    public GalleryOwner(String galleryName, int galleryOwner_id, Gallery gallery, 
+    public GalleryOwner(int galleryOwner_id,
             String fullName, String gender, int age, String imgPath, String phoneNumber, Mail mailAdress,
             String Username, String Password, String resetPasswordQuestion, String resetPasswordAnswer)
     {
         super(fullName, gender, age, imgPath, phoneNumber, mailAdress, Username, Password, resetPasswordQuestion, resetPasswordAnswer);
         this.galleryOwner_id = galleryOwner_id;
-        this.gallery = gallery;
     }
 
     public int getGalleryOwner_id() {
         return galleryOwner_id;
     }
-    
-    public Gallery getGallery() {
-        return gallery;
-    }
 
-    public void setGallery(Gallery gallery) {
-        this.gallery = gallery;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() + gallery + "\n";
+    public ArrayList<Gallery> getGalleries() {
+        return galleries;
     }
 
     @Override
     public void printOrder() {
         
     }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
+    
+    
 }

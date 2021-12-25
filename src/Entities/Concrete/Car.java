@@ -9,20 +9,29 @@ public class Car implements Comparable<Object> {
     private int id;
     private String brand;
     private String model;
+    private String type;
+    private String fuelType;
+    private String transmissionType;
     private int year;
     private double price;
     private int km;
-    private String imgPath;
+    private String small_imgPath;
+    private String large_imgPath;
     
     private static int total_id = 0;
 
-    public Car(String brand, String model, int year, double price, int km, int id) {
+    public Car(String brand, String model, String type, String fuelType, String transmissionType, int year, double price, int km, int id, String small_imgPath, String large_imgPath) {
         this.id = id;
         this.brand = brand;
         this.model = model;
+        this.type = type;
+        this.fuelType = fuelType;
+        this.transmissionType = transmissionType;
         this.year = year;
         this.price = price;
         this.km = km;
+        this.small_imgPath = small_imgPath;
+        this.large_imgPath = large_imgPath;
         total_id++;
     }
 
@@ -44,6 +53,26 @@ public class Car implements Comparable<Object> {
 
     public void setModel(String model) {
         this.model = model;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getFuelType() {
+        return fuelType;
+    }
+
+    public String getTransmissionType() {
+        return transmissionType;
+    }
+
+    public String getSmall_imgPath() {
+        return small_imgPath;
+    }
+
+    public String getLarge_imgPath() {
+        return large_imgPath;
     }
 
     public int getYear() {

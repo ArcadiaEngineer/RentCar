@@ -407,7 +407,7 @@ public class ResetPasswordPanel extends javax.swing.JFrame {
        // TODO add your handling code here:
        boolean isSuccesful = false;
         try {
-            RentCarSystem.updatePersonPassword(mail_JText.getText(), String.valueOf(newPassword_JPass.getPassword()) );
+            RentCarSystem.updateUserPassword(mail_JText.getText(), String.valueOf(newPassword_JPass.getPassword()) );
             isSuccesful = true;
         } catch (IllegalArgumentException exception) {
             HelperMethods.showErrorMessage(exception.getMessage(), "Invalid Password");

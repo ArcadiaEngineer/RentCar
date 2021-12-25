@@ -1,6 +1,9 @@
 package GUI;
 
 import Business.RentCarSystem;
+import Entities.Abstract.User;
+import Entities.Concrete.Customer;
+import Entities.Concrete.GalleryOwner;
 import Helper.HelperMethods;
 import javax.swing.ImageIcon;
 
@@ -58,7 +61,6 @@ public class Login extends javax.swing.JFrame {
         mail_JText.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         mail_JText.setText("ibr.glmz19@gmail.com");
         mail_JText.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        mail_JText.setOpaque(true);
         mail_JText.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 mail_JTextKeyReleased(evt);
@@ -71,7 +73,6 @@ public class Login extends javax.swing.JFrame {
         pass_JPass.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         pass_JPass.setText("adskasdkas");
         pass_JPass.setBorder(javax.swing.BorderFactory.createEmptyBorder(7, 7, 7, 7));
-        pass_JPass.setOpaque(true);
 
         hideShowPass_Btn.setBackground(new java.awt.Color(50, 45, 44));
         hideShowPass_Btn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/closeEye2.png"))); // NOI18N
@@ -331,6 +332,23 @@ public class Login extends javax.swing.JFrame {
 
     private void login_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_login_btnActionPerformed
         // TODO add your handling code here:
+        User user = RentCarSystem.getUserByMailName_and_Password(mail_JText.getText(), String.valueOf(pass_JPass.getPassword()) );
+        
+        if ( user instanceof Customer ) {
+            CustomerWindow customerWindow = new CustomerWindow( user );
+            customerWindow.setVisible(true);
+            customerWindow.setLocationRelativeTo( null );
+            dispose();
+        } else if (user instanceof GalleryOwner ) {
+            GalleryOwnerWindow galleryOwnerWindow = new GalleryOwnerWindow( user );
+            galleryOwnerWindow.setVisible( true );
+            galleryOwnerWindow.setLocationRelativeTo( null );
+            dispose();
+        } else {
+            HelperMethods.showErrorMessage("Wrong answer or email", "Login Error");
+        }
+        
+        
     }//GEN-LAST:event_login_btnActionPerformed
 
     private void resetPassword_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetPassword_btnActionPerformed
@@ -348,7 +366,7 @@ public class Login extends javax.swing.JFrame {
                 int i = 2;
                 while ( true ) {
                     try {
-                        Thread.sleep(5000);
+                        Thread.sleep(4000);
                     } catch (InterruptedException ex) {
                         System.out.println(ex);
                     }

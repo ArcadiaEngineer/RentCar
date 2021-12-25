@@ -6,10 +6,12 @@ import Entities.Concrete.Car;
 import Entities.Concrete.Customer;
 import Entities.Concrete.Mail;
 import DataAccessLayer.DBConnection;
+import Entities.Concrete.Gallery;
+import Entities.Concrete.GalleryOwner;
+import Entities.Concrete.PromotionCode;
 import Helper.HelperMethods;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.TreeSet;
 
@@ -21,6 +23,9 @@ public class RentCarSystem {
     
     private static ArrayList<Mail> mailList = new ArrayList<>();
     private static ArrayList<User> userList = new ArrayList<>();
+    private static ArrayList<PromotionCode> promotionCodes = new ArrayList<>();
+    private static ArrayList<Gallery> galleries = new ArrayList<>();
+    private static ArrayList<Car> cars = new ArrayList<>();
 
     private static DBConnection dbConnection = new DBConnection();
     private static Connection connection = dbConnection.connDb();
@@ -98,16 +103,27 @@ public class RentCarSystem {
     }
     
     public static User getUserByMailName( String mailName ) {
-        for ( User person : userList ) {
-            if ( person.getMailAdress().getName().equals( mailName ) ) {
-                return person;
+        for ( User user : userList ) {
+            if ( user.getMailAdress().getName().equals( mailName ) ) {
+                return user;
             }
         }
         
         return null;
     }
     
-    public static boolean updatePersonPassword(String mailName, String newPassword) throws IllegalArgumentException {
+    public static User getUserByMailName_and_Password(String mailName, String password) {
+        for ( User user : userList ) {
+            
+            if ( user.getMailAdress().getName().equals(mailName) && user.getPassword().equals(password) ) {
+                return user;
+            }
+        }
+        
+        return null;
+    }
+    
+    public static boolean updateUserPassword(String mailName, String newPassword) throws IllegalArgumentException {
         
         if ( !HelperMethods.checkPasswordWriting(newPassword) ) {
             throw new IllegalArgumentException("Please try another password!" + "\n"+
@@ -134,6 +150,22 @@ public class RentCarSystem {
         return true;
     }
     
+    public static GalleryOwner getGalleryOwnerById(int id) {
+        for ( User user : userList ) {
+            if ( user instanceof GalleryOwner && ((GalleryOwner)user).getGalleryOwner_id() == id ) 
+                return (GalleryOwner) user;
+        }
+        
+        return null;
+    }
+    
+    public static Gallery getGalleryById(int id) {
+        for ( Gallery gallery : galleries )
+            if ( gallery.getId() == id )
+                return gallery;
+        
+        return null;
+    }
     
     
     ////////////////////////////////////////////////////////////////////////////
@@ -161,9 +193,54 @@ public class RentCarSystem {
                 RentCarSystem.addUserToList(customer );
             }
             
+            rs = st.executeQuery("SELECT * FROM galleryowner");
+            
+            while ( rs.next() ) {
+                Mail mail = RentCarSystem.getMailById( rs.getInt("mail_id") );
+                GalleryOwner galleryOwner = new GalleryOwner(rs.getInt("galleryOwner_id"), rs.getString("fullName"), 
+                        rs.getString("gender"), rs.getInt("age"), rs.getString("imgPath"), rs.getString("phoneNum"), mail,
+                        rs.getString("username"), rs.getString("password"), rs.getString("resetPasswordQue"), 
+                        rs.getString("resetPasswordAns"));
+                RentCarSystem.addUserToList( galleryOwner );
+            }
+            
+            rs = st.executeQuery("SELECT * FROM promotioncodes");
+            
+            while ( rs.next() ) {
+                boolean isUsed = rs.getBoolean("isUsed");
+                PromotionCode promotionCode = new PromotionCode( rs.getInt("promotionCode_id"), rs.getString("promotionCode_str"), rs.getDouble("discount"), isUsed);
+                promotionCodes.add( promotionCode );
+                
+            }
+            
+            rs = st.executeQuery("SELECT * FROM galleries");
+            
+            while ( rs.next() ) {
+                
+                Gallery gallery = new Gallery(rs.getInt("gallery_id"), rs.getString("name"));
+                galleries.add( gallery );
+                getGalleryOwnerById( rs.getInt("galleryOwner_id") ).getGalleries().add( gallery );
+                
+            }
+            
+            rs = st.executeQuery("SELECT * FROM cars");
+            
+            while ( rs.next() ) {
+                
+                Car car = new Car(rs.getString("brand"), rs.getString("model"), rs.getString("type"), rs.getString("fuelType"), 
+                        rs.getString("transmissionType"), rs.getInt("year"), 
+                        rs.getDouble("daily_price"), rs.getInt("km"), rs.getInt("car_id"), rs.getString("small_imgPath"), rs.getString("large_imgPath"));
+                cars.add( car );
+                getGalleryById( rs.getInt("gallery_id") ).getCars().add( car );
+            }
+            
+            
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+        
+        
+        
     }
     
     ////////////////////////////////////////////////////////////////////////////

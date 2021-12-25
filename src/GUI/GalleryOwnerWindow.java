@@ -1,7 +1,11 @@
 package GUI;
 
 
+import Entities.Abstract.User;
+import Entities.Concrete.Customer;
+import Entities.Concrete.GalleryOwner;
 import java.awt.Color;
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 /*
@@ -15,11 +19,30 @@ import javax.swing.JPanel;
  */
 public class GalleryOwnerWindow extends javax.swing.JFrame {
 
-    /**
-     * Creates new form NewJFrame1
-     */
-    public GalleryOwnerWindow() {
+    
+    User galleryOwner;
+    
+    public GalleryOwnerWindow(User galleryOwner) {
+        this.galleryOwner = galleryOwner;
         initComponents();
+        initializeFields();
+        
+    }
+    
+    public void initializeFields() {
+        lblProfilePic.setIcon( new ImageIcon(getClass().getResource( ((GalleryOwner)galleryOwner).getImgPath() )));
+        lblTheUserName.setText(galleryOwner.getUsername());
+        lblTheUserMail.setText(galleryOwner.getMailAdress().getName());
+        tbxUserName.setText( galleryOwner.getUsername() );
+        tbxUserFullName.setText( galleryOwner.getFullName() );
+        tbxUserGender.setText( galleryOwner.getGender() );
+        tbxUserAge.setText( String.valueOf( galleryOwner.getAge() ) );
+        tbxUserEmail.setText( galleryOwner.getMailAdress().getName() );
+        tbxUserEmail.setEditable( false );
+        tbxCurrentPass.setEchoChar((char)'\u2022');
+        tbxNewPass.setEchoChar((char)'\u2022');
+        tbxConfNewPass.setEchoChar((char)'\u2022');
+        
     }
 
     /**
@@ -40,11 +63,9 @@ public class GalleryOwnerWindow extends javax.swing.JFrame {
         pnlExit = new javax.swing.JPanel();
         lblSignOut = new javax.swing.JLabel();
         pnlProfileInfo = new javax.swing.JPanel();
-        lblProfilePic = new javax.swing.JLabel();
-        lblUserName = new javax.swing.JLabel();
-        lblUserMail = new javax.swing.JLabel();
-        lblTheUserMail = new javax.swing.JLabel();
         lblTheUserName = new javax.swing.JLabel();
+        lblTheUserMail = new javax.swing.JLabel();
+        lblProfilePic = new javax.swing.JLabel();
         pnlLayered = new javax.swing.JLayeredPane();
         pnlLayeredProfile = new javax.swing.JPanel();
         pnlInPnlLayerdProfileFilter = new javax.swing.JPanel();
@@ -74,16 +95,6 @@ public class GalleryOwnerWindow extends javax.swing.JFrame {
         btnPreviousOrder = new javax.swing.JButton();
         btnDeleteOrder = new javax.swing.JButton();
         pnlUserInformation = new javax.swing.JPanel();
-        lblUserName1 = new javax.swing.JLabel();
-        lblUserGender = new javax.swing.JLabel();
-        lblUserAge = new javax.swing.JLabel();
-        lblUserEmail = new javax.swing.JLabel();
-        lblUserFullName = new javax.swing.JLabel();
-        tbxUserName = new javax.swing.JTextField();
-        tbxUserFullName = new javax.swing.JTextField();
-        tbxUserGender = new javax.swing.JTextField();
-        tbxUserAge = new javax.swing.JTextField();
-        tbxUserEmail = new javax.swing.JTextField();
         pnlUserBankInformation = new javax.swing.JPanel();
         lblUserCurrentCarNumber = new javax.swing.JLabel();
         lblUserCurrentCashValue = new javax.swing.JLabel();
@@ -94,8 +105,23 @@ public class GalleryOwnerWindow extends javax.swing.JFrame {
         lblUserCurrentOrderNumberValue = new javax.swing.JLabel();
         btnSaveChanges = new javax.swing.JButton();
         btnModifyUser = new javax.swing.JButton();
-        lblUserProfileImage = new javax.swing.JLabel();
         btnDeleteUser = new javax.swing.JButton();
+        lblUserName1 = new javax.swing.JLabel();
+        tbxUserName = new javax.swing.JTextField();
+        tbxUserFullName = new javax.swing.JTextField();
+        lblUserFullName = new javax.swing.JLabel();
+        lblUserGender = new javax.swing.JLabel();
+        tbxUserGender = new javax.swing.JTextField();
+        tbxUserAge = new javax.swing.JTextField();
+        lblUserAge = new javax.swing.JLabel();
+        lblUserEmail = new javax.swing.JLabel();
+        tbxUserEmail = new javax.swing.JTextField();
+        lblConfNewPassword = new javax.swing.JLabel();
+        tbxConfNewPass = new javax.swing.JPasswordField();
+        tbxNewPass = new javax.swing.JPasswordField();
+        lblNewPassword = new javax.swing.JLabel();
+        lblCurrentPassword = new javax.swing.JLabel();
+        tbxCurrentPass = new javax.swing.JPasswordField();
         pnlLayeredHomePage = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         listCars = new javax.swing.JList<>();
@@ -215,58 +241,37 @@ public class GalleryOwnerWindow extends javax.swing.JFrame {
 
         pnlProfileInfo.setBackground(new java.awt.Color(133, 146, 158));
 
-        lblUserName.setBackground(new java.awt.Color(242, 243, 244));
-        lblUserName.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        lblUserName.setForeground(new java.awt.Color(208, 211, 212));
-        lblUserName.setText("User Name");
-
-        lblUserMail.setBackground(new java.awt.Color(242, 243, 244));
-        lblUserMail.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        lblUserMail.setForeground(new java.awt.Color(208, 211, 212));
-        lblUserMail.setText("Mail");
+        lblTheUserName.setBackground(new java.awt.Color(242, 243, 244));
+        lblTheUserName.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lblTheUserName.setForeground(new java.awt.Color(51, 51, 51));
+        lblTheUserName.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
         lblTheUserMail.setBackground(new java.awt.Color(242, 243, 244));
-        lblTheUserMail.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        lblTheUserMail.setForeground(new java.awt.Color(153, 51, 255));
-
-        lblTheUserName.setBackground(new java.awt.Color(242, 243, 244));
-        lblTheUserName.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        lblTheUserName.setForeground(new java.awt.Color(153, 51, 255));
+        lblTheUserMail.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lblTheUserMail.setForeground(new java.awt.Color(51, 51, 51));
 
         javax.swing.GroupLayout pnlProfileInfoLayout = new javax.swing.GroupLayout(pnlProfileInfo);
         pnlProfileInfo.setLayout(pnlProfileInfoLayout);
         pnlProfileInfoLayout.setHorizontalGroup(
             pnlProfileInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlProfileInfoLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlProfileInfoLayout.createSequentialGroup()
+                .addContainerGap(60, Short.MAX_VALUE)
                 .addGroup(pnlProfileInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(pnlProfileInfoLayout.createSequentialGroup()
-                        .addGap(58, 58, 58)
-                        .addComponent(lblProfilePic, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(pnlProfileInfoLayout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addGroup(pnlProfileInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblUserName)
-                            .addComponent(lblUserMail, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(pnlProfileInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblTheUserMail, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblTheUserName, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(62, Short.MAX_VALUE))
+                    .addComponent(lblTheUserMail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblTheUserName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblProfilePic, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(60, 60, 60))
         );
         pnlProfileInfoLayout.setVerticalGroup(
             pnlProfileInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlProfileInfoLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblProfilePic, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(47, 47, 47)
-                .addGroup(pnlProfileInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblUserName)
-                    .addComponent(lblTheUserName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(15, 15, 15)
+                .addComponent(lblProfilePic, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlProfileInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lblUserMail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblTheUserMail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addComponent(lblTheUserName, javax.swing.GroupLayout.DEFAULT_SIZE, 21, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblTheUserMail, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(35, 35, 35))
         );
 
         javax.swing.GroupLayout PnlLeftSideLayout = new javax.swing.GroupLayout(PnlLeftSide);
@@ -342,7 +347,7 @@ public class GalleryOwnerWindow extends javax.swing.JFrame {
                 .addComponent(lblOrderPerson, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cbxOrderGalery, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnFilterOrders, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(21, 21, 21))
         );
@@ -441,7 +446,7 @@ public class GalleryOwnerWindow extends javax.swing.JFrame {
                         .addComponent(btnPreviousOrder, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnNextOrder, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnDeleteOrder, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -481,41 +486,6 @@ public class GalleryOwnerWindow extends javax.swing.JFrame {
 
         pnlUserInformation.setBackground(new java.awt.Color(202, 207, 210));
         pnlUserInformation.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Accaunt Information", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 15), new java.awt.Color(255, 102, 0))); // NOI18N
-
-        lblUserName1.setBackground(new java.awt.Color(242, 243, 244));
-        lblUserName1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblUserName1.setForeground(new java.awt.Color(51, 51, 51));
-        lblUserName1.setText("User Name:");
-
-        lblUserGender.setBackground(new java.awt.Color(242, 243, 244));
-        lblUserGender.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblUserGender.setForeground(new java.awt.Color(51, 51, 51));
-        lblUserGender.setText("Gender:");
-
-        lblUserAge.setBackground(new java.awt.Color(242, 243, 244));
-        lblUserAge.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblUserAge.setForeground(new java.awt.Color(51, 51, 51));
-        lblUserAge.setText("Age");
-
-        lblUserEmail.setBackground(new java.awt.Color(242, 243, 244));
-        lblUserEmail.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblUserEmail.setForeground(new java.awt.Color(51, 51, 51));
-        lblUserEmail.setText("Email");
-
-        lblUserFullName.setBackground(new java.awt.Color(242, 243, 244));
-        lblUserFullName.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblUserFullName.setForeground(new java.awt.Color(51, 51, 51));
-        lblUserFullName.setText("Full Name");
-
-        tbxUserName.setEnabled(false);
-
-        tbxUserFullName.setEnabled(false);
-
-        tbxUserGender.setEnabled(false);
-
-        tbxUserAge.setEnabled(false);
-
-        tbxUserEmail.setEnabled(false);
 
         pnlUserBankInformation.setBackground(new java.awt.Color(202, 207, 210));
         pnlUserBankInformation.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Gallery Information", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 15), new java.awt.Color(255, 102, 0))); // NOI18N
@@ -584,7 +554,7 @@ public class GalleryOwnerWindow extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(pnlUserBankInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlUserBankInformationLayout.createSequentialGroup()
-                        .addComponent(lblUserTotalEarnedMoney, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE)
+                        .addComponent(lblUserTotalEarnedMoney, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(33, 33, 33))
                     .addGroup(pnlUserBankInformationLayout.createSequentialGroup()
                         .addComponent(lblUserTotalEarnedMoneyValue, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -605,6 +575,64 @@ public class GalleryOwnerWindow extends javax.swing.JFrame {
         btnDeleteUser.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         btnDeleteUser.setText("Delete Account");
 
+        lblUserName1.setBackground(new java.awt.Color(242, 243, 244));
+        lblUserName1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblUserName1.setForeground(new java.awt.Color(51, 51, 51));
+        lblUserName1.setText("User Name:");
+
+        tbxUserName.setEditable(false);
+        tbxUserName.setEnabled(false);
+
+        tbxUserFullName.setEditable(false);
+        tbxUserFullName.setEnabled(false);
+
+        lblUserFullName.setBackground(new java.awt.Color(242, 243, 244));
+        lblUserFullName.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblUserFullName.setForeground(new java.awt.Color(51, 51, 51));
+        lblUserFullName.setText("Full Name");
+
+        lblUserGender.setBackground(new java.awt.Color(242, 243, 244));
+        lblUserGender.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblUserGender.setForeground(new java.awt.Color(51, 51, 51));
+        lblUserGender.setText("Gender:");
+
+        tbxUserGender.setEditable(false);
+        tbxUserGender.setEnabled(false);
+
+        tbxUserAge.setEditable(false);
+        tbxUserAge.setEnabled(false);
+
+        lblUserAge.setBackground(new java.awt.Color(242, 243, 244));
+        lblUserAge.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblUserAge.setForeground(new java.awt.Color(51, 51, 51));
+        lblUserAge.setText("Age");
+
+        lblUserEmail.setBackground(new java.awt.Color(242, 243, 244));
+        lblUserEmail.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblUserEmail.setForeground(new java.awt.Color(51, 51, 51));
+        lblUserEmail.setText("Email");
+
+        lblConfNewPassword.setBackground(new java.awt.Color(242, 243, 244));
+        lblConfNewPassword.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblConfNewPassword.setForeground(new java.awt.Color(51, 51, 51));
+        lblConfNewPassword.setText("Confirm New Password:");
+
+        tbxConfNewPass.setEditable(false);
+
+        tbxNewPass.setEditable(false);
+
+        lblNewPassword.setBackground(new java.awt.Color(242, 243, 244));
+        lblNewPassword.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblNewPassword.setForeground(new java.awt.Color(51, 51, 51));
+        lblNewPassword.setText("New Password:");
+
+        lblCurrentPassword.setBackground(new java.awt.Color(242, 243, 244));
+        lblCurrentPassword.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCurrentPassword.setForeground(new java.awt.Color(51, 51, 51));
+        lblCurrentPassword.setText("Current Password:");
+
+        tbxCurrentPass.setEditable(false);
+
         javax.swing.GroupLayout pnlUserInformationLayout = new javax.swing.GroupLayout(pnlUserInformation);
         pnlUserInformation.setLayout(pnlUserInformationLayout);
         pnlUserInformationLayout.setHorizontalGroup(
@@ -613,36 +641,44 @@ public class GalleryOwnerWindow extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlUserInformationLayout.createSequentialGroup()
-                        .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlUserInformationLayout.createSequentialGroup()
-                                .addComponent(lblUserName1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(tbxUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(pnlUserInformationLayout.createSequentialGroup()
-                                .addComponent(lblUserFullName, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(tbxUserFullName, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(pnlUserInformationLayout.createSequentialGroup()
-                                .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblUserGender, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblUserAge, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblUserEmail, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
-                                .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(tbxUserAge, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(tbxUserGender, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(tbxUserEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(50, 50, 50)
-                        .addComponent(lblUserProfileImage, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(pnlUserInformationLayout.createSequentialGroup()
                         .addComponent(btnModifyUser, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnSaveChanges)
                         .addGap(18, 18, 18)
-                        .addComponent(btnDeleteUser, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(pnlUserBankInformation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                        .addComponent(btnDeleteUser, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlUserInformationLayout.createSequentialGroup()
+                        .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblUserName1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblUserFullName, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblUserGender, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblUserEmail, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblUserAge, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(tbxUserEmail, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(tbxUserAge, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlUserInformationLayout.createSequentialGroup()
+                                .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(tbxUserGender)
+                                    .addComponent(tbxUserFullName)
+                                    .addComponent(tbxUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(pnlUserInformationLayout.createSequentialGroup()
+                                        .addComponent(lblConfNewPassword)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(tbxConfNewPass, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(pnlUserInformationLayout.createSequentialGroup()
+                                        .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(lblCurrentPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(lblNewPassword, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(41, 41, 41)
+                                        .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(tbxNewPass, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(tbxCurrentPass, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE))))))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addComponent(pnlUserBankInformation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         pnlUserInformationLayout.setVerticalGroup(
             pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -653,29 +689,41 @@ public class GalleryOwnerWindow extends javax.swing.JFrame {
                     .addGroup(pnlUserInformationLayout.createSequentialGroup()
                         .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(pnlUserInformationLayout.createSequentialGroup()
-                                .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(tbxUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblUserName1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(lblUserName1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(tbxUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(tbxUserFullName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblUserFullName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(lblUserFullName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblUserGender, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addGroup(pnlUserInformationLayout.createSequentialGroup()
-                                        .addComponent(tbxUserGender, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(0, 0, Short.MAX_VALUE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(lblUserAge, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(tbxUserAge, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(tbxUserEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblUserEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(lblUserProfileImage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
+                                    .addComponent(tbxUserGender, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblUserGender, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(pnlUserInformationLayout.createSequentialGroup()
+                                        .addGap(42, 42, 42)
+                                        .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(lblUserEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(tbxUserEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(tbxUserAge, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(lblUserAge, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(pnlUserInformationLayout.createSequentialGroup()
+                                .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(tbxCurrentPass, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblCurrentPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(tbxNewPass, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblNewPassword))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(lblConfNewPassword)
+                                    .addComponent(tbxConfNewPass, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(87, 87, 87)))
+                        .addGap(22, 22, 22)
                         .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnSaveChanges, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnModifyUser, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -933,7 +981,7 @@ public class GalleryOwnerWindow extends javax.swing.JFrame {
         cbxModelYear.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021" }));
 
         cbxModel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        cbxModel.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sedan", "Coupe", "Sports Car", "Hatchback", "SUV" }));
+        cbxModel.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sedan", "Coupe", "Hatchback", "SUV" }));
 
         cbxBrand.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         cbxBrand.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mercedes", "BMW", "Volkswagen", "Nissan", "Fiat", "Porche", "Ferrari", "Peugeout", "Volvo", "Audi", "Citroen", "Dacia", "Ford", "Honda", "Hyundai", "Maserati", "Toyota", "LandRover", "Skoda" }));
@@ -958,7 +1006,7 @@ public class GalleryOwnerWindow extends javax.swing.JFrame {
                 .addGroup(pnlApprovalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(cbxModelYear, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(cbxModel, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cbxBrand, 0, 103, Short.MAX_VALUE)
+                    .addComponent(cbxBrand, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(tbxKm)
                     .addComponent(tbxPrice, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addGap(30, 30, 30))
@@ -1033,8 +1081,8 @@ public class GalleryOwnerWindow extends javax.swing.JFrame {
             PnlParentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PnlParentLayout.createSequentialGroup()
                 .addComponent(PnlLeftSide, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(pnlLayered, javax.swing.GroupLayout.PREFERRED_SIZE, 802, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pnlLayered))
         );
         PnlParentLayout.setVerticalGroup(
             PnlParentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1070,43 +1118,7 @@ public class GalleryOwnerWindow extends javax.swing.JFrame {
         pnlProfile.setBackground(color);
     }//GEN-LAST:event_pnlHomePageMouseClicked
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(GalleryOwnerWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(GalleryOwnerWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(GalleryOwnerWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(GalleryOwnerWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new GalleryOwnerWindow().setVisible(true);
-            }
-        });
-    }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel PnlLeftSide;
@@ -1142,12 +1154,15 @@ public class GalleryOwnerWindow extends javax.swing.JFrame {
     private javax.swing.JLabel lblCarModel;
     private javax.swing.JLabel lblCarModelYear;
     private javax.swing.JLabel lblCarPrice;
+    private javax.swing.JLabel lblConfNewPassword;
+    private javax.swing.JLabel lblCurrentPassword;
     private javax.swing.JLabel lblGallery;
     private javax.swing.JLabel lblHomePage;
     private javax.swing.JLabel lblKm;
     private javax.swing.JLabel lblKmOfCar;
     private javax.swing.JLabel lblModel;
     private javax.swing.JLabel lblModelOfCar;
+    private javax.swing.JLabel lblNewPassword;
     private javax.swing.JLabel lblOrderPerson;
     private javax.swing.JLabel lblOrderPrice;
     private javax.swing.JLabel lblOrderdCarImage;
@@ -1178,10 +1193,7 @@ public class GalleryOwnerWindow extends javax.swing.JFrame {
     private javax.swing.JLabel lblUserEmail;
     private javax.swing.JLabel lblUserFullName;
     private javax.swing.JLabel lblUserGender;
-    private javax.swing.JLabel lblUserMail;
-    private javax.swing.JLabel lblUserName;
     private javax.swing.JLabel lblUserName1;
-    private javax.swing.JLabel lblUserProfileImage;
     private javax.swing.JLabel lblUserTotalEarnedMoney;
     private javax.swing.JLabel lblUserTotalEarnedMoneyValue;
     private javax.swing.JLabel lblYear;
@@ -1202,11 +1214,14 @@ public class GalleryOwnerWindow extends javax.swing.JFrame {
     private javax.swing.JPanel pnlProfileInfo;
     private javax.swing.JPanel pnlUserBankInformation;
     private javax.swing.JPanel pnlUserInformation;
+    private javax.swing.JPasswordField tbxConfNewPass;
+    private javax.swing.JPasswordField tbxCurrentPass;
     private javax.swing.JTextField tbxKm;
     private javax.swing.JTextField tbxMax;
     private javax.swing.JTextField tbxMax1;
     private javax.swing.JTextField tbxMin;
     private javax.swing.JTextField tbxMin1;
+    private javax.swing.JPasswordField tbxNewPass;
     private javax.swing.JTextField tbxPrice;
     private javax.swing.JTextField tbxUserAge;
     private javax.swing.JTextField tbxUserEmail;
