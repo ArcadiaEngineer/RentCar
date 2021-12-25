@@ -118,7 +118,8 @@ public class TRY extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     
-
+    
+        
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;

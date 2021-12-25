@@ -228,8 +228,8 @@ public class RentCarSystem {
             while ( rs.next() ) {
                 
                 Car car = new Car(rs.getString("brand"), rs.getString("model"), rs.getString("type"), rs.getString("fuelType"), 
-                        rs.getString("transmissionType"), rs.getInt("year"), 
-                        rs.getDouble("daily_price"), rs.getInt("km"), rs.getInt("car_id"), rs.getString("small_imgPath"), rs.getString("large_imgPath"));
+                        rs.getString("transmissionType"), rs.getInt("year"), rs.getDouble("daily_price"), rs.getDouble("fuelCapacity"), 
+                        rs.getDouble("trunkVolume"), rs.getInt("km"), rs.getInt("car_id"), rs.getString("small_imgPath"), rs.getString("large_imgPath"));
                 cars.add( car );
                 getGalleryById( rs.getInt("gallery_id") ).getCars().add( car );
             }

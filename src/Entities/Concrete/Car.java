@@ -14,13 +14,16 @@ public class Car implements Comparable<Object> {
     private String transmissionType;
     private int year;
     private double price;
+    private double fuelCapacity;
+    private double trunkVolume;
     private int km;
     private String small_imgPath;
     private String large_imgPath;
     
     private static int total_id = 0;
 
-    public Car(String brand, String model, String type, String fuelType, String transmissionType, int year, double price, int km, int id, String small_imgPath, String large_imgPath) {
+    public Car(String brand, String model, String type, String fuelType, String transmissionType, int year, double price, double fuelCapacity, double trunkVolume, 
+            int km, int id, String small_imgPath, String large_imgPath) {
         this.id = id;
         this.brand = brand;
         this.model = model;
@@ -29,6 +32,8 @@ public class Car implements Comparable<Object> {
         this.transmissionType = transmissionType;
         this.year = year;
         this.price = price;
+        this.fuelCapacity = fuelCapacity;
+        this.trunkVolume = trunkVolume;
         this.km = km;
         this.small_imgPath = small_imgPath;
         this.large_imgPath = large_imgPath;
@@ -65,6 +70,14 @@ public class Car implements Comparable<Object> {
 
     public String getTransmissionType() {
         return transmissionType;
+    }
+
+    public double getFuelCapacity() {
+        return fuelCapacity;
+    }
+
+    public double getTrunkVolume() {
+        return trunkVolume;
     }
 
     public String getSmall_imgPath() {

@@ -2,8 +2,7 @@ package GUI;
 
 import Business.RentCarSystem;
 import Entities.Abstract.User;
-import Entities.Concrete.Customer;
-import Entities.Concrete.GalleryOwner;
+import Entities.Concrete.*;
 import Helper.HelperMethods;
 import javax.swing.ImageIcon;
 
@@ -311,7 +310,10 @@ public class Login extends javax.swing.JFrame {
 
     private void guest_JLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_guest_JLabelMouseClicked
         // TODO add your handling code here:
-        
+        Visitor visitor = new Visitor("Guest");
+        CustomerWindow visitorWindow = new CustomerWindow( visitor );
+        visitorWindow.setVisible( true );
+        visitorWindow.setLocationRelativeTo( null );
     }//GEN-LAST:event_guest_JLabelMouseClicked
 
     private void mail_JTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_mail_JTextKeyReleased
@@ -335,12 +337,12 @@ public class Login extends javax.swing.JFrame {
         User user = RentCarSystem.getUserByMailName_and_Password(mail_JText.getText(), String.valueOf(pass_JPass.getPassword()) );
         
         if ( user instanceof Customer ) {
-            CustomerWindow customerWindow = new CustomerWindow( user );
+            CustomerWindow customerWindow = new CustomerWindow( (Customer)user );
             customerWindow.setVisible(true);
             customerWindow.setLocationRelativeTo( null );
             dispose();
         } else if (user instanceof GalleryOwner ) {
-            GalleryOwnerWindow galleryOwnerWindow = new GalleryOwnerWindow( user );
+            GalleryOwnerWindow galleryOwnerWindow = new GalleryOwnerWindow( (GalleryOwner)user );
             galleryOwnerWindow.setVisible( true );
             galleryOwnerWindow.setLocationRelativeTo( null );
             dispose();

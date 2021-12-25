@@ -3,18 +3,18 @@ package GUI;
 
 import Entities.Abstract.User;
 import Entities.Concrete.Customer;
+import Entities.Concrete.Visitor;
+import Entities.Interface.Registerable;
 import Helper.HelperMethods;
 import com.toedter.calendar.JTextFieldDateEditor;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Date;
 import javax.swing.ImageIcon;
-import javax.swing.JPanel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -32,19 +32,58 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public final class CustomerWindow extends javax.swing.JFrame {
 
-    User customer;
+    Customer customer;
+    Visitor visitor;
     
-    public CustomerWindow(User customer) {
+    public CustomerWindow(Customer customer) {
         this.customer = customer;
         initComponents();
         initializeFields();
+        designColorsAndComponents();
+        
+        
+
+    }
+    
+    public CustomerWindow(Registerable visitor) {
+        this.visitor = (Visitor) visitor;
+        initComponents();
+        lblProfilePic.setIcon( new ImageIcon(getClass().getResource( "/images/visitor125.png" )));
+        lblTheUserName.setText( ((Visitor)visitor).getFullName() );
+        designColorsAndComponents();
+        pnlProfile.setVisible( false );
+        pnlLayeredProfile.setVisible( false );
+        lblCurrentCash.setVisible( false );
+        lblTotalPayment1.setVisible( false );
+        lblTotalCashAfterRental.setVisible( false );
+        
+        lblRent.addMouseListener( new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                visitorNotPermitedAction();
+            }
+            
+        });
+        
+        btnApprove.addActionListener( new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                visitorNotPermitedAction();
+            }
+            
+        });
         
         //tableCar.getTableHeader().setDefaultRenderer( new Helper.HeaderColor());
+        //tableCar.setDefaultRenderer(Object.class, centerRenderer);
+
+    }
+    
+    public void designColorsAndComponents() {
         
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment( SwingConstants.CENTER );
         centerRenderer.setBackground( new Color(51, 51, 51));
-        //tableCar.setDefaultRenderer(Object.class, centerRenderer);
+        
         
         pick_upDate_JDatechooser.setBackground( new Color(51, 51, 51));
         pick_upDate_JDatechooser.getCalendarButton().setBackground( new Color(51, 51, 51));
@@ -67,18 +106,13 @@ public final class CustomerWindow extends javax.swing.JFrame {
         });
         ((JTextFieldDateEditor)returnDate_JDatechooser.getDateEditor()).setBackground( new Color(51, 51, 51));
         ((JTextFieldDateEditor)returnDate_JDatechooser.getDateEditor()).setBorder( new CompoundBorder(new LineBorder(new Color(122, 72, 255), 1, true), new EmptyBorder(1, 4, 1, 1) ));
-        
-        
-        
-        
-        
-
     }
     
     public void initializeFields() {
-        lblProfilePic.setIcon( new ImageIcon(getClass().getResource( ((Customer)customer).getImgPath() )));
+        lblProfilePic.setIcon( new ImageIcon(getClass().getResource( customer.getImgPath() )));
         lblTheUserName.setText(customer.getUsername());
         lblTheUserMail.setText(customer.getMailAdress().getName());
+        lblCurrentCashOfUser.setText("$" + customer.getTotalCash() );
         tbxUserName.setText( customer.getUsername() );
         tbxUserFullName.setText( customer.getFullName() );
         tbxUserGender.setText( customer.getGender() );
@@ -89,6 +123,16 @@ public final class CustomerWindow extends javax.swing.JFrame {
         tbxNewPass.setEchoChar((char)'\u2022');
         tbxConfNewPass.setEchoChar((char)'\u2022');
         
+    }
+    
+    public void visitorNotPermitedAction() {
+        int choice = JOptionPane.showConfirmDialog(null, "You must register to the application. Do you want to register?", "Unsopperdet Operation", JOptionPane.YES_NO_OPTION);
+                System.out.println("" + choice);
+                
+                if ( choice == 0){
+                    dispose();
+                    visitor.register();
+                }
     }
 
     /**
@@ -114,7 +158,7 @@ public final class CustomerWindow extends javax.swing.JFrame {
         lblProfileText = new javax.swing.JLabel();
         lblProfileIcon = new javax.swing.JLabel();
         lblProfileColor = new javax.swing.JLabel();
-        pnlExit_1 = new javax.swing.JPanel();
+        pnlExit = new javax.swing.JPanel();
         lblExitIcon = new javax.swing.JLabel();
         lblExitText = new javax.swing.JLabel();
         lblExitColor = new javax.swing.JLabel();
@@ -134,10 +178,25 @@ public final class CustomerWindow extends javax.swing.JFrame {
         lblPrevious = new javax.swing.JLabel();
         lblNext = new javax.swing.JLabel();
         lblRent = new javax.swing.JLabel();
+        lblCarTitle = new javax.swing.JLabel();
+        lblFuelType = new javax.swing.JLabel();
+        lblFuelType1 = new javax.swing.JLabel();
+        lblTransmissionType = new javax.swing.JLabel();
+        lblTransmissionTypeValue = new javax.swing.JLabel();
+        lblDailyPrice = new javax.swing.JLabel();
+        lblYear = new javax.swing.JLabel();
+        lblYearValue = new javax.swing.JLabel();
+        lblDailyPriceValue = new javax.swing.JLabel();
+        lblKilometerValue = new javax.swing.JLabel();
+        lblKilometer = new javax.swing.JLabel();
+        lblFuelType6 = new javax.swing.JLabel();
+        lblFuelType7 = new javax.swing.JLabel();
+        lblFuelType8 = new javax.swing.JLabel();
+        lblFuelType9 = new javax.swing.JLabel();
         pnlApproval = new javax.swing.JPanel();
-        btnApprove1 = new javax.swing.JButton();
+        btnApprove = new javax.swing.JButton();
         lblTotalCashAfterRental = new javax.swing.JLabel();
-        lblCurrentCash1 = new javax.swing.JLabel();
+        lblCurrentCash = new javax.swing.JLabel();
         lblTotalCashAfterRentalOfUser = new javax.swing.JLabel();
         lblCurrentCashOfUser = new javax.swing.JLabel();
         lblTotalPaymentOfUser = new javax.swing.JLabel();
@@ -219,6 +278,8 @@ public final class CustomerWindow extends javax.swing.JFrame {
         pnlProfileInfo.setBackground(new java.awt.Color(51, 51, 51));
         pnlProfileInfo.setForeground(new java.awt.Color(51, 51, 51));
 
+        lblProfilePic.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
         lblTheUserMail.setBackground(new java.awt.Color(242, 243, 244));
         lblTheUserMail.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lblTheUserMail.setForeground(new java.awt.Color(204, 204, 204));
@@ -234,15 +295,14 @@ public final class CustomerWindow extends javax.swing.JFrame {
         pnlProfileInfoLayout.setHorizontalGroup(
             pnlProfileInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlProfileInfoLayout.createSequentialGroup()
-                .addGap(50, 50, 50)
-                .addComponent(lblProfilePic, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(pnlProfileInfoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlProfileInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblTheUserMail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblTheUserName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addComponent(lblProfilePic, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(pnlProfileInfoLayout.createSequentialGroup()
+                        .addGroup(pnlProfileInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblTheUserMail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblTheUserName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap())))
         );
         pnlProfileInfoLayout.setVerticalGroup(
             pnlProfileInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -314,19 +374,19 @@ public final class CustomerWindow extends javax.swing.JFrame {
         });
         pnlProfile.add(lblProfileColor, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 250, 60));
 
-        pnlExit_1.setBackground(new java.awt.Color(255, 255, 255));
-        pnlExit_1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        pnlExit_1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        pnlExit.setBackground(new java.awt.Color(255, 255, 255));
+        pnlExit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        pnlExit.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblExitIcon.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblExitIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/exit48.png"))); // NOI18N
-        pnlExit_1.add(lblExitIcon, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 0, 60, 60));
+        pnlExit.add(lblExitIcon, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 0, 60, 60));
 
         lblExitText.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         lblExitText.setForeground(new java.awt.Color(204, 204, 204));
         lblExitText.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblExitText.setText("Sign Out");
-        pnlExit_1.add(lblExitText, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 0, 80, 60));
+        pnlExit.add(lblExitText, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 0, 90, 60));
 
         lblExitColor.setBackground(new java.awt.Color(51, 51, 51));
         lblExitColor.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/color2.png"))); // NOI18N
@@ -341,14 +401,14 @@ public final class CustomerWindow extends javax.swing.JFrame {
                 lblExitColorMouseExited(evt);
             }
         });
-        pnlExit_1.add(lblExitColor, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 250, 60));
+        pnlExit.add(lblExitColor, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 250, 60));
 
         javax.swing.GroupLayout PnlLeftSideLayout = new javax.swing.GroupLayout(PnlLeftSide);
         PnlLeftSide.setLayout(PnlLeftSideLayout);
         PnlLeftSideLayout.setHorizontalGroup(
             PnlLeftSideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(pnlProfileInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(pnlExit_1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pnlExit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(pnlHomePage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(pnlProfile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
@@ -361,7 +421,7 @@ public final class CustomerWindow extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlProfile, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(pnlExit_1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(pnlExit, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(59, 59, 59))
         );
 
@@ -422,28 +482,27 @@ public final class CustomerWindow extends javax.swing.JFrame {
         pnlInPnlLayerdHomePagefilterLayout.setHorizontalGroup(
             pnlInPnlLayerdHomePagefilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlInPnlLayerdHomePagefilterLayout.createSequentialGroup()
-                .addGroup(pnlInPnlLayerdHomePagefilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(119, 119, 119)
+                .addGroup(pnlInPnlLayerdHomePagefilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(pnlInPnlLayerdHomePagefilterLayout.createSequentialGroup()
-                        .addGap(168, 168, 168)
-                        .addComponent(btnFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(pnlInPnlLayerdHomePagefilterLayout.createSequentialGroup()
-                        .addGap(119, 119, 119)
-                        .addGroup(pnlInPnlLayerdHomePagefilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(pnlInPnlLayerdHomePagefilterLayout.createSequentialGroup()
-                                .addComponent(lblPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cbxPrice, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnlInPnlLayerdHomePagefilterLayout.createSequentialGroup()
-                                .addComponent(lblGallery, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cbxGallery, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnlInPnlLayerdHomePagefilterLayout.createSequentialGroup()
-                                .addComponent(lblRange, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(6, 6, 6)
-                                .addComponent(tbxMin, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(6, 6, 6)
-                                .addComponent(tbxMax, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addComponent(lblPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cbxPrice, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnlInPnlLayerdHomePagefilterLayout.createSequentialGroup()
+                        .addComponent(lblGallery, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cbxGallery, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnlInPnlLayerdHomePagefilterLayout.createSequentialGroup()
+                        .addComponent(lblRange, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(tbxMin, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(tbxMax, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(125, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlInPnlLayerdHomePagefilterLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(181, 181, 181))
         );
         pnlInPnlLayerdHomePagefilterLayout.setVerticalGroup(
             pnlInPnlLayerdHomePagefilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -466,7 +525,7 @@ public final class CustomerWindow extends javax.swing.JFrame {
                     .addComponent(cbxGallery, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18))
+                .addGap(17, 17, 17))
         );
 
         pnlInLayeredHomePageCarInfo.setBackground(new java.awt.Color(51, 51, 51));
@@ -511,6 +570,79 @@ public final class CustomerWindow extends javax.swing.JFrame {
             }
         });
 
+        lblCarTitle.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarTitle.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        lblCarTitle.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCarTitle.setText("AUDI A3 Sedan");
+
+        lblFuelType.setBackground(new java.awt.Color(51, 51, 51));
+        lblFuelType.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblFuelType.setForeground(new java.awt.Color(204, 204, 204));
+        lblFuelType.setText("Fuel Type:");
+
+        lblFuelType1.setBackground(new java.awt.Color(51, 51, 51));
+        lblFuelType1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblFuelType1.setForeground(new java.awt.Color(204, 204, 204));
+        lblFuelType1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        lblTransmissionType.setBackground(new java.awt.Color(242, 243, 244));
+        lblTransmissionType.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblTransmissionType.setForeground(new java.awt.Color(204, 204, 204));
+        lblTransmissionType.setText("Transmission Type:");
+
+        lblTransmissionTypeValue.setBackground(new java.awt.Color(242, 243, 244));
+        lblTransmissionTypeValue.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblTransmissionTypeValue.setForeground(new java.awt.Color(204, 204, 204));
+        lblTransmissionTypeValue.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        lblDailyPrice.setBackground(new java.awt.Color(242, 243, 244));
+        lblDailyPrice.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblDailyPrice.setForeground(new java.awt.Color(204, 204, 204));
+        lblDailyPrice.setText("Daily Price:");
+
+        lblYear.setBackground(new java.awt.Color(51, 51, 51));
+        lblYear.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblYear.setForeground(new java.awt.Color(204, 204, 204));
+        lblYear.setText("Year:");
+
+        lblYearValue.setBackground(new java.awt.Color(51, 51, 51));
+        lblYearValue.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblYearValue.setForeground(new java.awt.Color(204, 204, 204));
+        lblYearValue.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        lblDailyPriceValue.setBackground(new java.awt.Color(242, 243, 244));
+        lblDailyPriceValue.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblDailyPriceValue.setForeground(new java.awt.Color(204, 204, 204));
+        lblDailyPriceValue.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        lblKilometerValue.setBackground(new java.awt.Color(51, 51, 51));
+        lblKilometerValue.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblKilometerValue.setForeground(new java.awt.Color(204, 204, 204));
+
+        lblKilometer.setBackground(new java.awt.Color(51, 51, 51));
+        lblKilometer.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblKilometer.setForeground(new java.awt.Color(204, 204, 204));
+        lblKilometer.setText("Kilometer:");
+
+        lblFuelType6.setBackground(new java.awt.Color(51, 51, 51));
+        lblFuelType6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblFuelType6.setForeground(new java.awt.Color(204, 204, 204));
+        lblFuelType6.setText("Fuel Capacity:");
+
+        lblFuelType7.setBackground(new java.awt.Color(51, 51, 51));
+        lblFuelType7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblFuelType7.setForeground(new java.awt.Color(204, 204, 204));
+
+        lblFuelType8.setBackground(new java.awt.Color(51, 51, 51));
+        lblFuelType8.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblFuelType8.setForeground(new java.awt.Color(204, 204, 204));
+        lblFuelType8.setText("Trunk Volume:");
+
+        lblFuelType9.setBackground(new java.awt.Color(51, 51, 51));
+        lblFuelType9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblFuelType9.setForeground(new java.awt.Color(204, 204, 204));
+
         javax.swing.GroupLayout pnlInLayeredHomePageCarInfoLayout = new javax.swing.GroupLayout(pnlInLayeredHomePageCarInfo);
         pnlInLayeredHomePageCarInfo.setLayout(pnlInLayeredHomePageCarInfoLayout);
         pnlInLayeredHomePageCarInfoLayout.setHorizontalGroup(
@@ -518,9 +650,44 @@ public final class CustomerWindow extends javax.swing.JFrame {
             .addGroup(pnlInLayeredHomePageCarInfoLayout.createSequentialGroup()
                 .addGap(6, 6, 6)
                 .addComponent(lblCarImage, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(pnlInLayeredHomePageCarInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblCarTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(pnlInLayeredHomePageCarInfoLayout.createSequentialGroup()
+                        .addGroup(pnlInLayeredHomePageCarInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlInLayeredHomePageCarInfoLayout.createSequentialGroup()
+                                .addGroup(pnlInLayeredHomePageCarInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblTransmissionType, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
+                                    .addComponent(lblFuelType, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnlInLayeredHomePageCarInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblFuelType1, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblTransmissionTypeValue, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(pnlInLayeredHomePageCarInfoLayout.createSequentialGroup()
+                                .addGroup(pnlInLayeredHomePageCarInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(lblYear, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(lblDailyPrice, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnlInLayeredHomePageCarInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(lblDailyPriceValue, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+                                    .addComponent(lblYearValue, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(62, 62, 62)
+                        .addGroup(pnlInLayeredHomePageCarInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlInLayeredHomePageCarInfoLayout.createSequentialGroup()
+                                .addComponent(lblFuelType8, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblFuelType9, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlInLayeredHomePageCarInfoLayout.createSequentialGroup()
+                                .addGroup(pnlInLayeredHomePageCarInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblFuelType6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(lblKilometer, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnlInLayeredHomePageCarInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblKilometerValue, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblFuelType7, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlInLayeredHomePageCarInfoLayout.createSequentialGroup()
-                .addGap(250, 250, 250)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lblPrevious, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(lblRent, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -531,8 +698,43 @@ public final class CustomerWindow extends javax.swing.JFrame {
         pnlInLayeredHomePageCarInfoLayout.setVerticalGroup(
             pnlInLayeredHomePageCarInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlInLayeredHomePageCarInfoLayout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addComponent(lblCarImage, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(pnlInLayeredHomePageCarInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlInLayeredHomePageCarInfoLayout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(lblCarImage, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlInLayeredHomePageCarInfoLayout.createSequentialGroup()
+                        .addComponent(lblCarTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(pnlInLayeredHomePageCarInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlInLayeredHomePageCarInfoLayout.createSequentialGroup()
+                                .addGap(9, 9, 9)
+                                .addGroup(pnlInLayeredHomePageCarInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(lblKilometer, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblKilometerValue, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnlInLayeredHomePageCarInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblFuelType7, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblFuelType6, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnlInLayeredHomePageCarInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblFuelType9, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblFuelType8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(pnlInLayeredHomePageCarInfoLayout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addGroup(pnlInLayeredHomePageCarInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(lblFuelType, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblFuelType1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnlInLayeredHomePageCarInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblTransmissionTypeValue, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblTransmissionType, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnlInLayeredHomePageCarInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblYearValue, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblYear, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnlInLayeredHomePageCarInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblDailyPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblDailyPriceValue, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                 .addGap(6, 6, 6)
                 .addGroup(pnlInLayeredHomePageCarInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblPrevious, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -544,20 +746,20 @@ public final class CustomerWindow extends javax.swing.JFrame {
         pnlApproval.setBackground(new java.awt.Color(51, 51, 51));
         pnlApproval.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Approval", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 15), new java.awt.Color(122, 72, 255))); // NOI18N
 
-        btnApprove1.setBackground(new java.awt.Color(0, 0, 0));
-        btnApprove1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnApprove1.setForeground(new java.awt.Color(122, 72, 255));
-        btnApprove1.setText("Approve");
+        btnApprove.setBackground(new java.awt.Color(0, 0, 0));
+        btnApprove.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnApprove.setForeground(new java.awt.Color(122, 72, 255));
+        btnApprove.setText("Approve");
 
         lblTotalCashAfterRental.setBackground(new java.awt.Color(242, 243, 244));
         lblTotalCashAfterRental.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lblTotalCashAfterRental.setForeground(new java.awt.Color(204, 204, 204));
         lblTotalCashAfterRental.setText("Total Cash After Rental");
 
-        lblCurrentCash1.setBackground(new java.awt.Color(242, 243, 244));
-        lblCurrentCash1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblCurrentCash1.setForeground(new java.awt.Color(204, 204, 204));
-        lblCurrentCash1.setText("Your Current Cash");
+        lblCurrentCash.setBackground(new java.awt.Color(242, 243, 244));
+        lblCurrentCash.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCurrentCash.setForeground(new java.awt.Color(204, 204, 204));
+        lblCurrentCash.setText("Your Current Cash");
 
         lblTotalCashAfterRentalOfUser.setBackground(new java.awt.Color(51, 51, 51));
         lblTotalCashAfterRentalOfUser.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -565,7 +767,7 @@ public final class CustomerWindow extends javax.swing.JFrame {
 
         lblCurrentCashOfUser.setBackground(new java.awt.Color(51, 51, 51));
         lblCurrentCashOfUser.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblCurrentCashOfUser.setForeground(new java.awt.Color(204, 204, 204));
+        lblCurrentCashOfUser.setForeground(new java.awt.Color(51, 153, 0));
         lblCurrentCashOfUser.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
         lblTotalPaymentOfUser.setBackground(new java.awt.Color(51, 51, 51));
@@ -622,7 +824,7 @@ public final class CustomerWindow extends javax.swing.JFrame {
                     .addGroup(pnlApprovalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(lblReturnDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(lblPickUpDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(lblCurrentCash1, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)
+                        .addComponent(lblCurrentCash, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)
                         .addComponent(lblPromotionCode, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(pnlApprovalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(lblTotalCashAfterRental, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -638,7 +840,7 @@ public final class CustomerWindow extends javax.swing.JFrame {
                 .addGap(21, 21, 21))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlApprovalLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnApprove1, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnApprove, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(104, 104, 104))
         );
         pnlApprovalLayout.setVerticalGroup(
@@ -647,7 +849,7 @@ public final class CustomerWindow extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(pnlApprovalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblCurrentCashOfUser, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblCurrentCash1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblCurrentCash, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlApprovalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(lblPickUpDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -669,7 +871,7 @@ public final class CustomerWindow extends javax.swing.JFrame {
                     .addComponent(lblTotalCashAfterRentalOfUser, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblTotalCashAfterRental, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(3, 3, 3)
-                .addComponent(btnApprove1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnApprove, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -679,13 +881,13 @@ public final class CustomerWindow extends javax.swing.JFrame {
             pnlLayeredHomePageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlLayeredHomePageLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addGroup(pnlLayeredHomePageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGroup(pnlLayeredHomePageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pnlInLayeredHomePageCarInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(pnlLayeredHomePageLayout.createSequentialGroup()
                         .addComponent(pnlInPnlLayerdHomePagefilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(pnlApproval, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addContainerGap())
         );
         pnlLayeredHomePageLayout.setVerticalGroup(
             pnlLayeredHomePageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1425,7 +1627,7 @@ public final class CustomerWindow extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel PnlLeftSide;
     private javax.swing.JPanel PnlParent;
-    private javax.swing.JButton btnApprove1;
+    private javax.swing.JButton btnApprove;
     private javax.swing.JButton btnDeleteOrder;
     private javax.swing.JButton btnDeleteOrder1;
     private javax.swing.JButton btnDeleteUser;
@@ -1441,17 +1643,28 @@ public final class CustomerWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblCarImage;
+    private javax.swing.JLabel lblCarTitle;
     private javax.swing.JLabel lblConfNewPassword;
-    private javax.swing.JLabel lblCurrentCash1;
+    private javax.swing.JLabel lblCurrentCash;
     private javax.swing.JLabel lblCurrentCashOfUser;
     private javax.swing.JLabel lblCurrentPassword;
+    private javax.swing.JLabel lblDailyPrice;
+    private javax.swing.JLabel lblDailyPriceValue;
     private javax.swing.JLabel lblExitColor;
     private javax.swing.JLabel lblExitIcon;
     private javax.swing.JLabel lblExitText;
+    private javax.swing.JLabel lblFuelType;
+    private javax.swing.JLabel lblFuelType1;
+    private javax.swing.JLabel lblFuelType6;
+    private javax.swing.JLabel lblFuelType7;
+    private javax.swing.JLabel lblFuelType8;
+    private javax.swing.JLabel lblFuelType9;
     private javax.swing.JLabel lblGallery;
     private javax.swing.JLabel lblHomeColor;
     private javax.swing.JLabel lblHomeIcon;
     private javax.swing.JLabel lblHomeText;
+    private javax.swing.JLabel lblKilometer;
+    private javax.swing.JLabel lblKilometerValue;
     private javax.swing.JLabel lblNewPassword;
     private javax.swing.JLabel lblNext;
     private javax.swing.JLabel lblOrderGallery;
@@ -1491,6 +1704,8 @@ public final class CustomerWindow extends javax.swing.JFrame {
     private javax.swing.JLabel lblTotalCashAfterRentalOfUser;
     private javax.swing.JLabel lblTotalPayment1;
     private javax.swing.JLabel lblTotalPaymentOfUser;
+    private javax.swing.JLabel lblTransmissionType;
+    private javax.swing.JLabel lblTransmissionTypeValue;
     private javax.swing.JLabel lblUserAge;
     private javax.swing.JLabel lblUserCurrentCash;
     private javax.swing.JLabel lblUserCurrentCash1;
@@ -1501,10 +1716,12 @@ public final class CustomerWindow extends javax.swing.JFrame {
     private javax.swing.JLabel lblUserGender;
     private javax.swing.JLabel lblUserName1;
     private javax.swing.JLabel lblUserTotalCash;
+    private javax.swing.JLabel lblYear;
+    private javax.swing.JLabel lblYearValue;
     private javax.swing.JList<String> listOrders;
     private com.toedter.calendar.JDateChooser pick_upDate_JDatechooser;
     private javax.swing.JPanel pnlApproval;
-    private javax.swing.JPanel pnlExit_1;
+    private javax.swing.JPanel pnlExit;
     private javax.swing.JPanel pnlHomePage;
     private javax.swing.JPanel pnlInLayeredHomePageCarInfo;
     private javax.swing.JPanel pnlInLayeredHomePageCarInfo1;

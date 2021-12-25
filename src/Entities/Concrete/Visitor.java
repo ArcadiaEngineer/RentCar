@@ -1,22 +1,18 @@
 package Entities.Concrete;
 
 import Entities.Interface.Registerable;
+import Entities.Abstract.Person;
 import GUI.RegisterPanel;
 
 /**
  *
  * @author Lian La-Fey
  */
-public class Visitor implements Registerable {
+public class Visitor extends Person implements Registerable {
     
-    private String name;
-
-    public Visitor() {
-        name = "Visitor";
-    }
-
-    public String getName() {
-        return name;
+    
+    public Visitor(String fullName) {
+        super(fullName);
     }
 
     @Override
