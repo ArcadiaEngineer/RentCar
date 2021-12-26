@@ -435,33 +435,38 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="119" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="1" attributes="0">
-                                      <Component id="lblPrice" min="-2" pref="69" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="cbxPrice" max="32767" attributes="0"/>
+                                      <Component id="btnFilter" max="32767" attributes="0"/>
+                                      <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
+                                      <Component id="btnClearFilter" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="90" max="-2" attributes="0"/>
                                   </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="lblGallery" min="-2" pref="69" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="cbxGallery" max="32767" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="lblRange" min="-2" pref="69" max="-2" attributes="0"/>
-                                      <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                                      <Component id="tbxMin" min="-2" pref="67" max="-2" attributes="0"/>
-                                      <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                                      <Component id="tbxMax" min="-2" pref="67" max="-2" attributes="0"/>
+                                  <Group type="102" attributes="0">
+                                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                          <Group type="102" alignment="1" attributes="0">
+                                              <Component id="lblPrice" min="-2" pref="69" max="-2" attributes="0"/>
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Component id="cbxPrice" max="32767" attributes="0"/>
+                                          </Group>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="lblGallery" min="-2" pref="69" max="-2" attributes="0"/>
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Component id="cbxGallery" max="32767" attributes="0"/>
+                                          </Group>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="lblRange" min="-2" pref="69" max="-2" attributes="0"/>
+                                              <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
+                                              <Component id="tbxMin" min="-2" pref="67" max="-2" attributes="0"/>
+                                              <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
+                                              <Component id="tbxMax" min="-2" pref="67" max="-2" attributes="0"/>
+                                          </Group>
+                                      </Group>
+                                      <EmptySpace pref="125" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace pref="125" max="32767" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="1" attributes="0">
-                              <EmptySpace max="32767" attributes="0"/>
-                              <Component id="btnFilter" min="-2" pref="94" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="181" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -489,8 +494,11 @@
                                   <Component id="lblGallery" pref="40" max="32767" attributes="0"/>
                                   <Component id="cbxGallery" pref="40" max="32767" attributes="0"/>
                               </Group>
-                              <EmptySpace max="32767" attributes="0"/>
-                              <Component id="btnFilter" min="-2" pref="40" max="-2" attributes="0"/>
+                              <EmptySpace pref="67" max="32767" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="btnFilter" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
+                                  <Component id="btnClearFilter" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
+                              </Group>
                               <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -532,7 +540,6 @@
                           </StringArray>
                         </Property>
                         <Property name="selectedIndex" type="int" value="-1"/>
-                        <Property name="opaque" type="boolean" value="true"/>
                       </Properties>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
@@ -570,7 +577,6 @@
                             <StringItem index="0" value="All"/>
                           </StringArray>
                         </Property>
-                        <Property name="opaque" type="boolean" value="true"/>
                       </Properties>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
@@ -604,7 +610,6 @@
                           <Color blue="cc" green="cc" red="cc" type="rgb"/>
                         </Property>
                         <Property name="horizontalAlignment" type="int" value="0"/>
-                        <Property name="text" type="java.lang.String" value="Min"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="tbxMax">
@@ -619,7 +624,6 @@
                           <Color blue="cc" green="cc" red="cc" type="rgb"/>
                         </Property>
                         <Property name="horizontalAlignment" type="int" value="0"/>
-                        <Property name="text" type="java.lang.String" value="Max"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JButton" name="btnFilter">
@@ -635,6 +639,26 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="Filter"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnFilterActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="btnClearFilter">
+                      <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="0" green="0" red="0" type="rgb"/>
+                        </Property>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Segoe UI" size="14" style="1"/>
+                        </Property>
+                        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="ff" green="48" red="7a" type="rgb"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Clear Filter"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnClearFilterActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -666,12 +690,12 @@
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Group type="102" attributes="0">
                                               <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Component id="lblTransmissionType" pref="136" max="32767" attributes="0"/>
+                                                  <Component id="lblTransmissionType" pref="145" max="32767" attributes="0"/>
                                                   <Component id="lblFuelType" max="32767" attributes="0"/>
                                               </Group>
                                               <EmptySpace max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Component id="lblFuelType1" min="-2" pref="114" max="-2" attributes="0"/>
+                                                  <Component id="lblFuelTypeValue" min="-2" pref="114" max="-2" attributes="0"/>
                                                   <Component id="lblTransmissionTypeValue" min="-2" pref="114" max="-2" attributes="0"/>
                                               </Group>
                                           </Group>
@@ -680,29 +704,29 @@
                                                   <Component id="lblYear" max="32767" attributes="0"/>
                                                   <Component id="lblDailyPrice" pref="136" max="32767" attributes="0"/>
                                               </Group>
-                                              <EmptySpace max="-2" attributes="0"/>
-                                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                                  <Component id="lblDailyPriceValue" pref="114" max="32767" attributes="0"/>
+                                              <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                                              <Group type="103" groupAlignment="0" attributes="0">
                                                   <Component id="lblYearValue" max="32767" attributes="0"/>
+                                                  <Component id="lblDailyPriceValue" max="32767" attributes="0"/>
                                               </Group>
                                           </Group>
                                       </Group>
                                       <EmptySpace min="-2" pref="62" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Group type="102" alignment="0" attributes="0">
-                                              <Component id="lblFuelType8" pref="121" max="32767" attributes="0"/>
+                                              <Component id="lblFuelType8" pref="131" max="32767" attributes="0"/>
                                               <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="lblFuelType9" min="-2" pref="120" max="-2" attributes="0"/>
+                                              <Component id="lblTrunkVolumeValue" min="-2" pref="120" max="-2" attributes="0"/>
                                           </Group>
                                           <Group type="102" alignment="0" attributes="0">
                                               <Group type="103" groupAlignment="0" attributes="0">
                                                   <Component id="lblFuelType6" max="32767" attributes="0"/>
-                                                  <Component id="lblKilometer" pref="121" max="32767" attributes="0"/>
+                                                  <Component id="lblKilometer" pref="131" max="32767" attributes="0"/>
                                               </Group>
                                               <EmptySpace max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="0" attributes="0">
                                                   <Component id="lblKilometerValue" min="-2" pref="120" max="-2" attributes="0"/>
-                                                  <Component id="lblFuelType7" min="-2" pref="120" max="-2" attributes="0"/>
+                                                  <Component id="lblFuelCapacityValue" min="-2" pref="120" max="-2" attributes="0"/>
                                               </Group>
                                           </Group>
                                       </Group>
@@ -740,20 +764,20 @@
                                               </Group>
                                               <EmptySpace max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Component id="lblFuelType7" min="-2" pref="30" max="-2" attributes="0"/>
+                                                  <Component id="lblFuelCapacityValue" min="-2" pref="30" max="-2" attributes="0"/>
                                                   <Component id="lblFuelType6" min="-2" pref="30" max="-2" attributes="0"/>
                                               </Group>
                                               <EmptySpace min="-2" max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Component id="lblFuelType9" alignment="1" min="-2" pref="30" max="-2" attributes="0"/>
+                                                  <Component id="lblTrunkVolumeValue" alignment="1" min="-2" pref="30" max="-2" attributes="0"/>
                                                   <Component id="lblFuelType8" alignment="1" min="-2" pref="30" max="-2" attributes="0"/>
                                               </Group>
                                           </Group>
                                           <Group type="102" alignment="0" attributes="0">
                                               <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                                              <Group type="103" groupAlignment="3" attributes="0">
-                                                  <Component id="lblFuelType" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
-                                                  <Component id="lblFuelType1" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="lblFuelTypeValue" min="-2" pref="30" max="-2" attributes="0"/>
+                                                  <Component id="lblFuelType" min="-2" pref="30" max="-2" attributes="0"/>
                                               </Group>
                                               <EmptySpace max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="0" attributes="0">
@@ -780,7 +804,7 @@
                                   <Component id="lblNext" min="-2" pref="40" max="-2" attributes="0"/>
                                   <Component id="lblRent" min="-2" pref="40" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="8" max="32767" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -800,6 +824,7 @@
                         <Property name="opaque" type="boolean" value="true"/>
                       </Properties>
                       <Events>
+                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lblPreviousMouseClicked"/>
                         <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lblPreviousMouseEntered"/>
                         <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lblPreviousMouseExited"/>
                       </Events>
@@ -816,6 +841,7 @@
                         <Property name="opaque" type="boolean" value="true"/>
                       </Properties>
                       <Events>
+                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lblNextMouseClicked"/>
                         <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lblNextMouseEntered"/>
                         <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lblNextMouseExited"/>
                       </Events>
@@ -832,6 +858,7 @@
                         <Property name="opaque" type="boolean" value="true"/>
                       </Properties>
                       <Events>
+                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lblRentMouseClicked"/>
                         <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lblRentMouseEntered"/>
                         <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lblRentMouseExited"/>
                       </Events>
@@ -865,7 +892,7 @@
                         <Property name="text" type="java.lang.String" value="Fuel Type:"/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JLabel" name="lblFuelType1">
+                    <Component class="javax.swing.JLabel" name="lblFuelTypeValue">
                       <Properties>
                         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="33" green="33" red="33" type="rgb"/>
@@ -1004,7 +1031,7 @@
                         <Property name="text" type="java.lang.String" value="Fuel Capacity:"/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JLabel" name="lblFuelType7">
+                    <Component class="javax.swing.JLabel" name="lblFuelCapacityValue">
                       <Properties>
                         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="33" green="33" red="33" type="rgb"/>
@@ -1031,7 +1058,7 @@
                         <Property name="text" type="java.lang.String" value="Trunk Volume:"/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JLabel" name="lblFuelType9">
+                    <Component class="javax.swing.JLabel" name="lblTrunkVolumeValue">
                       <Properties>
                         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="33" green="33" red="33" type="rgb"/>
@@ -1066,28 +1093,28 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                      <Component id="lblReturnDate" max="32767" attributes="0"/>
-                                      <Component id="lblPickUpDate" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="lblCurrentCash" alignment="0" pref="153" max="32767" attributes="0"/>
-                                      <Component id="lblPromotionCode" alignment="0" max="32767" attributes="0"/>
-                                  </Group>
-                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                      <Component id="lblTotalCashAfterRental" max="32767" attributes="0"/>
-                                      <Component id="lblTotalPayment1" alignment="1" min="-2" pref="153" max="-2" attributes="0"/>
-                                  </Group>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="lblReturnDate" max="32767" attributes="0"/>
+                                  <Component id="lblPickUpDate" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="lblCurrentCash" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="lblPromotionCode" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="lblTotalCashAfterRental" max="32767" attributes="0"/>
+                                  <Component id="lblTotalPayment1" alignment="0" max="32767" attributes="0"/>
                               </Group>
-                              <EmptySpace max="32767" attributes="0"/>
-                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                              <EmptySpace pref="85" max="32767" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="lblTotalCashAfterRentalOfUser" alignment="0" max="32767" attributes="0"/>
                                   <Component id="lblCurrentCashOfUser" alignment="0" max="32767" attributes="0"/>
                                   <Component id="lblTotalPaymentOfUser" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="textPromotionCode" max="32767" attributes="0"/>
-                                  <Component id="pick_upDate_JDatechooser" pref="150" max="32767" attributes="0"/>
+                                  <Component id="pick_upDate_JDatechooser" alignment="1" pref="150" max="32767" attributes="0"/>
                                   <Component id="returnDate_JDatechooser" alignment="0" max="32767" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="textPromotionCode" min="-2" pref="83" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Component id="btnCheckPromotion" max="32767" attributes="0"/>
+                                  </Group>
                               </Group>
-                              <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace max="32767" attributes="0"/>
@@ -1114,10 +1141,13 @@
                                   <Component id="lblReturnDate" max="32767" attributes="0"/>
                                   <Component id="returnDate_JDatechooser" min="-2" pref="30" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="7" max="32767" attributes="0"/>
+                              <EmptySpace pref="13" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="lblPromotionCode" max="32767" attributes="0"/>
-                                  <Component id="textPromotionCode" min="-2" pref="30" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="textPromotionCode" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                                      <Component id="btnCheckPromotion" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
@@ -1150,6 +1180,9 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="Approve"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnApproveActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JLabel" name="lblTotalCashAfterRental">
                       <Properties>
@@ -1333,6 +1366,23 @@
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                     </Component>
+                    <Component class="javax.swing.JButton" name="btnCheckPromotion">
+                      <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="0" green="0" red="0" type="rgb"/>
+                        </Property>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Segoe UI" size="12" style="1"/>
+                        </Property>
+                        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="ff" green="48" red="7a" type="rgb"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Ok"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCheckPromotionActionPerformed"/>
+                      </Events>
+                    </Component>
                   </SubComponents>
                 </Container>
               </SubComponents>
@@ -1409,16 +1459,18 @@
                               <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
                               <Component id="lblRange1" min="-2" pref="69" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="tbxMin1" min="-2" pref="67" max="-2" attributes="0"/>
+                              <Component id="tbxMinPrice" min="-2" pref="67" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="tbxMax1" min="-2" pref="67" max="-2" attributes="0"/>
+                              <Component id="tbxMaxPrice" min="-2" pref="67" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
                               <Component id="lblOrderGallery" min="-2" pref="69" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="cbxOrderGalery" min="-2" pref="85" max="-2" attributes="0"/>
-                              <EmptySpace pref="187" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" pref="107" max="-2" attributes="0"/>
                               <Component id="btnFilterOrders" min="-2" pref="94" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="btnClearFilterOfOrder" min="-2" pref="94" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -1429,17 +1481,17 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="lblOrderGallery" alignment="0" max="32767" attributes="0"/>
                                   <Component id="cbxOrderPrice" alignment="0" max="32767" attributes="0"/>
-                                  <Group type="102" alignment="1" attributes="0">
-                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                                      <Component id="btnFilterOrders" min="-2" pref="41" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Component id="tbxMin1" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="tbxMax1" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="tbxMinPrice" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="tbxMaxPrice" alignment="1" max="32767" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace min="3" pref="3" max="-2" attributes="0"/>
                                       <Component id="lblOrderPrice" max="32767" attributes="0"/>
                                   </Group>
-                                  <Component id="cbxOrderGalery" alignment="1" max="32767" attributes="0"/>
+                                  <Group type="103" alignment="1" groupAlignment="3" attributes="0">
+                                      <Component id="cbxOrderGalery" alignment="3" max="32767" attributes="0"/>
+                                      <Component id="btnClearFilterOfOrder" alignment="3" min="-2" pref="41" max="-2" attributes="0"/>
+                                      <Component id="btnFilterOrders" alignment="3" min="-2" pref="41" max="-2" attributes="0"/>
+                                  </Group>
                                   <Component id="lblRange1" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -1529,7 +1581,7 @@
                         <Property name="text" type="java.lang.String" value="Range:"/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JTextField" name="tbxMin1">
+                    <Component class="javax.swing.JTextField" name="tbxMinPrice">
                       <Properties>
                         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="33" green="33" red="33" type="rgb"/>
@@ -1541,7 +1593,6 @@
                           <Color blue="cc" green="cc" red="cc" type="rgb"/>
                         </Property>
                         <Property name="horizontalAlignment" type="int" value="0"/>
-                        <Property name="text" type="java.lang.String" value="Min"/>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.CompoundBorderInfo">
                             <CompoundBorder>
@@ -1558,7 +1609,7 @@
                         </Property>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JTextField" name="tbxMax1">
+                    <Component class="javax.swing.JTextField" name="tbxMaxPrice">
                       <Properties>
                         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="33" green="33" red="33" type="rgb"/>
@@ -1570,7 +1621,6 @@
                           <Color blue="cc" green="cc" red="cc" type="rgb"/>
                         </Property>
                         <Property name="horizontalAlignment" type="int" value="0"/>
-                        <Property name="text" type="java.lang.String" value="Max"/>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.CompoundBorderInfo">
                             <CompoundBorder>
@@ -1601,6 +1651,27 @@
                         <Property name="text" type="java.lang.String" value="Filter"/>
                         <Property name="toolTipText" type="java.lang.String" value=""/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnFilterOrdersActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="btnClearFilterOfOrder">
+                      <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="0" green="0" red="0" type="rgb"/>
+                        </Property>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Segoe UI" size="14" style="1"/>
+                        </Property>
+                        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="ff" green="48" red="7a" type="rgb"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Clear"/>
+                        <Property name="toolTipText" type="java.lang.String" value=""/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnClearFilterOfOrderActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -1630,10 +1701,11 @@
                         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="cc" green="cc" red="cc" type="rgb"/>
                         </Property>
-                        <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
-                          <StringArray count="0"/>
-                        </Property>
+                        <Property name="selectionMode" type="int" value="0"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="valueChanged" listener="javax.swing.event.ListSelectionListener" parameters="javax.swing.event.ListSelectionEvent" handler="listOrdersValueChanged"/>
+                      </Events>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
                       </AuxValues>
@@ -1659,62 +1731,58 @@
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                  <Component id="lblOrderedCarGallery" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="lblOrderedCharge" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="lblOrderedCarType" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="lblOrderedCarMoedl" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="lblOrderedCarBrand" alignment="0" max="32767" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                          <Component id="lblOrderedCarGallery" alignment="0" pref="73" max="32767" attributes="0"/>
-                                          <Component id="lblOrderedCharge" alignment="0" max="32767" attributes="0"/>
-                                          <Component id="lblOrderedCarType" alignment="0" max="32767" attributes="0"/>
-                                          <Component id="lblOrderedCarMoedl" alignment="0" max="32767" attributes="0"/>
-                                          <Component id="lblOrderedCarBrand" alignment="0" max="32767" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                          <Component id="lblOrderedCarGalleryValue" alignment="0" pref="100" max="32767" attributes="0"/>
-                                          <Component id="lblOrderedCarDateValue" alignment="0" max="32767" attributes="0"/>
-                                          <Component id="lblOrderedCarModelValue" alignment="0" max="32767" attributes="0"/>
-                                          <Component id="lblOrderedCarBrandValue" alignment="0" max="32767" attributes="0"/>
-                                          <Component id="lblOrderedChargeValue" max="32767" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
-                                      <Component id="lblOrderedCarPriceValue" max="32767" attributes="0"/>
-                                      <EmptySpace min="-2" pref="139" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" alignment="0" attributes="0">
+                                  <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Group type="102" attributes="0">
-                                              <EmptySpace min="-2" pref="192" max="-2" attributes="0"/>
-                                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                                  <Component id="lblOrderedCarUsedPromotionCode" alignment="1" max="32767" attributes="0"/>
-                                                  <Group type="102" alignment="0" attributes="0">
-                                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                                          <Component id="lblOrderedCarPickUpDate" max="32767" attributes="0"/>
-                                                          <Component id="lblOrderedCarReturnDate" min="-2" pref="95" max="-2" attributes="0"/>
-                                                      </Group>
-                                                      <EmptySpace min="25" pref="25" max="-2" attributes="0"/>
-                                                  </Group>
-                                              </Group>
-                                              <EmptySpace max="-2" attributes="0"/>
-                                          </Group>
-                                          <Group type="102" alignment="1" attributes="0">
-                                              <EmptySpace max="-2" attributes="0"/>
+                                              <EmptySpace max="32767" attributes="0"/>
                                               <Component id="btnDeleteOrder1" min="-2" pref="120" max="-2" attributes="0"/>
-                                              <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                              <Component id="lblOrderedCarBrandValue" alignment="0" pref="112" max="32767" attributes="0"/>
+                                              <Component id="lblOrderedCarModelValue" alignment="0" max="32767" attributes="0"/>
+                                              <Component id="lblOrderedCarPhoneValue" alignment="0" max="32767" attributes="0"/>
                                           </Group>
                                       </Group>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                              <Component id="lblOrderedCarReturnDateValue" pref="120" max="32767" attributes="0"/>
-                                              <Component id="lblOrderedCarPickUpDateValue" max="32767" attributes="0"/>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <EmptySpace min="-2" pref="60" max="-2" attributes="0"/>
+                                              <Component id="btnDeleteOrder" min="-2" pref="120" max="-2" attributes="0"/>
                                           </Group>
-                                          <Component id="lblOrderedCarReturnUsedPromotionCodeValue" alignment="0" min="-2" pref="120" max="-2" attributes="0"/>
-                                          <Component id="btnDeleteOrder" alignment="0" min="-2" pref="120" max="-2" attributes="0"/>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Group type="103" groupAlignment="1" attributes="0">
+                                                  <Component id="lblOrderedCarPickUpDate" min="-2" pref="95" max="-2" attributes="0"/>
+                                                  <Component id="lblOrderedCarReturnDate" min="-2" pref="95" max="-2" attributes="0"/>
+                                                  <Component id="lblOrderedCarUsedPromotionCode" min="-2" pref="97" max="-2" attributes="0"/>
+                                              </Group>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                                  <Component id="lblOrderedCarChargeValue" alignment="0" pref="81" max="32767" attributes="0"/>
+                                                  <Component id="lblOrderedCarGalleryIdValue" alignment="0" max="32767" attributes="0"/>
+                                                  <Component id="lblOrderedCarPromotionCodeValue" max="32767" attributes="0"/>
+                                              </Group>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="lblOrderDetailCarImg" min="-2" pref="203" max="-2" attributes="0"/>
+                                          </Group>
                                       </Group>
-                                      <EmptySpace max="32767" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="lblOrderedCarRentDateValue" alignment="0" min="-2" pref="311" max="-2" attributes="0"/>
+                                          <Component id="lblOrderedCarReturnDateValue" alignment="0" min="-2" pref="311" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
-                              <Component id="jLabel1" min="-2" pref="203" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -1725,51 +1793,48 @@
                               <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
-                                      <Group type="103" groupAlignment="1" attributes="0">
-                                          <Component id="lblOrderedCarReturnUsedPromotionCodeValue" min="-2" pref="20" max="-2" attributes="0"/>
-                                          <Group type="103" alignment="1" groupAlignment="0" attributes="0">
-                                              <Group type="103" groupAlignment="1" attributes="0">
-                                                  <Group type="102" alignment="1" attributes="0">
-                                                      <Component id="lblOrderedCarPickUpDate" min="-2" max="-2" attributes="0"/>
-                                                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                                                      <Component id="lblOrderedCarReturnDate" min="-2" max="-2" attributes="0"/>
-                                                      <EmptySpace min="32" pref="32" max="-2" attributes="0"/>
-                                                  </Group>
-                                                  <Component id="lblOrderedCarUsedPromotionCode" alignment="1" min="-2" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="lblOrderedCarBrandValue" alignment="0" min="-2" pref="20" max="-2" attributes="0"/>
+                                          <Component id="lblOrderedCarBrand" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="lblOrderedCarPickUpDate" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="lblOrderedCarGalleryIdValue" alignment="0" min="-2" pref="20" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="lblOrderedCarReturnDate" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace max="32767" attributes="0"/>
+                                              <Component id="lblOrderedCarUsedPromotionCode" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Group type="102" attributes="0">
+                                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                                  <Component id="lblOrderedCarMoedl" alignment="0" max="32767" attributes="0"/>
+                                                  <Component id="lblOrderedCarModelValue" alignment="0" max="32767" attributes="0"/>
                                               </Group>
-                                              <Group type="102" attributes="0">
-                                                  <Group type="103" groupAlignment="0" attributes="0">
-                                                      <Component id="lblOrderedCarBrandValue" alignment="0" min="-2" pref="20" max="-2" attributes="0"/>
-                                                      <Component id="lblOrderedCarBrand" alignment="0" min="-2" max="-2" attributes="0"/>
-                                                      <Component id="lblOrderedCarPickUpDateValue" alignment="0" min="-2" pref="20" max="-2" attributes="0"/>
-                                                  </Group>
-                                                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                                                  <Group type="103" groupAlignment="0" attributes="0">
-                                                      <Component id="lblOrderedCarMoedl" alignment="0" min="-2" max="-2" attributes="0"/>
-                                                      <Component id="lblOrderedCarModelValue" alignment="0" min="-2" pref="20" max="-2" attributes="0"/>
-                                                      <Component id="lblOrderedCarReturnDateValue" alignment="0" min="-2" pref="20" max="-2" attributes="0"/>
-                                                  </Group>
-                                                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                                                  <Group type="103" groupAlignment="0" attributes="0">
-                                                      <Component id="lblOrderedCarType" alignment="0" min="-2" max="-2" attributes="0"/>
-                                                      <Component id="lblOrderedCarDateValue" alignment="1" min="-2" pref="20" max="-2" attributes="0"/>
-                                                  </Group>
+                                              <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="lblOrderedCarType" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="lblOrderedCarPhoneValue" alignment="1" min="-2" pref="20" max="-2" attributes="0"/>
                                               </Group>
+                                          </Group>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="lblOrderedCarChargeValue" min="-2" pref="20" max="-2" attributes="0"/>
+                                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                              <Component id="lblOrderedCarPromotionCodeValue" min="-2" pref="20" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="3" attributes="0">
-                                          <Component id="lblOrderedCarGallery" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="lblOrderedCarGalleryValue" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="lblOrderedCarGallery" min="-2" max="-2" attributes="0"/>
+                                          <Component id="lblOrderedCarRentDateValue" min="-2" pref="25" max="-2" attributes="0"/>
                                       </Group>
-                                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="1" attributes="0">
                                           <Component id="lblOrderedCharge" alignment="1" min="-2" max="-2" attributes="0"/>
-                                          <Component id="lblOrderedCarPriceValue" alignment="1" min="-2" pref="20" max="-2" attributes="0"/>
-                                          <Component id="lblOrderedChargeValue" min="-2" pref="20" max="-2" attributes="0"/>
+                                          <Component id="lblOrderedCarReturnDateValue" min="-2" pref="20" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
-                                  <Component id="jLabel1" min="-2" pref="166" max="-2" attributes="0"/>
+                                  <Component id="lblOrderDetailCarImg" min="-2" pref="166" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace pref="8" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
@@ -1822,7 +1887,7 @@
                         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="cc" green="cc" red="cc" type="rgb"/>
                         </Property>
-                        <Property name="text" type="java.lang.String" value="Type:"/>
+                        <Property name="text" type="java.lang.String" value="Phone N."/>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
                             <EmptyBorder bottom="0" left="5" right="0" top="0"/>
@@ -1838,7 +1903,7 @@
                         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="cc" green="cc" red="cc" type="rgb"/>
                         </Property>
-                        <Property name="text" type="java.lang.String" value="Charge:"/>
+                        <Property name="text" type="java.lang.String" value="Return Date:"/>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
                             <EmptyBorder bottom="0" left="5" right="0" top="0"/>
@@ -1854,7 +1919,7 @@
                         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="cc" green="cc" red="cc" type="rgb"/>
                         </Property>
-                        <Property name="text" type="java.lang.String" value="Gallery:"/>
+                        <Property name="text" type="java.lang.String" value="Rent Date:"/>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
                             <EmptyBorder bottom="0" left="5" right="0" top="0"/>
@@ -1882,7 +1947,7 @@
                         </Property>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JLabel" name="lblOrderedCarDateValue">
+                    <Component class="javax.swing.JLabel" name="lblOrderedCarPhoneValue">
                       <Properties>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="Segoe UI" size="14" style="1"/>
@@ -1892,17 +1957,7 @@
                         </Property>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JLabel" name="lblOrderedCarGalleryValue">
-                      <Properties>
-                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                          <Font name="Segoe UI" size="14" style="1"/>
-                        </Property>
-                        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="cc" green="cc" red="cc" type="rgb"/>
-                        </Property>
-                      </Properties>
-                    </Component>
-                    <Component class="javax.swing.JLabel" name="lblOrderedCarPriceValue">
+                    <Component class="javax.swing.JLabel" name="lblOrderedCarRentDateValue">
                       <Properties>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="Segoe UI" size="14" style="1"/>
@@ -1935,7 +1990,7 @@
                         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="cc" green="cc" red="cc" type="rgb"/>
                         </Property>
-                        <Property name="text" type="java.lang.String" value="Pick-up Date:"/>
+                        <Property name="text" type="java.lang.String" value="Gallery Id:"/>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
                             <EmptyBorder bottom="0" left="5" right="0" top="0"/>
@@ -1943,7 +1998,7 @@
                         </Property>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JLabel" name="lblOrderedCarPickUpDateValue">
+                    <Component class="javax.swing.JLabel" name="lblOrderedCarGalleryIdValue">
                       <Properties>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="Segoe UI" size="14" style="1"/>
@@ -1953,7 +2008,7 @@
                         </Property>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JLabel" name="lblOrderedChargeValue">
+                    <Component class="javax.swing.JLabel" name="lblOrderedCarReturnDateValue">
                       <Properties>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="Segoe UI" size="14" style="1"/>
@@ -1971,7 +2026,7 @@
                         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="cc" green="cc" red="cc" type="rgb"/>
                         </Property>
-                        <Property name="text" type="java.lang.String" value="Return Date:"/>
+                        <Property name="text" type="java.lang.String" value="Charge:"/>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
                             <EmptyBorder bottom="0" left="5" right="0" top="0"/>
@@ -1979,7 +2034,7 @@
                         </Property>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JLabel" name="lblOrderedCarReturnDateValue">
+                    <Component class="javax.swing.JLabel" name="lblOrderedCarChargeValue">
                       <Properties>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="Segoe UI" size="14" style="1"/>
@@ -1989,9 +2044,9 @@
                         </Property>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JLabel" name="jLabel1">
+                    <Component class="javax.swing.JLabel" name="lblOrderDetailCarImg">
                     </Component>
-                    <Component class="javax.swing.JLabel" name="lblOrderedCarReturnUsedPromotionCodeValue">
+                    <Component class="javax.swing.JLabel" name="lblOrderedCarPromotionCodeValue">
                       <Properties>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="Segoe UI" size="14" style="1"/>
@@ -2009,7 +2064,7 @@
                         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="cc" green="cc" red="cc" type="rgb"/>
                         </Property>
-                        <Property name="text" type="java.lang.String" value="Promotion Code:"/>
+                        <Property name="text" type="java.lang.String" value="Prom. Code:"/>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
                             <EmptyBorder bottom="0" left="5" right="0" top="0"/>
@@ -2101,7 +2156,7 @@
                                       <EmptySpace pref="135" max="32767" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                      <EmptySpace min="0" pref="106" max="32767" attributes="0"/>
                                       <Component id="btnModifyUser" min="-2" pref="174" max="-2" attributes="0"/>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Component id="btnSaveChanges" min="-2" max="-2" attributes="0"/>

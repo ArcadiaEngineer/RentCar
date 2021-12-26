@@ -70,7 +70,7 @@ public class Login extends javax.swing.JFrame {
         pass_JPass.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         pass_JPass.setForeground(new java.awt.Color(255, 255, 255));
         pass_JPass.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        pass_JPass.setText("adskasdkas");
+        pass_JPass.setText("12345");
         pass_JPass.setBorder(javax.swing.BorderFactory.createEmptyBorder(7, 7, 7, 7));
 
         hideShowPass_Btn.setBackground(new java.awt.Color(50, 45, 44));

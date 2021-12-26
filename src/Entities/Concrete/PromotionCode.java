@@ -7,6 +7,14 @@ public class PromotionCode {
     private String promotionCode_str;
     private double discount;  // 0.35, 0.12i
     private boolean isUsed;
+
+    public boolean isIsUsed() {
+        return isUsed;
+    }
+
+    public void setIsUsed(boolean isUsed) {
+        this.isUsed = isUsed;
+    }
     
     private static int total_promotionCode = 0;
 

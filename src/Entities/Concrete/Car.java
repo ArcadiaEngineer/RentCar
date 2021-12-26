@@ -7,6 +7,7 @@ package Entities.Concrete;
 public class Car implements Comparable<Object> {
     
     private int id;
+    private int galleryId;
     private String brand;
     private String model;
     private String type;
@@ -22,9 +23,12 @@ public class Car implements Comparable<Object> {
     
     private static int total_id = 0;
 
-    public Car(String brand, String model, String type, String fuelType, String transmissionType, int year, double price, double fuelCapacity, double trunkVolume, 
-            int km, int id, String small_imgPath, String large_imgPath) {
+    public Car(int id, int galleryId, String brand, String model,
+            String type, String fuelType, String transmissionType, int year,
+            double price, double fuelCapacity, double trunkVolume, int km,
+            String small_imgPath, String large_imgPath) {
         this.id = id;
+        this.galleryId = galleryId;
         this.brand = brand;
         this.model = model;
         this.type = type;
@@ -39,6 +43,16 @@ public class Car implements Comparable<Object> {
         this.large_imgPath = large_imgPath;
         total_id++;
     }
+
+    public int getGalleryId() {
+        return galleryId;
+    }
+
+    public void setGalleryId(int galleryId) {
+        this.galleryId = galleryId;
+    }
+
+    
 
     public int getId() {
         return id;

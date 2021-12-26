@@ -8,6 +8,7 @@ import Entities.Concrete.Mail;
 import DataAccessLayer.DBConnection;
 import Entities.Concrete.Gallery;
 import Entities.Concrete.GalleryOwner;
+import Entities.Concrete.Order;
 import Entities.Concrete.PromotionCode;
 import Helper.HelperMethods;
 import java.sql.*;
@@ -26,6 +27,7 @@ public class RentCarSystem {
     private static ArrayList<PromotionCode> promotionCodes = new ArrayList<>();
     private static ArrayList<Gallery> galleries = new ArrayList<>();
     private static ArrayList<Car> cars = new ArrayList<>();
+    private static ArrayList<Order> orders = new ArrayList<>();
 
     private static DBConnection dbConnection = new DBConnection();
     private static Connection connection = dbConnection.connDb();
@@ -167,10 +169,123 @@ public class RentCarSystem {
         return null;
     }
     
+    ////////////////////////////////////////////////////////////////////////////
+    public static ArrayList<Car> getCars(){
+        return cars;
+    }
     
     ////////////////////////////////////////////////////////////////////////////
     
+    ////////////////////////////////////////////////////////////////////////////
+    public static ArrayList<PromotionCode> getPromotions(){
+        return promotionCodes;
+    }
+    public static PromotionCode getPromotionCodeByCode(String code){
+        for (PromotionCode promotionCode : promotionCodes) {
+            if(promotionCode.getPromotionCode_str().equals(code)){
+                return promotionCode;
+            }
+        }
+        return null;
+    }
+    public static boolean  isUsed(PromotionCode promotionCode){
+        return promotionCode.isIsUsed();
+    }
+    public static boolean createOrder(String promotionCode, String fullName, String phoneNumber,
+            String brand ,String model,
+            String rentDate, String returnDate, 
+            double amountPaid, int galleryId, int customerId, String imgCarPath){
+        PromotionCode promotionCodeforCheckCode = getPromotionCodeByCode(promotionCode);
+        if(promotionCodeforCheckCode!=null && isUsed(promotionCodeforCheckCode)==false){
+            amountPaid -= promotionCodeforCheckCode.getDiscount()*amountPaid;
+            if(!fullName.isBlank() && !fullName.isEmpty() && !phoneNumber.isEmpty() && !phoneNumber.isBlank() && !brand.isBlank() && !brand.isEmpty() && !model.isBlank() && !model.isEmpty() && !rentDate.isBlank() && !rentDate.isEmpty() && !returnDate.isBlank() && !returnDate.isEmpty()){
+                Order order = new Order(Order.getTotal_id(), promotionCodeforCheckCode.getPromotionCode_str(), fullName, phoneNumber, brand, model, rentDate, returnDate, amountPaid, galleryId, customerId, imgCarPath);
+                var result = addOrderToDabase(order);
+                if(result){
+                    orders.add(order);
+                    promotionCodeforCheckCode.setIsUsed(true);
+                    updatePromotion(promotionCodeforCheckCode);
+                    return true;
+                }
+            }
+        }
+        return false;//Promotion code exception
+    }
+    public static void createOrder(String fullName, String phoneNumber,
+            String brand ,String model,
+            String rentDate, String returnDate, 
+            double amountPaid, int galleryId, int customerId , String imgCarPath){
+        Order order = new Order(Order.getTotal_id(), fullName, phoneNumber, brand, model, rentDate, returnDate, amountPaid, galleryId, customerId , imgCarPath);
+        var result = addOrderToDabase(order);
+        if(result){
+            orders.add(order);
+        }
+    }
+    public static boolean addOrderToDabase(Order order){
+        
+        boolean result = false;
+        
+        String query = "INSERT INTO orders" + "( promotionCode, fullName, phoneNumber, brand, model, rentDate, returnDate, amountPaid, customerId, galleryId, carImgPath) VALUES" + 
+                       "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        try {
+            st = connection.createStatement();
+            PreparedStatement preparedStatement = connection.prepareStatement( query );
+            preparedStatement.setString(1, order.getPromotionCodeId());
+            preparedStatement.setString(2, order.getFullName());
+            preparedStatement.setString(3, order.getPhoneNumber());
+            preparedStatement.setString(4, order.getBrand());
+            preparedStatement.setString(5, order.getModel());
+            preparedStatement.setString(6, order.getRentDate());
+            preparedStatement.setString(7, order.getReturnDate());
+            preparedStatement.setDouble(8, order.getAmountPaid());
+            preparedStatement.setInt(9, order.getCustomerId());
+            preparedStatement.setInt(10, order.getGalleryId());
+            preparedStatement.setString(11, order.getImgCarPath());
+            preparedStatement.executeUpdate();
+            
+            result = true;
+            
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            result = false;
+        }
+        
+        return result;
+    }
+    public static void updatePromotion(PromotionCode promotionCode){
+        try {
+                
+                String query = "UPDATE promotionCodes SET isUsed = " + promotionCode.isIsUsed() + " WHERE promotionCode_id = " + promotionCode.getPromotionCode_id();
+            
+                st = connection.createStatement();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                preparedStatement.executeUpdate(); 
+                
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+    }
+    public static Order getOrderById(int id){
+        for (Order order : orders) {
+            if(order.getOrderId() == id){
+                return order;
+            }
+        }
+        return null;
+    }
     
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    public static ArrayList<Gallery> getGalleries(){
+        return galleries;
+    }
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    public static ArrayList<Order> getOrders(){
+        return orders;
+    }
+    ////////////////////////////////////////////////////////////////////////////
     
     public static void getDataFromDatabase() {
         try {
@@ -213,6 +328,18 @@ public class RentCarSystem {
                 
             }
             
+            rs = st.executeQuery("SELECT * FROM orders");
+            
+            while ( rs.next() ) {
+                
+                Order order = new Order(rs.getInt("order_id"),rs.getString("promotionCode"),rs.getString("fullName"),rs.getString("phoneNumber"),
+                rs.getString("brand"),rs.getString("model"),rs.getString("rentDate"),
+                rs.getString("returnDate"),rs.getDouble("amountPaid"),rs.getInt("customerId"),
+                rs.getInt("galleryId"),rs.getString("carImgPath"));
+                orders.add(order);
+                
+            }
+            
             rs = st.executeQuery("SELECT * FROM galleries");
             
             while ( rs.next() ) {
@@ -227,9 +354,9 @@ public class RentCarSystem {
             
             while ( rs.next() ) {
                 
-                Car car = new Car(rs.getString("brand"), rs.getString("model"), rs.getString("type"), rs.getString("fuelType"), 
+                Car car = new Car(rs.getInt("car_id"),rs.getInt("gallery_id"),rs.getString("brand"), rs.getString("model"), rs.getString("type"), rs.getString("fuelType"), 
                         rs.getString("transmissionType"), rs.getInt("year"), rs.getDouble("daily_price"), rs.getDouble("fuelCapacity"), 
-                        rs.getDouble("trunkVolume"), rs.getInt("km"), rs.getInt("car_id"), rs.getString("small_imgPath"), rs.getString("large_imgPath"));
+                        rs.getDouble("trunkVolume"), rs.getInt("km"),rs.getString("small_imgPath"), rs.getString("large_imgPath"));
                 cars.add( car );
                 getGalleryById( rs.getInt("gallery_id") ).getCars().add( car );
             }
@@ -298,8 +425,6 @@ public class RentCarSystem {
             case "Default" : Collections.sort(cars);
                              break;
         }
-        
-        
         
     }
 }
