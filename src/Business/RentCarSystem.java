@@ -28,6 +28,9 @@ public class RentCarSystem {
     private static ArrayList<Gallery> galleries = new ArrayList<>();
     private static ArrayList<Car> cars = new ArrayList<>();
     private static ArrayList<Order> orders = new ArrayList<>();
+    
+    private static ArrayList<Car> filteredCars = new ArrayList<>();
+    private static ArrayList<Order> filteredOrders = new ArrayList<>();
 
     private static DBConnection dbConnection = new DBConnection();
     private static Connection connection = dbConnection.connDb();
@@ -35,6 +38,13 @@ public class RentCarSystem {
     private static ResultSet rs = null;
     
     ////////////////////////////////////////////////////////////////////////////
+    public static ArrayList<Car> getFilteredCarList() {
+        return filteredCars;
+    }
+    public static ArrayList<Order> getFilteredOrderList() {
+        return filteredOrders;
+    }
+    
     
     public static ArrayList<User> getUserList() {
         return userList;
@@ -77,7 +87,6 @@ public class RentCarSystem {
                        "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         try {
-            System.out.println(Customer.current_database_customer_id);
             st = connection.createStatement();
             PreparedStatement preparedStatement = connection.prepareStatement( query );
             preparedStatement.setString(1, customer.getFullName());
@@ -235,12 +244,12 @@ public class RentCarSystem {
     public static boolean createOrder(String promotionCode, String fullName, String phoneNumber,
             String brand ,String model,
             String rentDate, String returnDate, 
-            double amountPaid, int galleryId, int customerId, String imgCarPath){
+            double amountPaid, int galleryId, int customerId, String imgCarPath, int totalDay, double dailyPrice){
         PromotionCode promotionCodeforCheckCode = getPromotionCodeByCode(promotionCode);
         if(promotionCodeforCheckCode!=null && isUsed(promotionCodeforCheckCode)==false){
-            amountPaid -= promotionCodeforCheckCode.getDiscount()*amountPaid;
+            amountPaid = totalDay*dailyPrice - promotionCodeforCheckCode.getDiscount()*totalDay*dailyPrice;
             if(!fullName.isBlank() && !fullName.isEmpty() && !phoneNumber.isEmpty() && !phoneNumber.isBlank() && !brand.isBlank() && !brand.isEmpty() && !model.isBlank() && !model.isEmpty() && !rentDate.isBlank() && !rentDate.isEmpty() && !returnDate.isBlank() && !returnDate.isEmpty()){
-                Order order = new Order(Order.getTotal_id(), promotionCodeforCheckCode.getPromotionCode_str(), fullName, phoneNumber, brand, model, rentDate, returnDate, amountPaid, galleryId, customerId, imgCarPath);
+                Order order = new Order(Order.getTotal_id(), promotionCodeforCheckCode.getPromotionCode_str(), fullName, phoneNumber, brand, model, rentDate, returnDate, amountPaid, galleryId, customerId, imgCarPath,totalDay,dailyPrice);
                 var result = addOrderToDabase(order);
                 if(result){
                     orders.add(order);
@@ -255,8 +264,8 @@ public class RentCarSystem {
     public static void createOrder(String fullName, String phoneNumber,
             String brand ,String model,
             String rentDate, String returnDate, 
-            double amountPaid, int galleryId, int customerId , String imgCarPath){
-        Order order = new Order(Order.getTotal_id(), fullName, phoneNumber, brand, model, rentDate, returnDate, amountPaid, galleryId, customerId , imgCarPath);
+            double amountPaid, int galleryId, int customerId , String imgCarPath, int totalDay, double dailyPrice){
+        Order order = new Order(Order.getTotal_id(), fullName, phoneNumber, brand, model, rentDate, returnDate, amountPaid, galleryId, customerId , imgCarPath, totalDay,dailyPrice);
         var result = addOrderToDabase(order);
         if(result){
             orders.add(order);
@@ -266,8 +275,8 @@ public class RentCarSystem {
         
         boolean result = false;
         
-        String query = "INSERT INTO orders" + "( promotionCode, fullName, phoneNumber, brand, model, rentDate, returnDate, amountPaid, customerId, galleryId, carImgPath) VALUES" + 
-                       "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO orders" + "( promotionCode, fullName, phoneNumber, brand, model, rentDate, returnDate, amountPaid, customerId, galleryId, carImgPath, totalDay, dailyPrice) VALUES" + 
+                       "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             st = connection.createStatement();
@@ -283,6 +292,8 @@ public class RentCarSystem {
             preparedStatement.setInt(9, order.getCustomerId());
             preparedStatement.setInt(10, order.getGalleryId());
             preparedStatement.setString(11, order.getImgCarPath());
+            preparedStatement.setInt(12, order.getTotalDay());
+            preparedStatement.setDouble(13, order.getDailyPrice());
             preparedStatement.executeUpdate();
             
             result = true;
@@ -390,10 +401,9 @@ public class RentCarSystem {
                 Order order = new Order(rs.getInt("order_id"),rs.getString("promotionCode"),rs.getString("fullName"),rs.getString("phoneNumber"),
                 rs.getString("brand"),rs.getString("model"),rs.getString("rentDate"),
                 rs.getString("returnDate"),rs.getDouble("amountPaid"),rs.getInt("customerId"),
-                rs.getInt("galleryId"),rs.getString("carImgPath"));
+                rs.getInt("galleryId"),rs.getString("carImgPath"),rs.getInt("totalDay"),rs.getDouble("dailyPrice"));
                 orders.add(order);
                 
-                System.out.println(""+ order.toString());
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -448,7 +458,7 @@ public class RentCarSystem {
                 Order order = new Order(rs.getInt("order_id"),rs.getString("promotionCode"),rs.getString("fullName"),rs.getString("phoneNumber"),
                 rs.getString("brand"),rs.getString("model"),rs.getString("rentDate"),
                 rs.getString("returnDate"),rs.getDouble("amountPaid"),rs.getInt("customerId"),
-                rs.getInt("galleryId"),rs.getString("carImgPath"));
+                rs.getInt("galleryId"),rs.getString("carImgPath"),rs.getInt("totalDay"),rs.getDouble("dailyPrice"));
                 orders.add(order);
                 
             }

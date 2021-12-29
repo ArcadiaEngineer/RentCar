@@ -62,14 +62,14 @@ public final class Bill extends javax.swing.JFrame {
         tbxCustımerID.setText( "" + order.getCustomerId() );
         lblPickUpDateValue.setText( order.getRentDate().substring(0, 11 ) +  order.getRentDate().substring( order.getRentDate().length() - 4 ));
         lblReturnDateValue.setText( order.getReturnDate().substring(0, 11 ) + order.getReturnDate().substring( order.getRentDate().length() - 4 ));
-        lblSubTotalValue.setText( String.format("$%.2f", order.getAmountPaid()) );
-        lblDiscountValue.setText( String.format("$%.2f", order.getAmountPaid() * RentCarSystem.getPromotionCodeByCode(order.getPromotionCodeId()).getDiscount() ) );
-        lblTotalValue.setText( String.format("$%.2f",order.getAmountPaid() - order.getAmountPaid() * RentCarSystem.getPromotionCodeByCode(order.getPromotionCodeId()).getDiscount() ) );
+        lblSubTotalValue.setText( String.format("$%.4f", order.getTotalDay() * order.getDailyPrice()) );
+        lblDiscountValue.setText( String.format("$%.4f", order.getTotalDay() * order.getDailyPrice() * RentCarSystem.getPromotionCodeByCode(order.getPromotionCodeId()).getDiscount() ) );
+        lblTotalValue.setText( String.format("$%.4f",(order.getAmountPaid())));
         
         DefaultTableModel tableModel = (DefaultTableModel) orderTable.getModel();
         tableModel.setRowCount( 0 );
         
-        tableModel.addRow( new Object[]{order.getGalleryId(), order.getBrand() + " " + order.getModel(), });
+        tableModel.addRow( new Object[]{order.getGalleryId(), order.getBrand() + " " + order.getModel(),order.getTotalDay(),order.getDailyPrice(), order.getAmountPaid()});
     }
 
     /**

@@ -16,10 +16,12 @@ public class Order {
     private int galleryId;
     private int customerId;
     private String imgCarPath;
+    private int totalDay;
+    private double dailyPrice;
     
     private static int total_id = 0;
 
-    public Order(int orderId, String promotionCodeId, String fullName, String phoneNumber, String brand, String model, String rentDate, String returnDate, double amountPaid, int galleryId, int customerId, String imgCarPath) {
+    public Order(int orderId, String promotionCodeId, String fullName, String phoneNumber, String brand, String model, String rentDate, String returnDate, double amountPaid, int galleryId, int customerId, String imgCarPath, int totalDay, double dailyPrice) {
         this.orderId = orderId;
         this.promotionCodeId = promotionCodeId;
         this.fullName = fullName;
@@ -32,14 +34,12 @@ public class Order {
         this.galleryId = galleryId;
         this.customerId = customerId;
         this.imgCarPath = imgCarPath;
+        this.totalDay = totalDay;
+        this.dailyPrice = dailyPrice;
         total_id++;
     }
 
-    public static int getTotal_id() {
-        return total_id;
-    }
-
-    public Order(int orderId, String fullName, String phoneNumber, String brand, String model, String rentDate, String returnDate, double amountPaid, int galleryId, int customerId, String imgCarPath) {
+    public Order(int orderId, String fullName, String phoneNumber, String brand, String model, String rentDate, String returnDate, double amountPaid, int galleryId, int customerId, String imgCarPath, int totalDay, double dailyPrice) {
         this.orderId = orderId;
         this.fullName = fullName;
         this.phoneNumber = phoneNumber;
@@ -51,13 +51,31 @@ public class Order {
         this.galleryId = galleryId;
         this.customerId = customerId;
         this.imgCarPath = imgCarPath;
+        this.totalDay = totalDay;
+        this.dailyPrice = dailyPrice;
+        total_id++;
     }
+
+    public int getTotalDay() {
+        return totalDay;
+    }
+
+    public double getDailyPrice() {
+        return dailyPrice;
+    }
+
+    
+    
+
+    public static int getTotal_id() {
+        return total_id;
+    }
+
     
     public String getImgCarPath() {
         return imgCarPath;
     }
     
-
     public int getOrderId() {
         return orderId;
     }

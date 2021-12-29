@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -46,13 +47,15 @@ public final class CustomerWindow extends javax.swing.JFrame {
 
     Customer customer;
     Visitor visitor;
+    
     Car currentCar;
     int currentCarIndex = 0;
-    ArrayList<Car> cars = new ArrayList<>();
-    ArrayList<Order> orders = new ArrayList<>();
     Order currentOrder;
     int currentOrderIndex = 0;
-    DefaultListModel defaultListModel;
+    
+    boolean isCarsFiltered = false;
+    boolean isOrdersFiltered = false;
+    boolean isChecked = false;
     
     
     public CustomerWindow(Customer customer) {
@@ -147,7 +150,6 @@ public final class CustomerWindow extends javax.swing.JFrame {
     
     public void visitorNotPermitedAction() {
         int choice = JOptionPane.showConfirmDialog(null, "You must register to the application. \nDo you want to register?", "Unsopperdet Operation", JOptionPane.YES_NO_OPTION);
-                System.out.println("" + choice);
                 
                 if ( choice == 0){
                     dispose();
@@ -1165,6 +1167,11 @@ public final class CustomerWindow extends javax.swing.JFrame {
         btnDeleteOrder1.setForeground(new java.awt.Color(122, 72, 255));
         btnDeleteOrder1.setText("Print");
         btnDeleteOrder1.setToolTipText("");
+        btnDeleteOrder1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteOrder1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnlInLayeredHomePageCarInfo1Layout = new javax.swing.GroupLayout(pnlInLayeredHomePageCarInfo1);
         pnlInLayeredHomePageCarInfo1.setLayout(pnlInLayeredHomePageCarInfo1Layout);
@@ -1639,19 +1646,6 @@ public final class CustomerWindow extends javax.swing.JFrame {
         // TODO add your handling code here:
         HelperMethods.changePage(pnlLayeredProfile, pnlLayered);
         RentCarSystem.getOrdersFromDatabase();
-        orders.addAll(RentCarSystem.getOrders());
-        defaultListModel = new DefaultListModel();
-        for (Order order : orders) {
-            if(order.getCustomerId()==customer.getCustomerId()){
-                defaultListModel.addElement(order);
-            }
-        }
-        
-        if ( !orders.isEmpty() ) {
-            currentOrder = orders.get(currentOrderIndex);
-            listOrders.setModel(defaultListModel);
-            setOrderDetails(currentOrder);
-        }
     }//GEN-LAST:event_lblProfileColorMouseClicked
 
     private void lblExitColorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblExitColorMouseClicked
@@ -1700,99 +1694,65 @@ public final class CustomerWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_lblRentMouseExited
 
     private void textPromotionCodeKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textPromotionCodeKeyTyped
-        // TODO add your handling code here:
+        lblTotalPaymentOfUser.setText(String.valueOf(currentCar.getPrice() *(int)(returnDate_JDatechooser.getDate().getTime() - pick_upDate_JDatechooser.getDate().getTime()) / 86_400_000));
+        isChecked = false;
         ((JTextFieldDateEditor)pick_upDate_JDatechooser.getDateEditor()).setForeground(new Color(204, 204, 204));
         ((JTextFieldDateEditor)returnDate_JDatechooser.getDateEditor()).setForeground(new Color(204, 204, 204));
     }//GEN-LAST:event_textPromotionCodeKeyTyped
 
     private void lblNextMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblNextMouseClicked
-        /*
-        if(currentCarIndex < cars.size() && currentCarIndex > 0){
-            currentCar = cars.get(currentCarIndex);
-            setCarInformation(currentCar);
-            currentCarIndex++;
-        }else{
-            currentCarIndex = 0;
-            currentCar = cars.get(currentCarIndex);
-            setCarInformation(currentCar);
-            currentCarIndex++;
-        }
-        */
         
         currentCarIndex++;
-        if ( currentCarIndex == cars.size() )
-            currentCarIndex = 0;
-        
-        currentCar =  cars.get( currentCarIndex );
-        setCarInformation( currentCar );
-        
-        //System.out.println("" + cars.toString());
+        if(isCarsFiltered){
+            if ( currentCarIndex == RentCarSystem.getFilteredCarList().size())
+                currentCarIndex = 0;
+            currentCar = RentCarSystem.getFilteredCarList().get(currentCarIndex);
+            setCarInformation(currentCar);
+        }
+        else{
+            if ( currentCarIndex == RentCarSystem.getCars().size())
+                currentCarIndex = 0;
+            currentCar = RentCarSystem.getCars().get(currentCarIndex);
+            setCarInformation(currentCar);
+        }
     }//GEN-LAST:event_lblNextMouseClicked
 
     private void lblPreviousMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblPreviousMouseClicked
-        /*
-        if(currentCarIndex > -1 && currentCarIndex < cars.size()){
-            currentCar = cars.get(currentCarIndex);
-            setCarInformation(currentCar);
-            currentCarIndex--;
-        }else{
-            currentCarIndex = cars.size()-1;
-            currentCar = cars.get(currentCarIndex);
-            setCarInformation(currentCar);
-            currentCarIndex--;
-        }
-        */
         
         currentCarIndex--;
-        
-        if ( currentCarIndex == -1 ) {
-            currentCarIndex = cars.size()-1;
+        if(isCarsFiltered){
+            if ( currentCarIndex == -1)
+                currentCarIndex = RentCarSystem.getFilteredCarList().size() - 1;
+            currentCar = RentCarSystem.getFilteredCarList().get(currentCarIndex);
+            setCarInformation(currentCar);
         }
-        currentCar = cars.get( currentCarIndex );
-        setCarInformation(currentCar);
+        else{currentCarIndex--;
+            if ( currentCarIndex == -1)
+                currentCarIndex = RentCarSystem.getCars().size() - 1;
+            currentCar = RentCarSystem.getCars().get(currentCarIndex);
+            setCarInformation(currentCar);
+        }
     }//GEN-LAST:event_lblPreviousMouseClicked
 
     private void btnFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFilterActionPerformed
         
         String comparetorType = null;
-        int min = -1, max= -1;
-        int galleryId = -1;
+        int min = -1, max= -1 , galleryId = -1;
         
-        if(!(!((String)cbxPrice.getSelectedItem() == null) && cbxPrice.getSelectedItem().equals("")) ){
+        if(!((String)cbxPrice.getSelectedItem() == null) && !cbxPrice.getSelectedItem().equals("") ){
             comparetorType = (String)cbxPrice.getSelectedItem();
         }
         if(!((String)cbxGallery.getSelectedItem() == null) && !(cbxGallery.getSelectedItem().equals("")) && !((String)cbxGallery.getSelectedItem()).equals("All")){
              galleryId = Integer.parseInt((String)cbxGallery.getSelectedItem());
         }
-        if(!tbxMax.getText().isBlank() && !tbxMax.getText().isEmpty()){
-            try {
-                max = Integer.parseInt(tbxMax.getText());
-                if(max<0){
-                    max = -1;
-                    throw new Exception();
-                }
-            } catch (NumberFormatException e) {
-                e.printStackTrace();//Entered not digit
-            } catch (Exception ex) {
-                ex.printStackTrace();//Invalid input
-            }
-        }
-        if(!tbxMin.getText().isBlank() && !tbxMin.getText().isEmpty()){
-            try {
-                min = Integer.parseInt(tbxMin.getText());
-                if(min<0){
-                    min = -1;
-                    throw new Exception();
-                }
-            } catch (NumberFormatException e) {
-                e.printStackTrace();//Entered not digit
-            } catch (Exception ex) {
-                ex.printStackTrace();//Invalid input
-            }
-        }
+        max = checkValidInput(tbxMax,max);
+        min = checkValidInput(tbxMin, min);
+        
         if(comparetorType != null){
-            RentCarSystem.sortCarList(cars, comparetorType);
+            RentCarSystem.sortCarList(RentCarSystem.getCars(), comparetorType);
         }
+        RentCarSystem.getFilteredCarList().clear();
+        RentCarSystem.getFilteredCarList().addAll(RentCarSystem.getCars());
         
         if(min != -1){
             sortByMin(min);
@@ -1804,25 +1764,27 @@ public final class CustomerWindow extends javax.swing.JFrame {
             sortByGalleryId(galleryId);
         }
         
-        if(cars.size()>0){
+        if(RentCarSystem.getFilteredCarList().size()>0){
+            isCarsFiltered = true;
             currentCarIndex = 0;
-            currentCar = cars.get(currentCarIndex);
+            currentCar = RentCarSystem.getFilteredCarList().get(currentCarIndex);
             setCarInformation(currentCar);
         }else{
-            //There is no car to suitable for the filtration message
-            cars = RentCarSystem.getCars();
+            isCarsFiltered = false;
             currentCarIndex = 0;
-            currentCar = cars.get(currentCarIndex);
+            isCarsFiltered = false;
+            currentCar = RentCarSystem.getCars().get(currentCarIndex);
             setCarInformation(currentCar);
         }
         
     }//GEN-LAST:event_btnFilterActionPerformed
 
     private void btnClearFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearFilterActionPerformed
-        cars.clear();
-        cars.addAll(RentCarSystem.getCars());
+        isCarsFiltered = false;
+        RentCarSystem.getFilteredCarList().clear();
+        RentCarSystem.getFilteredCarList().addAll(RentCarSystem.getCars());
         currentCarIndex = 0;
-        currentCar = cars.get(currentCarIndex);
+        currentCar = RentCarSystem.getCars().get(currentCarIndex);
         setCarInformation(currentCar);
         tbxMax.setText("");
         tbxMin.setText("");
@@ -1831,7 +1793,6 @@ public final class CustomerWindow extends javax.swing.JFrame {
     private void lblRentMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblRentMouseClicked
         lblCurrentCashOfUser.setText("$" + String.valueOf(customer.getTotalCash()));
         if(pick_upDate_JDatechooser.getDate()!=null && returnDate_JDatechooser.getDate()!=null){
-            //var totalPayment = computeDiff(pick_upDate_JDatechooser.getDate(),returnDate_JDatechooser.getDate()).get(TimeUnit.DAYS) * currentCar.getPrice();
             double totalPayment = ((returnDate_JDatechooser.getDate().getTime() - pick_upDate_JDatechooser.getDate().getTime()) / 86_400_000) * currentCar.getPrice();
             lblTotalPaymentOfUser.setText(String.valueOf(totalPayment));
             lblTotalCashAfterRentalOfUser.setText(String.valueOf(customer.getTotalCash() - totalPayment));
@@ -1842,44 +1803,58 @@ public final class CustomerWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_lblRentMouseClicked
 
     private void btnApproveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnApproveActionPerformed
-        
+        var totalDay = (int)(returnDate_JDatechooser.getDate().getTime() - pick_upDate_JDatechooser.getDate().getTime()) / 86_400_000;
         if(!textPromotionCode.getText().isBlank() && !textPromotionCode.getText().isEmpty()){
-            System.out.println("customerWindow");
             var result = RentCarSystem.createOrder(textPromotionCode.getText(), customer.getFullName(), customer.getPhoneNumber(), currentCar.getBrand(), currentCar.getModel(),
                     pick_upDate_JDatechooser.getDate().toString(), returnDate_JDatechooser.getDate().toString(), Double.parseDouble(lblTotalPaymentOfUser.getText()),
-                    currentCar.getGalleryId(), currentCar.getId(),currentCar.getSmall_imgPath());
+                    customer.getCustomerId(),currentCar.getGalleryId(),currentCar.getSmall_imgPath(),totalDay,currentCar.getPrice());
             if(!result){
                 //Promotion exception
+            }else{
+                setOrderList(RentCarSystem.getOrders());
             }
         }else{
             RentCarSystem.createOrder(customer.getFullName(), customer.getPhoneNumber(), currentCar.getBrand(), currentCar.getModel(),
                     pick_upDate_JDatechooser.getDate().toString(), returnDate_JDatechooser.getDate().toString(), Double.parseDouble(lblTotalPaymentOfUser.getText()),
-                    currentCar.getGalleryId(), currentCar.getId(), currentCar.getSmall_imgPath());
+                    customer.getCustomerId(),currentCar.getGalleryId(), currentCar.getSmall_imgPath(),totalDay,currentCar.getPrice());
+            setOrderList(RentCarSystem.getOrders());
         }
         
         
     }//GEN-LAST:event_btnApproveActionPerformed
 
     private void btnCheckPromotionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCheckPromotionActionPerformed
-        if(!textPromotionCode.getText().isBlank() && !textPromotionCode.getText().isEmpty()){
+        if(!isChecked){
+            var totalDay = (int)(returnDate_JDatechooser.getDate().getTime() - pick_upDate_JDatechooser.getDate().getTime()) / 86_400_000;
+            if(!textPromotionCode.getText().isBlank() && !textPromotionCode.getText().isEmpty()){
             PromotionCode pc = RentCarSystem.getPromotionCodeByCode(textPromotionCode.getText());
-            if(pc!=null && RentCarSystem.isUsed(pc)==false){
-                double totalPayment = Double.parseDouble(lblTotalPaymentOfUser.getText()) - Double.parseDouble(lblTotalPaymentOfUser.getText())*pc.getDiscount();
+            if(pc!=null && RentCarSystem.isUsed(pc)==false && !lblTotalPaymentOfUser.getText().isEmpty()){
+                double totalPayment = totalDay * currentCar.getPrice() - totalDay *  pc.getDiscount() * currentCar.getPrice() ;
                 lblTotalPaymentOfUser.setText(String.valueOf(totalPayment));
+                isChecked = true;
             }
+        }
         }
     }//GEN-LAST:event_btnCheckPromotionActionPerformed
 
     private void listOrdersValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listOrdersValueChanged
-        currentOrderIndex = listOrders.getSelectedIndex()==-1?0:listOrders.getSelectedIndex();
-        currentOrder = orders.get(currentOrderIndex);
-        setOrderDetails(currentOrder);
+        
+        if(isOrdersFiltered){
+            currentOrderIndex = listOrders.getSelectedIndex()==-1?0:listOrders.getSelectedIndex();
+            currentOrder = RentCarSystem.getFilteredOrderList().get(currentOrderIndex);
+            setOrderDetails(currentOrder);
+        }else{
+            currentOrderIndex = listOrders.getSelectedIndex()==-1?0:listOrders.getSelectedIndex();
+            currentOrder = RentCarSystem.getOrders().get(currentOrderIndex);
+            setOrderDetails(currentOrder);
+        }
+        
+        
     }//GEN-LAST:event_listOrdersValueChanged
 
     private void btnFilterOrdersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFilterOrdersActionPerformed
         String comparetorType = null;
-        int min = -1, max= -1;
-        int galleryId = -1;
+        int min = -1, max= -1 , galleryId = -1;
         
         if(!(!((String)cbxOrderPrice.getSelectedItem() == null) && cbxOrderPrice.getSelectedItem().equals("")) ){
             comparetorType = (String)cbxOrderPrice.getSelectedItem();
@@ -1887,85 +1862,57 @@ public final class CustomerWindow extends javax.swing.JFrame {
         if(!((String)cbxOrderGalery.getSelectedItem() == null) && !(cbxOrderGalery.getSelectedItem().equals("")) && !((String)cbxOrderGalery.getSelectedItem()).equals("All")){
              galleryId = Integer.parseInt((String)cbxOrderGalery.getSelectedItem());
         }
-        if(!tbxMaxPrice.getText().isBlank() && !tbxMaxPrice.getText().isEmpty()){
-            try {
-                max = Integer.parseInt(tbxMaxPrice.getText());
-                if(max<0){
-                    max = -1;
-                    throw new Exception();
-                }
-            } catch (NumberFormatException e) {
-                e.printStackTrace();//Entered not digit
-            } catch (Exception ex) {
-                ex.printStackTrace();//Invalid input
-            }
-        }
-        if(!tbxMinPrice.getText().isBlank() && !tbxMinPrice.getText().isEmpty()){
-            try {
-                min = Integer.parseInt(tbxMinPrice.getText());
-                if(min<0){
-                    min = -1;
-                    throw new Exception();
-                }
-            } catch (NumberFormatException e) {
-                e.printStackTrace();//Entered not digit
-            } catch (Exception ex) {
-                ex.printStackTrace();//Invalid input
-            }
-        }
-        if(comparetorType.equals("Ascending")){
-            Collections.sort(orders,new Comparator<Order>(){
-                @Override
-                public int compare(Order o1, Order o2) {
-                    if(o1.getAmountPaid()<o2.getAmountPaid()){
-                        return -1;
-                    }
-                    if(o1.getAmountPaid()>o2.getAmountPaid()){
-                        return 1;
-                    }else{
-                        return 0;
-                    }
-                }
-            });
-        }
-        else{
-            Collections.sort(orders,new Comparator<Order>(){
-                @Override
-                public int compare(Order o1, Order o2) {
-                    if(o1.getAmountPaid()<o2.getAmountPaid()){
-                        return 1;
-                    }
-                    if(o1.getAmountPaid()>o2.getAmountPaid()){
-                        return -1;
-                    }else{
-                        return 0;
-                    }
-                }
-            });
-        }
+        
+        max = checkValidInput(tbxMaxPrice,max);
+        min = checkValidInput(tbxMinPrice, min);
+        
+        RentCarSystem.getFilteredOrderList().clear();
+        RentCarSystem.getFilteredOrderList().addAll(RentCarSystem.getOrders());
+        sortOrders(comparetorType);
+        
         if(min != -1){
-            SortByMinOrder(min);
+            sortByMinOrder(min);
         }
         if(max != -1){
-            SortByMaxOrder(max);
+            sortByMaxOrder(max);
         }
         if(galleryId != -1){
-            SortByGalleryIdOrder(galleryId);
+            sortByGalleryIdOrder(galleryId);
         }
-        setOrderList();
-        currentOrderIndex = 0;
-        currentOrder = orders.get(currentOrderIndex);
-        setOrderDetails(currentOrder);
+        
+        if(RentCarSystem.getFilteredOrderList().size()>0){
+            isOrdersFiltered = true;
+            currentOrderIndex = 0;
+            currentOrder = RentCarSystem.getFilteredOrderList().get(currentOrderIndex);
+            setOrderDetails(currentOrder);
+            setOrderList(RentCarSystem.getFilteredOrderList());
+        }else{
+            isOrdersFiltered = false;
+            currentOrderIndex = 0;
+            currentOrder = RentCarSystem.getOrders().get(currentOrderIndex);
+            setOrderDetails(currentOrder);
+            setOrderList(RentCarSystem.getOrders());
+        }
     }//GEN-LAST:event_btnFilterOrdersActionPerformed
 
     private void btnClearFilterOfOrderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearFilterOfOrderActionPerformed
-        orders.clear();
-        orders.addAll(RentCarSystem.getOrders());
-        setOrderList();
+        isOrdersFiltered = false;
+        RentCarSystem.getFilteredOrderList().clear();
+        RentCarSystem.getFilteredOrderList().addAll(RentCarSystem.getOrders());
         currentOrderIndex = 0;
-        currentOrder = orders.get(currentOrderIndex);
+        currentOrder = RentCarSystem.getOrders().get(currentOrderIndex);
         setOrderDetails(currentOrder);
+        setOrderList(RentCarSystem.getFilteredOrderList());
+        tbxMaxPrice.setText("");
+        tbxMinPrice.setText("");
     }//GEN-LAST:event_btnClearFilterOfOrderActionPerformed
+
+    private void btnDeleteOrder1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteOrder1ActionPerformed
+        Order order = currentOrder ;
+        Bill frameBill = new Bill( order );
+        frameBill.setVisible( true );
+        frameBill.setLocationRelativeTo( null );
+    }//GEN-LAST:event_btnDeleteOrder1ActionPerformed
 
     
 
@@ -2100,31 +2047,13 @@ public final class CustomerWindow extends javax.swing.JFrame {
 
     private void fulfillData() {
         
-        /////////////////////////CAR INFORMATION/////////////////////////////////
-        cars.addAll(RentCarSystem.getCars());
-        currentCar = cars.get(currentCarIndex);
-        setCarInformation(currentCar);
-        currentCarIndex++;
-        //////////////////////////////////////////////////////////////////////////
-        /////////////////////////GALLERY COMBOBOX/////////////////////////////////
+        initCarFields();
+        initOrderFields();
         fulfillGalleryCbx();
         fulfillGalleryOrderedCbx();
-        //////////////////////////////////////////////////////////////////////////
-        /////////////////////////ORDER LIST///////////////////////////////////////
-        orders.addAll(RentCarSystem.getOrders());
-        defaultListModel = new DefaultListModel();
-        for (Order order : orders) {
-            if(order.getCustomerId()==customer.getCustomerId()){
-                defaultListModel.addElement(order);
-            }
-        }
         
-        if ( !orders.isEmpty() ) {
-            currentOrder = orders.get(currentOrderIndex);
-            listOrders.setModel(defaultListModel);
-            setOrderDetails(currentOrder);
-        }
     }
+    
     private void setCarInformation(Car currentCar) {
         
         lblCarTitle.setText(currentCar.getBrand());
@@ -2139,101 +2068,122 @@ public final class CustomerWindow extends javax.swing.JFrame {
         
     }
     private void sortByMin(int min) {
-        
-        ArrayList<Car> filteredCars = new ArrayList<>();
-        
-        for (Car car : cars) {
-            if(car.getPrice() > min){
-                filteredCars.add(car);
+        ArrayList<Car> toBeRemoved = new ArrayList<>();
+        for (Car car : RentCarSystem.getFilteredCarList()) {
+            if(car.getPrice() < min){
+                toBeRemoved.add(car);
             }
         }
-        cars.clear();
-        cars.addAll(filteredCars);
-        
+        RentCarSystem.getFilteredCarList().removeAll(toBeRemoved);
+        toBeRemoved = null;
     }
     private void sortByMax(int max) {
-        ArrayList<Car> filteredCars = new ArrayList<>();
-        
-        for (Car car : cars) {
-            if(car.getPrice() < max){
-                filteredCars.add(car);
+        ArrayList<Car> toBeRemoved = new ArrayList<>();
+        for (Car car : RentCarSystem.getFilteredCarList()) {
+            if(car.getPrice() > max){
+                toBeRemoved.add(car);
             }
         }
-        cars.clear();
-        cars.addAll(filteredCars);
+        RentCarSystem.getFilteredCarList().removeAll(toBeRemoved);
+        toBeRemoved = null;
     }
     private void sortByGalleryId(int galleryIdf) {
-        ArrayList<Car> filteredCars = new ArrayList<>();
-        
-        for (Car car : cars) {
-            if(car.getGalleryId()== galleryIdf){
-                filteredCars.add(car);
+        ArrayList<Car> toBeRemoved = new ArrayList<>();
+        for (Car car : RentCarSystem.getFilteredCarList()) {
+            if(car.getGalleryId() != galleryIdf){
+                toBeRemoved.add(car);
             }
         }
-        cars.clear();
-        cars.addAll(filteredCars);
-    }
-    private void SortByMinOrder(int min){
-        ArrayList<Order> filteredOrder = new ArrayList<>();
-        
-        for (Order order : orders) {
-            if(order.getAmountPaid() > min){
-                filteredOrder.add(order);
-            }
-        }
-        orders.clear();
-        orders.addAll(filteredOrder);
-    }
-    private void SortByMaxOrder(int max){
-        ArrayList<Order> filteredOrder = new ArrayList<>();
-        
-        for (Order order : orders) {
-            if(order.getAmountPaid() < max){
-                filteredOrder.add(order);
-            }
-        }
-        orders.clear();
-        orders.addAll(filteredOrder);
-    }
-    private void SortByGalleryIdOrder(int id){
-        ArrayList<Order> filteredOrder = new ArrayList<>();
-        
-        for (Order order : orders) {
-            if(order.getGalleryId() == id){
-                filteredOrder.add(order);
-            }
-        }
-        orders.clear();
-        orders.addAll(filteredOrder);
+        RentCarSystem.getFilteredCarList().removeAll(toBeRemoved);
+        toBeRemoved = null;
     }
     
-    /*
-    public static Map<TimeUnit,Long> computeDiff(Date date1, Date date2) {
-
-        long diffInMillies = date2.getTime() - date1.getTime();
-
-        //create the list
-        List<TimeUnit> units = new ArrayList<TimeUnit>(EnumSet.allOf(TimeUnit.class));
-        Collections.reverse(units);
-
-        //create the result map of TimeUnit and difference
-        Map<TimeUnit,Long> result = new LinkedHashMap<TimeUnit,Long>();
-        long milliesRest = diffInMillies;
-
-        for ( TimeUnit unit : units ) {
-
-            //calculate difference in millisecond 
-            long diff = unit.convert(milliesRest,TimeUnit.MILLISECONDS);
-            long diffInMilliesForUnit = unit.toMillis(diff);
-            milliesRest = milliesRest - diffInMilliesForUnit;
-
-            //put the result in the map
-            result.put(unit,diff);
+    private void sortByMinOrder(int min){
+        ArrayList<Order> toBeRemoved = new ArrayList<>();
+        for (Order order : RentCarSystem.getFilteredOrderList()) {
+            if(order.getAmountPaid() < min){
+                toBeRemoved.add(order);
+            }
         }
-
-        return result;
+        RentCarSystem.getFilteredOrderList().removeAll(toBeRemoved);
+        toBeRemoved = null;
     }
-    */
+    private void sortByMaxOrder(int max){
+        ArrayList<Order> toBeRemoved = new ArrayList<>();
+        for (Order order : RentCarSystem.getFilteredOrderList()) {
+            if(order.getAmountPaid() > max){
+                toBeRemoved.add(order);
+            }
+        }
+        RentCarSystem.getFilteredOrderList().removeAll(toBeRemoved);
+        toBeRemoved = null;
+    }
+    private void sortByGalleryIdOrder(int id){
+        ArrayList<Order> toBeRemoved = new ArrayList<>();
+        for (Order order : RentCarSystem.getFilteredOrderList()) {
+            if(order.getGalleryId() != id){
+                toBeRemoved.add(order);
+            }
+        }
+        RentCarSystem.getFilteredOrderList().removeAll(toBeRemoved);
+        toBeRemoved = null;
+    }
+    private void sortOrders(String comparetorType) {
+        if(comparetorType.equals("Ascending")){
+            Collections.sort(RentCarSystem.getFilteredOrderList(),new Comparator<Order>(){
+                @Override
+                public int compare(Order o1, Order o2) {
+                    if(o1.getAmountPaid()<o2.getAmountPaid()){
+                        return -1;
+                    }
+                    if(o1.getAmountPaid()>o2.getAmountPaid()){
+                        return 1;
+                    }else{
+                        return 0;
+                    }
+                }
+            });
+        }
+        else{
+            Collections.sort(RentCarSystem.getFilteredOrderList(),new Comparator<Order>(){
+                @Override
+                public int compare(Order o1, Order o2) {
+                    if(o1.getAmountPaid()<o2.getAmountPaid()){
+                        return 1;
+                    }
+                    if(o1.getAmountPaid()>o2.getAmountPaid()){
+                        return -1;
+                    }else{
+                        return 0;
+                    }
+                }
+            });
+        }
+    }
+    private void setOrderDetails(Order currentOrderForSet) {
+        lblOrderDetailCarImg.setIcon(new ImageIcon(getClass().getResource(currentOrderForSet.getImgCarPath())));
+        lblOrderedCarBrandValue.setText(currentOrderForSet.getBrand());
+        lblOrderedCarModelValue.setText(currentOrderForSet.getModel());
+        lblOrderedCarPhoneValue.setText(currentOrderForSet.getPhoneNumber());
+        lblOrderedCarRentDateValue.setText(currentOrderForSet.getRentDate());
+        lblOrderedCarReturnDateValue.setText(currentOrderForSet.getReturnDate());
+        lblOrderedCarPromotionCodeValue.setText((currentOrderForSet.getPromotionCodeId()==null?"No Promotion":currentOrderForSet.getPromotionCodeId()));
+        lblOrderedCarGalleryIdValue.setText(String.valueOf(currentOrderForSet.getGalleryId()));
+        lblOrderedCarChargeValue.setText(String.valueOf(currentOrderForSet.getAmountPaid()));
+        
+    }
+    private void setOrderList(ArrayList<Order> orders){
+        
+        DefaultListModel defaultListModel = new DefaultListModel();
+        for (Order order : orders) {
+            if(order.getCustomerId() == customer.getCustomerId()){
+                defaultListModel.addElement(order);
+            }
+        }
+        currentOrder = orders.get(currentOrderIndex);
+        listOrders.setModel(defaultListModel);
+        setOrderDetails(currentOrder);
+    }
     
     private void fulfillGalleryCbx() {
         String [] galleryIds =  new String[RentCarSystem.getGalleries().size()+ 1];
@@ -2251,27 +2201,40 @@ public final class CustomerWindow extends javax.swing.JFrame {
         }
         cbxOrderGalery.setModel(new javax.swing.DefaultComboBoxModel<>(galleryIds));
     }
-    private void setOrderDetails(Order currentOrderForSet) {
-        lblOrderDetailCarImg.setIcon(new ImageIcon(getClass().getResource(currentOrderForSet.getImgCarPath())));
-        lblOrderedCarBrandValue.setText(currentOrderForSet.getBrand());
-        lblOrderedCarModelValue.setText(currentOrderForSet.getModel());
-        lblOrderedCarPhoneValue.setText(currentOrderForSet.getPhoneNumber());
-        lblOrderedCarRentDateValue.setText(currentOrderForSet.getRentDate());
-        lblOrderedCarReturnDateValue.setText(currentOrderForSet.getReturnDate());
-        lblOrderedCarPromotionCodeValue.setText((currentOrderForSet.getPromotionCodeId()==null?"No Promotion":currentOrderForSet.getPromotionCodeId()));
-        lblOrderedCarGalleryIdValue.setText(String.valueOf(currentOrderForSet.getGalleryId()));
-        lblOrderedCarChargeValue.setText(String.valueOf(currentOrderForSet.getAmountPaid()));
+    
+    private int checkValidInput(JTextField tbxMax,int intValue) {
         
-    }
-    private void setOrderList(){
-        defaultListModel = new DefaultListModel();
-        for (Order order : orders) {
-            if(order.getCustomerId() == customer.getCustomerId()){
-                defaultListModel.addElement(order);
+        
+        if(!tbxMax.getText().isBlank() && !tbxMax.getText().isEmpty()){
+            try {
+                intValue = Integer.parseInt(tbxMax.getText());
+                if(intValue<0){
+                    intValue = -1;
+                    throw new Exception();
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();//Entered not digit
+            } catch (Exception ex) {
+                ex.printStackTrace();//Invalid input
             }
         }
-        currentOrder = orders.get(currentOrderIndex);
-        listOrders.setModel(defaultListModel);
-        setOrderDetails(currentOrder);
+        return intValue;
     }
+
+    private void initCarFields() {
+        RentCarSystem.getFilteredCarList().addAll(RentCarSystem.getCars());
+        currentCar = RentCarSystem.getCars().get(currentCarIndex);
+        setCarInformation(currentCar);
+        currentCarIndex++;
+    }
+    private void initOrderFields() {
+        if(RentCarSystem.getOrders().size()>0){
+            RentCarSystem.getFilteredOrderList().addAll(RentCarSystem.getOrders());
+            currentOrder = RentCarSystem.getOrders().get(currentOrderIndex);
+            setOrderDetails(currentOrder);
+            setOrderList(RentCarSystem.getOrders());
+        }
+    }
+
+    
 }

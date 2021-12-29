@@ -61,7 +61,7 @@ public class Login extends javax.swing.JFrame {
         mail_JText.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         mail_JText.setForeground(new java.awt.Color(255, 255, 255));
         mail_JText.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        mail_JText.setText("alan.backer@mynet.com");
+        mail_JText.setText("ibr.glmz19@gmail.com");
         mail_JText.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         mail_JText.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -73,7 +73,7 @@ public class Login extends javax.swing.JFrame {
         pass_JPass.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         pass_JPass.setForeground(new java.awt.Color(255, 255, 255));
         pass_JPass.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        pass_JPass.setText("123");
+        pass_JPass.setText("12345");
         pass_JPass.setBorder(javax.swing.BorderFactory.createEmptyBorder(7, 7, 7, 7));
 
         hideShowPass_Btn.setBackground(new java.awt.Color(50, 45, 44));
