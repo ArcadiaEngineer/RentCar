@@ -13,6 +13,11 @@ public class Mail {
         total_mail++;
     }
 
+    public void setMail_id(int mail_id) {
+        this.mail_id = mail_id;
+    }
+
+    
     public int getMail_id() {
         return mail_id;
     }

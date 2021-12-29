@@ -1,10 +1,32 @@
 package GUI;
 
+import Business.RentCarSystem;
+import Entities.Concrete.Car;
+import Entities.Concrete.Gallery;
 import Entities.Concrete.GalleryOwner;
+import Entities.Concrete.Mail;
+import Entities.Concrete.Order;
+import Helper.CustomFileFilter;
 import Helper.HelperMethods;
+import Helper.MyCellRenderer;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.io.File;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.ListModel;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -18,18 +40,31 @@ import javax.swing.table.DefaultTableCellRenderer;
 public final class GalleryOwnerWindow extends javax.swing.JFrame {
 
     
-    GalleryOwner galleryOwner;
+    private GalleryOwner galleryOwner;
+    
+    private ArrayList<Car> galleryOwnerCars = new ArrayList<>();
+    private ArrayList<Order> galleryOwnerOrders = new ArrayList<>();
+    
+    private String smallImgPath;
+    private String largeImgPath;
+    private String profPictPath;
+    
+    private JFileChooser chooser = new JFileChooser();
+    
+    private int currentGalleryIndex = 0;
+    private int currentOrderIndex = 0;
     
     public GalleryOwnerWindow(GalleryOwner galleryOwner) {
         this.galleryOwner = galleryOwner;
         initComponents();
         initializeFields();
-        
+        chooser.setFileFilter( new CustomFileFilter() );
     }
     
     public void initializeFields() {
         
         lblProfilePic.setIcon( new ImageIcon(getClass().getResource( galleryOwner.getImgPath() )));
+        System.out.println("" + galleryOwner.getImgPath() + "ss");
         lblTheUserName.setText(galleryOwner.getUsername());
         lblTheUserMail.setText(galleryOwner.getMailAdress().getName());
         tbxUserName.setText( galleryOwner.getUsername() );
@@ -38,17 +73,41 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
         tbxUserAge.setText( String.valueOf( galleryOwner.getAge() ) );
         tbxUserEmail.setText( galleryOwner.getMailAdress().getName() );
         tbxUserEmail.setEditable( false );
-        tbxCurrentPass.setEchoChar((char)'\u2022');
-        tbxNewPass.setEchoChar((char)'\u2022');
-        tbxConfNewPass.setEchoChar((char)'\u2022');
+        tbxNewPhoneNum.setText( galleryOwner.getPhoneNumber() );
         
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         tableCar.getTableHeader().setDefaultRenderer( new Helper.HeaderColor());
-        centerRenderer.setBackground( new Color(51, 51, 51));
-        tableCar.setDefaultRenderer(Object.class, centerRenderer);
-        tableCar.setOpaque( false );
         
+        // https://stackoverflow.com/questions/7433602/how-to-center-in-jtable-cell-a-value/7433758
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment( SwingConstants.CENTER );
+        centerRenderer.setBackground( new Color(51, 51, 51) );
+        centerRenderer.setForeground( new Color(255, 255, 255) );
+        tableCar.setDefaultRenderer(Object.class, centerRenderer);
+        tableCar.setOpaque( true );
+        
+        // https://stackoverflow.com/questions/18362150/jtable-in-jscrollpane-how-to-set-background
+        jScrollPaneTable.setBackground( new Color(51, 51, 51) );
+        jScrollPaneTable.getViewport().setBackground( new Color(51, 51, 51) );
+        jScrollPaneTable.setOpaque( true );
+        
+        // https://stackoverflow.com/questions/1720482/resize-problem-with-jlist
+        listOrders.setPrototypeCellValue("--------------------------------------------");
+        
+        // https://stackoverflow.com/questions/21029653/java-jlist-text-center-align
+        DefaultListCellRenderer renderer = (DefaultListCellRenderer) listOrders.getCellRenderer();
+        renderer.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        fillTheCars();
+        RentCarSystem.sortCarList(galleryOwnerCars, "Default");
+        fillTheTable();
+        fillTheGalleryNames();
+        renderAllComboBoxes();
+        initializeGallery();
+        fillTheOrders();
+        if ( !galleryOwnerOrders.isEmpty() )
+            fillOrderDetails();
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -59,6 +118,7 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        galleryBtnGrp = new javax.swing.ButtonGroup();
         PnlParent = new javax.swing.JPanel();
         PnlLeftSide = new javax.swing.JPanel();
         pnlProfileInfo = new javax.swing.JPanel();
@@ -81,7 +141,7 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
         pnlLayeredHomePage = new javax.swing.JPanel();
         pnlInPnlLayerdHomePagefilter = new javax.swing.JPanel();
         lblPrice = new javax.swing.JLabel();
-        cbxPrice = new javax.swing.JComboBox<>();
+        cbxSort = new javax.swing.JComboBox<>();
         lblGallery = new javax.swing.JLabel();
         cbxGallery = new javax.swing.JComboBox<>();
         lblRange = new javax.swing.JLabel();
@@ -89,20 +149,101 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
         tbxMax = new javax.swing.JTextField();
         btnFilter = new javax.swing.JButton();
         pnlAddNewCar = new javax.swing.JPanel();
-        btnAddCar = new javax.swing.JButton();
-        lblCarKm = new javax.swing.JLabel();
-        lblCarBrand = new javax.swing.JLabel();
-        lblCarModel = new javax.swing.JLabel();
-        lblCarModelYear = new javax.swing.JLabel();
-        lblCarDailyPrice = new javax.swing.JLabel();
-        cbxModelYear = new javax.swing.JComboBox<>();
-        cbxModel = new javax.swing.JComboBox<>();
-        cbxBrand = new javax.swing.JComboBox<>();
-        tbxKm = new javax.swing.JTextField();
-        tbxPrice = new javax.swing.JTextField();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        layeredPaneAddCar = new javax.swing.JLayeredPane();
+        pnlAddCarFirst = new javax.swing.JPanel();
+        lblCarBrandAdd = new javax.swing.JLabel();
+        cbxBrandAdd = new javax.swing.JComboBox<>();
+        tbxCarModelAdd = new javax.swing.JTextField();
+        lblCarModelAdd = new javax.swing.JLabel();
+        lblCarTypeAdd = new javax.swing.JLabel();
+        cbxTypeAdd = new javax.swing.JComboBox<>();
+        cbxModelYearAdd = new javax.swing.JComboBox<>();
+        lblCarModelYearAdd = new javax.swing.JLabel();
+        lblCarKmAdd = new javax.swing.JLabel();
+        tbxCarKmAdd = new javax.swing.JTextField();
+        tbxCarDailyPriceAdd = new javax.swing.JTextField();
+        lblCarDailyPriceAdd = new javax.swing.JLabel();
+        lblNextFirstPageAddCar = new javax.swing.JLabel();
+        pnlAddCarSecond = new javax.swing.JPanel();
+        lblCarFuelTypeAdd = new javax.swing.JLabel();
+        cbxFuelTypeAdd = new javax.swing.JComboBox<>();
+        lblCarFuelCarAdd = new javax.swing.JLabel();
+        tbxCarFuelCapAdd = new javax.swing.JTextField();
+        lblCarTransmissionAdd = new javax.swing.JLabel();
+        cbxTransmissionAdd = new javax.swing.JComboBox<>();
+        lblCarTrunkVolAdd = new javax.swing.JLabel();
+        tbxCarTrunkVolAdd = new javax.swing.JTextField();
+        cbxGalleryNameAdd = new javax.swing.JComboBox<>();
+        lblCarGalNameAdd = new javax.swing.JLabel();
+        lblCarSmall_imageAdd = new javax.swing.JLabel();
+        lblCarLarge_imageAdd = new javax.swing.JLabel();
+        lblPrevSecondPageAdd = new javax.swing.JLabel();
+        lblCarAdd = new javax.swing.JLabel();
+        jScrollPaneTable = new javax.swing.JScrollPane();
         tableCar = new javax.swing.JTable();
-        pnlAddNewGallery = new javax.swing.JPanel();
+        pnlGalleryProccess = new javax.swing.JPanel();
+        radBtnAdd = new javax.swing.JRadioButton();
+        radBtnUpdate = new javax.swing.JRadioButton();
+        radBtnDelete = new javax.swing.JRadioButton();
+        layeredPaneGallery = new javax.swing.JLayeredPane();
+        pnlAddGallery = new javax.swing.JPanel();
+        lblNewGalleryName = new javax.swing.JLabel();
+        tbxNewGalleryName = new javax.swing.JTextField();
+        jSeparator1 = new javax.swing.JSeparator();
+        lblGalleryAdd = new javax.swing.JLabel();
+        pnlUpdateGallery = new javax.swing.JPanel();
+        lblOldGalleryName = new javax.swing.JLabel();
+        lblUpdateNewGalleryName = new javax.swing.JLabel();
+        tbxOldGalleryName = new javax.swing.JTextField();
+        tbxUpdateNewGalleryName = new javax.swing.JTextField();
+        lblUpdateGallery = new javax.swing.JLabel();
+        pnlDeleteGallery = new javax.swing.JPanel();
+        lblGalleryName = new javax.swing.JLabel();
+        tbxDeleteGalleryName = new javax.swing.JTextField();
+        jSeparator2 = new javax.swing.JSeparator();
+        lblGalleryDelete = new javax.swing.JLabel();
+        pnlUpdateTheCar = new javax.swing.JPanel();
+        layeredPaneUpdateCar = new javax.swing.JLayeredPane();
+        pnlUpdateCarFirst = new javax.swing.JPanel();
+        lblCarID_Update = new javax.swing.JLabel();
+        tbxCarID_Update = new javax.swing.JTextField();
+        jSeparator4 = new javax.swing.JSeparator();
+        lblCarConfirmUpdate = new javax.swing.JLabel();
+        pnlUpdateCarSecond = new javax.swing.JPanel();
+        lblCarBrandUpdate = new javax.swing.JLabel();
+        lblCarModelUpdate = new javax.swing.JLabel();
+        lblCarModelYearUpdate = new javax.swing.JLabel();
+        lblCarKmUpdate = new javax.swing.JLabel();
+        lblCarDailyPriceUpdate = new javax.swing.JLabel();
+        lblCarTypeUpdate = new javax.swing.JLabel();
+        cbxBrandUpdate = new javax.swing.JComboBox<>();
+        tbxCarModelUpdate = new javax.swing.JTextField();
+        cbxTypeUpdate = new javax.swing.JComboBox<>();
+        cbxModelYearUpdate = new javax.swing.JComboBox<>();
+        tbxCarKmUpdate = new javax.swing.JTextField();
+        tbxCarDailyPriceUpdate = new javax.swing.JTextField();
+        lblPrevSecondPage = new javax.swing.JLabel();
+        lblNextSecondPage = new javax.swing.JLabel();
+        pnlUpdateCarThirdPage = new javax.swing.JPanel();
+        lblCarFuelTypeUpdate = new javax.swing.JLabel();
+        lblCarFuelCapUpdate = new javax.swing.JLabel();
+        tbxCarFuelCapUpdate = new javax.swing.JTextField();
+        cbxFuelTypeUpdate = new javax.swing.JComboBox<>();
+        lblCarTransmissionUpdate = new javax.swing.JLabel();
+        cbxTransmissionUpdate = new javax.swing.JComboBox<>();
+        lblCarTrunkVolUpdate = new javax.swing.JLabel();
+        tbxCarTrunkVolUpdate = new javax.swing.JTextField();
+        lblCarGalNameUpdate = new javax.swing.JLabel();
+        cbxGalleryNameUpdate = new javax.swing.JComboBox<>();
+        lblCarUpdate = new javax.swing.JLabel();
+        lblPrevThirdPage = new javax.swing.JLabel();
+        lblCarSmall_image = new javax.swing.JLabel();
+        lblCarLarge_image = new javax.swing.JLabel();
+        pnlDeleteCar = new javax.swing.JPanel();
+        lblCarID_Delete = new javax.swing.JLabel();
+        tbxCarID_Delete = new javax.swing.JTextField();
+        jSeparator3 = new javax.swing.JSeparator();
+        lblCarDelete = new javax.swing.JLabel();
         pnlLayeredProfile = new javax.swing.JPanel();
         pnlInPnlLayerdProfileFilter = new javax.swing.JPanel();
         lblOrderPrice = new javax.swing.JLabel();
@@ -110,32 +251,41 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
         lblOrderPerson = new javax.swing.JLabel();
         cbxOrderGalery = new javax.swing.JComboBox<>();
         lblRange1 = new javax.swing.JLabel();
-        tbxMin1 = new javax.swing.JTextField();
-        tbxMax1 = new javax.swing.JTextField();
+        tbxOrderMin = new javax.swing.JTextField();
+        tbxOrderMax = new javax.swing.JTextField();
         btnFilterOrders = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         listOrders = new javax.swing.JList<>();
-        pnlInLayeredHomePageCarInfo1 = new javax.swing.JPanel();
+        pnlInLayeredHomePageOrderInfo = new javax.swing.JPanel();
         lblOrderedCarBrand = new javax.swing.JLabel();
         lblOrderedCarPickUpDate = new javax.swing.JLabel();
         lblOrderedCarReturnDate = new javax.swing.JLabel();
         lblOrderedCarMoedl = new javax.swing.JLabel();
-        lblOrderedCarType = new javax.swing.JLabel();
         lblOrderedCarUsedPromotionCode = new javax.swing.JLabel();
         lblOrderedCarGallery = new javax.swing.JLabel();
         lblOrderedCharge = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        btnDeleteOrder = new javax.swing.JButton();
-        btnDeleteOrder1 = new javax.swing.JButton();
+        lblOrderCarImage = new javax.swing.JLabel();
+        lblOrderCarBrandVal = new javax.swing.JLabel();
+        lblOrderCarModelVal = new javax.swing.JLabel();
+        lblOrderCarGalleryVal = new javax.swing.JLabel();
+        lblOrderChargeVal = new javax.swing.JLabel();
+        lblOrderPromotionCode = new javax.swing.JLabel();
+        lblOrderReturnVal = new javax.swing.JLabel();
+        lblOrderPickupDate = new javax.swing.JLabel();
+        lblOrderPhoneNum = new javax.swing.JLabel();
+        lblOrderPhoneNumVal = new javax.swing.JLabel();
+        lbl_iconPrevGallery1 = new javax.swing.JLabel();
         pnlUserInformation = new javax.swing.JPanel();
         pnlUserBankInformation = new javax.swing.JPanel();
         lblUserCurrentCarNumber = new javax.swing.JLabel();
-        lblUserCurrentCashValue = new javax.swing.JLabel();
+        lblListGalleryCarNumber = new javax.swing.JLabel();
         lblUserCurrentOrderNumber = new javax.swing.JLabel();
         lblUserTotalEarnedMoney = new javax.swing.JLabel();
-        lblUserTotalEarnedMoneyValue = new javax.swing.JLabel();
-        btnUserDeleteGallery = new javax.swing.JButton();
-        lblUserCurrentOrderNumberValue = new javax.swing.JLabel();
+        lblListEarnedMoneyFromGallery = new javax.swing.JLabel();
+        lblListGalleryOrderNumber = new javax.swing.JLabel();
+        lblListGalleryName = new javax.swing.JLabel();
+        lbl_iconPrevGallery = new javax.swing.JLabel();
+        lbl_iconNextGallery = new javax.swing.JLabel();
         lblUserName1 = new javax.swing.JLabel();
         tbxUserName = new javax.swing.JTextField();
         tbxUserFullName = new javax.swing.JTextField();
@@ -146,17 +296,16 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
         lblUserAge = new javax.swing.JLabel();
         lblUserEmail = new javax.swing.JLabel();
         tbxUserEmail = new javax.swing.JTextField();
-        lblConfNewPassword = new javax.swing.JLabel();
-        tbxConfNewPass = new javax.swing.JPasswordField();
-        tbxNewPass = new javax.swing.JPasswordField();
-        tbxCurrentPass = new javax.swing.JPasswordField();
-        lblCurrentPassword = new javax.swing.JLabel();
-        lblNewPassword = new javax.swing.JLabel();
-        btnModifyUser = new javax.swing.JButton();
         btnSaveChanges = new javax.swing.JButton();
         btnDeleteUser = new javax.swing.JButton();
+        jTogg_btn_modifyAcc = new javax.swing.JToggleButton();
+        lblNewPhoNum = new javax.swing.JLabel();
+        tbxNewPhoneNum = new javax.swing.JTextField();
+        lblNewPhoNum1 = new javax.swing.JLabel();
+        lblChangePic = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
 
         PnlParent.setBackground(new java.awt.Color(51, 51, 51));
 
@@ -301,7 +450,7 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
             PnlLeftSideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PnlLeftSideLayout.createSequentialGroup()
                 .addComponent(pnlProfileInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(52, 52, 52)
+                .addGap(64, 64, 64)
                 .addComponent(pnlHomePage, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlProfile, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -320,12 +469,14 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
         lblPrice.setBackground(new java.awt.Color(51, 51, 51));
         lblPrice.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lblPrice.setForeground(new java.awt.Color(204, 204, 204));
-        lblPrice.setText("    Price:");
+        lblPrice.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblPrice.setText("Sort : ");
 
-        cbxPrice.setBackground(new java.awt.Color(51, 51, 51));
-        cbxPrice.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        cbxPrice.setForeground(new java.awt.Color(204, 204, 204));
-        cbxPrice.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ascending", "Descending" }));
+        cbxSort.setBackground(new java.awt.Color(51, 51, 51));
+        cbxSort.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        cbxSort.setForeground(new java.awt.Color(204, 204, 204));
+        cbxSort.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "ID", "Kilometer", "Price", "Year", "Brand" }));
+        cbxSort.setSelectedIndex(4);
 
         lblGallery.setBackground(new java.awt.Color(51, 51, 51));
         lblGallery.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -335,7 +486,6 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
         cbxGallery.setBackground(new java.awt.Color(51, 51, 51));
         cbxGallery.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         cbxGallery.setForeground(new java.awt.Color(204, 204, 204));
-        cbxGallery.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All" }));
 
         lblRange.setBackground(new java.awt.Color(51, 51, 51));
         lblRange.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -345,38 +495,55 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
         tbxMin.setBackground(new java.awt.Color(51, 51, 51));
         tbxMin.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         tbxMin.setForeground(new java.awt.Color(204, 204, 204));
-        tbxMin.setText("      Min");
+        tbxMin.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxMin.setText("0");
+        tbxMin.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                tbxMinKeyTyped(evt);
+            }
+        });
 
         tbxMax.setBackground(new java.awt.Color(51, 51, 51));
         tbxMax.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         tbxMax.setForeground(new java.awt.Color(204, 204, 204));
-        tbxMax.setText("     Max");
+        tbxMax.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxMax.setText("100");
+        tbxMax.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                tbxMaxKeyTyped(evt);
+            }
+        });
 
-        btnFilter.setBackground(new java.awt.Color(51, 51, 51));
+        btnFilter.setBackground(new java.awt.Color(0, 0, 0));
         btnFilter.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnFilter.setForeground(new java.awt.Color(204, 204, 204));
+        btnFilter.setForeground(new java.awt.Color(122, 72, 255));
         btnFilter.setText("Filter");
+        btnFilter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFilterActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnlInPnlLayerdHomePagefilterLayout = new javax.swing.GroupLayout(pnlInPnlLayerdHomePagefilter);
         pnlInPnlLayerdHomePagefilter.setLayout(pnlInPnlLayerdHomePagefilterLayout);
         pnlInPnlLayerdHomePagefilterLayout.setHorizontalGroup(
             pnlInPnlLayerdHomePagefilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlInPnlLayerdHomePagefilterLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(43, 43, 43)
                 .addComponent(lblPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbxPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
+                .addComponent(cbxSort, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lblRange, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tbxMin, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tbxMax, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28)
+                .addGap(52, 52, 52)
                 .addComponent(lblGallery, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbxGallery, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 198, Short.MAX_VALUE)
+                .addComponent(cbxGallery, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(66, 66, 66)
                 .addComponent(btnFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(20, 20, 20))
         );
@@ -386,7 +553,7 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(pnlInPnlLayerdHomePagefilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblGallery, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cbxPrice)
+                    .addComponent(cbxSort)
                     .addComponent(tbxMin)
                     .addComponent(tbxMax, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(pnlInPnlLayerdHomePagefilterLayout.createSequentialGroup()
@@ -401,134 +568,377 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
         );
 
         pnlAddNewCar.setBackground(new java.awt.Color(51, 51, 51));
-        pnlAddNewCar.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Add New Car", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 15), new java.awt.Color(122, 72, 255))); // NOI18N
+        pnlAddNewCar.setBorder(javax.swing.BorderFactory.createTitledBorder(null, " Add New Car ", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Segoe UI", 1, 15), new java.awt.Color(122, 72, 255))); // NOI18N
 
-        btnAddCar.setBackground(new java.awt.Color(0, 0, 0));
-        btnAddCar.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        btnAddCar.setForeground(new java.awt.Color(122, 72, 255));
-        btnAddCar.setText("Add");
+        layeredPaneAddCar.setLayout(new java.awt.CardLayout());
 
-        lblCarKm.setBackground(new java.awt.Color(242, 243, 244));
-        lblCarKm.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblCarKm.setForeground(new java.awt.Color(204, 204, 204));
-        lblCarKm.setText("Total Km");
+        pnlAddCarFirst.setBackground(new java.awt.Color(51, 51, 51));
 
-        lblCarBrand.setBackground(new java.awt.Color(242, 243, 244));
-        lblCarBrand.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblCarBrand.setForeground(new java.awt.Color(204, 204, 204));
-        lblCarBrand.setText("Brand:");
+        lblCarBrandAdd.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarBrandAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarBrandAdd.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarBrandAdd.setText("Brand:");
 
-        lblCarModel.setBackground(new java.awt.Color(242, 243, 244));
-        lblCarModel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblCarModel.setForeground(new java.awt.Color(204, 204, 204));
-        lblCarModel.setText("Model:");
+        cbxBrandAdd.setBackground(new java.awt.Color(0, 0, 0));
+        cbxBrandAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        cbxBrandAdd.setForeground(new java.awt.Color(204, 204, 204));
+        cbxBrandAdd.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mercedes", "BMW", "Volkswagen", "Nissan", "Fiat", "Porche", "Ferrari", "Peugeout", "Volvo", "Audi", "Citroen", "Dacia", "Ford", "Honda", "Hyundai", "Maserati", "Toyota", "LandRover", "Skoda" }));
+        cbxBrandAdd.setSelectedIndex(1);
 
-        lblCarModelYear.setBackground(new java.awt.Color(242, 243, 244));
-        lblCarModelYear.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblCarModelYear.setForeground(new java.awt.Color(204, 204, 204));
-        lblCarModelYear.setText("Model Year:");
+        tbxCarModelAdd.setBackground(new java.awt.Color(51, 51, 51));
+        tbxCarModelAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        tbxCarModelAdd.setForeground(new java.awt.Color(204, 204, 204));
+        tbxCarModelAdd.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxCarModelAdd.setText("i3");
+        tbxCarModelAdd.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true), javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1)));
 
-        lblCarDailyPrice.setBackground(new java.awt.Color(242, 243, 244));
-        lblCarDailyPrice.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblCarDailyPrice.setForeground(new java.awt.Color(204, 204, 204));
-        lblCarDailyPrice.setText("Price");
+        lblCarModelAdd.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarModelAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarModelAdd.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarModelAdd.setText("Model:");
 
-        cbxModelYear.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        cbxModelYear.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021" }));
+        lblCarTypeAdd.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarTypeAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarTypeAdd.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarTypeAdd.setText("Type:");
 
-        cbxModel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        cbxModel.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sedan", "Coupe", "Hatchback", "SUV" }));
+        cbxTypeAdd.setBackground(new java.awt.Color(0, 0, 0));
+        cbxTypeAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        cbxTypeAdd.setForeground(new java.awt.Color(204, 204, 204));
+        cbxTypeAdd.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sedan", "Coupe", "Hatchback", "SUV" }));
+        cbxTypeAdd.setSelectedIndex(1);
 
-        cbxBrand.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        cbxBrand.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mercedes", "BMW", "Volkswagen", "Nissan", "Fiat", "Porche", "Ferrari", "Peugeout", "Volvo", "Audi", "Citroen", "Dacia", "Ford", "Honda", "Hyundai", "Maserati", "Toyota", "LandRover", "Skoda" }));
+        cbxModelYearAdd.setBackground(new java.awt.Color(0, 0, 0));
+        cbxModelYearAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        cbxModelYearAdd.setForeground(new java.awt.Color(204, 204, 204));
+        cbxModelYearAdd.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021" }));
+        cbxModelYearAdd.setSelectedIndex(21);
 
-        tbxKm.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblCarModelYearAdd.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarModelYearAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarModelYearAdd.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarModelYearAdd.setText("Model Year:");
 
-        tbxPrice.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblCarKmAdd.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarKmAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarKmAdd.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarKmAdd.setText("Total Km");
+
+        tbxCarKmAdd.setBackground(new java.awt.Color(51, 51, 51));
+        tbxCarKmAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        tbxCarKmAdd.setForeground(new java.awt.Color(204, 204, 204));
+        tbxCarKmAdd.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxCarKmAdd.setText("450");
+        tbxCarKmAdd.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true), javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1)));
+
+        tbxCarDailyPriceAdd.setBackground(new java.awt.Color(51, 51, 51));
+        tbxCarDailyPriceAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        tbxCarDailyPriceAdd.setForeground(new java.awt.Color(204, 204, 204));
+        tbxCarDailyPriceAdd.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxCarDailyPriceAdd.setText("20");
+        tbxCarDailyPriceAdd.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true), javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1)));
+
+        lblCarDailyPriceAdd.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarDailyPriceAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarDailyPriceAdd.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarDailyPriceAdd.setText("Daily Price:");
+
+        lblNextFirstPageAddCar.setBackground(new java.awt.Color(51, 51, 51));
+        lblNextFirstPageAddCar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblNextFirstPageAddCar.setForeground(new java.awt.Color(204, 204, 204));
+        lblNextFirstPageAddCar.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblNextFirstPageAddCar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/next32.png"))); // NOI18N
+        lblNextFirstPageAddCar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblNextFirstPageAddCar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        lblNextFirstPageAddCar.setOpaque(true);
+        lblNextFirstPageAddCar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblNextFirstPageAddCarMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlAddCarFirstLayout = new javax.swing.GroupLayout(pnlAddCarFirst);
+        pnlAddCarFirst.setLayout(pnlAddCarFirstLayout);
+        pnlAddCarFirstLayout.setHorizontalGroup(
+            pnlAddCarFirstLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlAddCarFirstLayout.createSequentialGroup()
+                .addGap(117, 117, 117)
+                .addComponent(lblNextFirstPageAddCar, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(127, Short.MAX_VALUE))
+            .addGroup(pnlAddCarFirstLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(pnlAddCarFirstLayout.createSequentialGroup()
+                    .addGap(19, 19, 19)
+                    .addGroup(pnlAddCarFirstLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlAddCarFirstLayout.createSequentialGroup()
+                            .addGap(3, 3, 3)
+                            .addGroup(pnlAddCarFirstLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(lblCarModelAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lblCarModelYearAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lblCarBrandAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(lblCarTypeAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(18, 18, 18)
+                            .addGroup(pnlAddCarFirstLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(cbxBrandAdd, 0, 125, Short.MAX_VALUE)
+                                .addComponent(tbxCarModelAdd)
+                                .addComponent(cbxTypeAdd, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(cbxModelYearAdd, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGroup(pnlAddCarFirstLayout.createSequentialGroup()
+                            .addComponent(lblCarKmAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(tbxCarKmAdd))
+                        .addGroup(pnlAddCarFirstLayout.createSequentialGroup()
+                            .addComponent(lblCarDailyPriceAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(tbxCarDailyPriceAdd)))
+                    .addGap(20, 20, 20)))
+        );
+        pnlAddCarFirstLayout.setVerticalGroup(
+            pnlAddCarFirstLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAddCarFirstLayout.createSequentialGroup()
+                .addContainerGap(265, Short.MAX_VALUE)
+                .addComponent(lblNextFirstPageAddCar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .addGroup(pnlAddCarFirstLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(pnlAddCarFirstLayout.createSequentialGroup()
+                    .addGap(2, 2, 2)
+                    .addGroup(pnlAddCarFirstLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(cbxBrandAdd, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
+                        .addComponent(lblCarBrandAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(pnlAddCarFirstLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lblCarModelAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(tbxCarModelAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(pnlAddCarFirstLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lblCarTypeAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cbxTypeAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(pnlAddCarFirstLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lblCarModelYearAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cbxModelYearAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(pnlAddCarFirstLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(tbxCarKmAdd, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
+                        .addComponent(lblCarKmAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(pnlAddCarFirstLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lblCarDailyPriceAdd, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+                        .addComponent(tbxCarDailyPriceAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGap(55, 55, 55)))
+        );
+
+        layeredPaneAddCar.add(pnlAddCarFirst, "card2");
+
+        pnlAddCarSecond.setBackground(new java.awt.Color(51, 51, 51));
+
+        lblCarFuelTypeAdd.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarFuelTypeAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarFuelTypeAdd.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarFuelTypeAdd.setText("Fuel Type:");
+
+        cbxFuelTypeAdd.setBackground(new java.awt.Color(0, 0, 0));
+        cbxFuelTypeAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        cbxFuelTypeAdd.setForeground(new java.awt.Color(204, 204, 204));
+        cbxFuelTypeAdd.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Diesel", "Hybrid", "Benzine" }));
+        cbxFuelTypeAdd.setSelectedIndex(1);
+
+        lblCarFuelCarAdd.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarFuelCarAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarFuelCarAdd.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarFuelCarAdd.setText("Fuel Capapcity:");
+
+        tbxCarFuelCapAdd.setBackground(new java.awt.Color(51, 51, 51));
+        tbxCarFuelCapAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        tbxCarFuelCapAdd.setForeground(new java.awt.Color(204, 204, 204));
+        tbxCarFuelCapAdd.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxCarFuelCapAdd.setText("50");
+        tbxCarFuelCapAdd.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true), javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1)));
+
+        lblCarTransmissionAdd.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarTransmissionAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarTransmissionAdd.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarTransmissionAdd.setText("Transmission:");
+
+        cbxTransmissionAdd.setBackground(new java.awt.Color(0, 0, 0));
+        cbxTransmissionAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        cbxTransmissionAdd.setForeground(new java.awt.Color(204, 204, 204));
+        cbxTransmissionAdd.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Automatic", "Manual" }));
+
+        lblCarTrunkVolAdd.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarTrunkVolAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarTrunkVolAdd.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarTrunkVolAdd.setText("Trunk Volume:");
+
+        tbxCarTrunkVolAdd.setBackground(new java.awt.Color(51, 51, 51));
+        tbxCarTrunkVolAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        tbxCarTrunkVolAdd.setForeground(new java.awt.Color(204, 204, 204));
+        tbxCarTrunkVolAdd.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxCarTrunkVolAdd.setText("250");
+        tbxCarTrunkVolAdd.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true), javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1)));
+
+        cbxGalleryNameAdd.setBackground(new java.awt.Color(0, 0, 0));
+        cbxGalleryNameAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        cbxGalleryNameAdd.setForeground(new java.awt.Color(204, 204, 204));
+
+        lblCarGalNameAdd.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarGalNameAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarGalNameAdd.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarGalNameAdd.setText("Gallery Name:");
+
+        lblCarSmall_imageAdd.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarSmall_imageAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarSmall_imageAdd.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarSmall_imageAdd.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCarSmall_imageAdd.setText("Small Image");
+        lblCarSmall_imageAdd.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true));
+        lblCarSmall_imageAdd.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblCarSmall_imageAdd.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblCarSmall_imageAddMouseClicked(evt);
+            }
+        });
+
+        lblCarLarge_imageAdd.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarLarge_imageAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarLarge_imageAdd.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarLarge_imageAdd.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCarLarge_imageAdd.setText("Large Image");
+        lblCarLarge_imageAdd.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true));
+        lblCarLarge_imageAdd.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblCarLarge_imageAdd.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblCarLarge_imageAddMouseClicked(evt);
+            }
+        });
+
+        lblPrevSecondPageAdd.setBackground(new java.awt.Color(51, 51, 51));
+        lblPrevSecondPageAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblPrevSecondPageAdd.setForeground(new java.awt.Color(204, 204, 204));
+        lblPrevSecondPageAdd.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblPrevSecondPageAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/previous32.png"))); // NOI18N
+        lblPrevSecondPageAdd.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblPrevSecondPageAdd.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        lblPrevSecondPageAdd.setOpaque(true);
+        lblPrevSecondPageAdd.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblPrevSecondPageAddMouseClicked(evt);
+            }
+        });
+
+        lblCarAdd.setBackground(new java.awt.Color(51, 51, 51));
+        lblCarAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarAdd.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarAdd.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCarAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/update32.png"))); // NOI18N
+        lblCarAdd.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblCarAdd.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        lblCarAdd.setOpaque(true);
+        lblCarAdd.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblCarAddMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlAddCarSecondLayout = new javax.swing.GroupLayout(pnlAddCarSecond);
+        pnlAddCarSecond.setLayout(pnlAddCarSecondLayout);
+        pnlAddCarSecondLayout.setHorizontalGroup(
+            pnlAddCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlAddCarSecondLayout.createSequentialGroup()
+                .addGap(77, 77, 77)
+                .addComponent(lblPrevSecondPageAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lblCarAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAddCarSecondLayout.createSequentialGroup()
+                .addContainerGap(28, Short.MAX_VALUE)
+                .addGroup(pnlAddCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlAddCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(pnlAddCarSecondLayout.createSequentialGroup()
+                            .addComponent(lblCarTransmissionAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(cbxTransmissionAdd, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(pnlAddCarSecondLayout.createSequentialGroup()
+                            .addGroup(pnlAddCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(lblCarFuelCarAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lblCarFuelTypeAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(18, 18, 18)
+                            .addGroup(pnlAddCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(cbxFuelTypeAdd, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(tbxCarFuelCapAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(pnlAddCarSecondLayout.createSequentialGroup()
+                        .addGroup(pnlAddCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(lblCarGalNameAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblCarTrunkVolAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblCarSmall_imageAdd, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(pnlAddCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(tbxCarTrunkVolAdd)
+                            .addComponent(cbxGalleryNameAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblCarLarge_imageAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addGap(20, 20, 20))
+        );
+        pnlAddCarSecondLayout.setVerticalGroup(
+            pnlAddCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlAddCarSecondLayout.createSequentialGroup()
+                .addGroup(pnlAddCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblCarFuelTypeAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cbxFuelTypeAdd, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlAddCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblCarFuelCarAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tbxCarFuelCapAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlAddCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblCarTransmissionAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cbxTransmissionAdd, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlAddCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblCarTrunkVolAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tbxCarTrunkVolAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlAddCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblCarGalNameAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cbxGalleryNameAdd, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(pnlAddCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblCarSmall_imageAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblCarLarge_imageAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(19, 19, 19)
+                .addGroup(pnlAddCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblPrevSecondPageAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblCarAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+
+        layeredPaneAddCar.add(pnlAddCarSecond, "card3");
 
         javax.swing.GroupLayout pnlAddNewCarLayout = new javax.swing.GroupLayout(pnlAddNewCar);
         pnlAddNewCar.setLayout(pnlAddNewCarLayout);
         pnlAddNewCarLayout.setHorizontalGroup(
             pnlAddNewCarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAddNewCarLayout.createSequentialGroup()
-                .addGap(23, 23, 23)
-                .addGroup(pnlAddNewCarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lblCarModel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblCarModelYear, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
-                    .addComponent(lblCarDailyPrice, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblCarKm, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblCarBrand, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(pnlAddNewCarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(cbxModelYear, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cbxModel, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cbxBrand, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(tbxKm)
-                    .addComponent(tbxPrice, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addGap(30, 30, 30))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAddNewCarLayout.createSequentialGroup()
-                .addContainerGap(142, Short.MAX_VALUE)
-                .addComponent(btnAddCar, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(102, 102, 102))
+            .addGroup(pnlAddNewCarLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(layeredPaneAddCar)
+                .addContainerGap())
         );
         pnlAddNewCarLayout.setVerticalGroup(
             pnlAddNewCarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlAddNewCarLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnlAddNewCarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lblCarBrand, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cbxBrand, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlAddNewCarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblCarModel, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cbxModel, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(11, 11, 11)
-                .addGroup(pnlAddNewCarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lblCarModelYear, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(pnlAddNewCarLayout.createSequentialGroup()
-                        .addComponent(cbxModelYear, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(1, 1, 1)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlAddNewCarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(tbxKm, javax.swing.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE)
-                    .addComponent(lblCarKm, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlAddNewCarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lblCarDailyPrice, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(tbxPrice, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE))
-                .addGap(27, 27, 27)
-                .addComponent(btnAddCar, javax.swing.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE))
+                .addComponent(layeredPaneAddCar))
         );
 
-        tableCar.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        tableCar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         tableCar.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "BRAND", "MODEL", "YEAR", "KILOMETER", "PRICE"
+                "ID", "BRAND", "MODEL", "TYPE", "FUEL TYPE", "FUEL CAP", "TRUNK VOL", "TRANSMISSION", "YEAR", "KILOMETER", "DAILY PRICE", "GAL. NAME"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -542,22 +952,804 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
         tableCar.setSelectionBackground(new java.awt.Color(232, 57, 95));
         tableCar.setSelectionForeground(new java.awt.Color(255, 255, 255));
         tableCar.setShowGrid(false);
-        tableCar.setShowHorizontalLines(true);
         tableCar.getTableHeader().setReorderingAllowed(false);
-        jScrollPane1.setViewportView(tableCar);
+        tableCar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableCarMouseClicked(evt);
+            }
+        });
+        jScrollPaneTable.setViewportView(tableCar);
+        if (tableCar.getColumnModel().getColumnCount() > 0) {
+            tableCar.getColumnModel().getColumn(0).setResizable(false);
+            tableCar.getColumnModel().getColumn(0).setPreferredWidth(20);
+            tableCar.getColumnModel().getColumn(1).setResizable(false);
+            tableCar.getColumnModel().getColumn(1).setPreferredWidth(60);
+            tableCar.getColumnModel().getColumn(2).setResizable(false);
+            tableCar.getColumnModel().getColumn(2).setPreferredWidth(60);
+            tableCar.getColumnModel().getColumn(3).setResizable(false);
+            tableCar.getColumnModel().getColumn(4).setResizable(false);
+            tableCar.getColumnModel().getColumn(4).setPreferredWidth(45);
+            tableCar.getColumnModel().getColumn(5).setResizable(false);
+            tableCar.getColumnModel().getColumn(5).setPreferredWidth(45);
+            tableCar.getColumnModel().getColumn(6).setResizable(false);
+            tableCar.getColumnModel().getColumn(6).setPreferredWidth(50);
+            tableCar.getColumnModel().getColumn(7).setResizable(false);
+            tableCar.getColumnModel().getColumn(8).setResizable(false);
+            tableCar.getColumnModel().getColumn(8).setPreferredWidth(30);
+            tableCar.getColumnModel().getColumn(9).setResizable(false);
+            tableCar.getColumnModel().getColumn(9).setPreferredWidth(50);
+            tableCar.getColumnModel().getColumn(10).setResizable(false);
+            tableCar.getColumnModel().getColumn(10).setPreferredWidth(50);
+            tableCar.getColumnModel().getColumn(11).setMinWidth(90);
+            tableCar.getColumnModel().getColumn(11).setPreferredWidth(90);
+        }
 
-        pnlAddNewGallery.setBackground(new java.awt.Color(51, 51, 51));
-        pnlAddNewGallery.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Add New Gallery", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Segoe UI", 1, 15), new java.awt.Color(122, 72, 255))); // NOI18N
+        pnlGalleryProccess.setBackground(new java.awt.Color(51, 51, 51));
+        pnlGalleryProccess.setBorder(javax.swing.BorderFactory.createTitledBorder(null, " Gallery Proccess ", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Segoe UI", 1, 15), new java.awt.Color(122, 72, 255))); // NOI18N
+        pnlGalleryProccess.setOpaque(false);
 
-        javax.swing.GroupLayout pnlAddNewGalleryLayout = new javax.swing.GroupLayout(pnlAddNewGallery);
-        pnlAddNewGallery.setLayout(pnlAddNewGalleryLayout);
-        pnlAddNewGalleryLayout.setHorizontalGroup(
-            pnlAddNewGalleryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+        radBtnAdd.setBackground(new java.awt.Color(51, 51, 51));
+        galleryBtnGrp.add(radBtnAdd);
+        radBtnAdd.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        radBtnAdd.setForeground(new java.awt.Color(204, 204, 204));
+        radBtnAdd.setSelected(true);
+        radBtnAdd.setText("Add");
+        radBtnAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radBtnAddActionPerformed(evt);
+            }
+        });
+
+        radBtnUpdate.setBackground(new java.awt.Color(51, 51, 51));
+        galleryBtnGrp.add(radBtnUpdate);
+        radBtnUpdate.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        radBtnUpdate.setForeground(new java.awt.Color(204, 204, 204));
+        radBtnUpdate.setText("Update");
+        radBtnUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radBtnUpdateActionPerformed(evt);
+            }
+        });
+
+        radBtnDelete.setBackground(new java.awt.Color(51, 51, 51));
+        galleryBtnGrp.add(radBtnDelete);
+        radBtnDelete.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        radBtnDelete.setForeground(new java.awt.Color(204, 204, 204));
+        radBtnDelete.setText("Delete");
+        radBtnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radBtnDeleteActionPerformed(evt);
+            }
+        });
+
+        layeredPaneGallery.setPreferredSize(new java.awt.Dimension(283, 120));
+        layeredPaneGallery.setLayout(new java.awt.CardLayout());
+
+        pnlAddGallery.setBackground(new java.awt.Color(51, 51, 51));
+
+        lblNewGalleryName.setBackground(new java.awt.Color(242, 243, 244));
+        lblNewGalleryName.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblNewGalleryName.setForeground(new java.awt.Color(204, 204, 204));
+        lblNewGalleryName.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblNewGalleryName.setText("New Gallery Name");
+
+        tbxNewGalleryName.setBackground(new java.awt.Color(51, 51, 51));
+        tbxNewGalleryName.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        tbxNewGalleryName.setForeground(new java.awt.Color(204, 204, 204));
+        tbxNewGalleryName.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxNewGalleryName.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+
+        lblGalleryAdd.setBackground(new java.awt.Color(51, 51, 51));
+        lblGalleryAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblGalleryAdd.setForeground(new java.awt.Color(204, 204, 204));
+        lblGalleryAdd.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblGalleryAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/add32.png"))); // NOI18N
+        lblGalleryAdd.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblGalleryAdd.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        lblGalleryAdd.setOpaque(true);
+        lblGalleryAdd.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblGalleryAddMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlAddGalleryLayout = new javax.swing.GroupLayout(pnlAddGallery);
+        pnlAddGallery.setLayout(pnlAddGalleryLayout);
+        pnlAddGalleryLayout.setHorizontalGroup(
+            pnlAddGalleryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlAddGalleryLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlAddGalleryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblNewGalleryName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(tbxNewGalleryName))
+                .addContainerGap())
+            .addGroup(pnlAddGalleryLayout.createSequentialGroup()
+                .addGap(41, 41, 41)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(27, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAddGalleryLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblGalleryAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(99, 99, 99))
         );
-        pnlAddNewGalleryLayout.setVerticalGroup(
-            pnlAddNewGalleryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+        pnlAddGalleryLayout.setVerticalGroup(
+            pnlAddGalleryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlAddGalleryLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblNewGalleryName)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tbxNewGalleryName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblGalleryAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        layeredPaneGallery.add(pnlAddGallery, "card2");
+
+        pnlUpdateGallery.setBackground(new java.awt.Color(51, 51, 51));
+        pnlUpdateGallery.setPreferredSize(new java.awt.Dimension(283, 120));
+
+        lblOldGalleryName.setBackground(new java.awt.Color(242, 243, 244));
+        lblOldGalleryName.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblOldGalleryName.setForeground(new java.awt.Color(204, 204, 204));
+        lblOldGalleryName.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblOldGalleryName.setText("Old Gallery Name:");
+
+        lblUpdateNewGalleryName.setBackground(new java.awt.Color(242, 243, 244));
+        lblUpdateNewGalleryName.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblUpdateNewGalleryName.setForeground(new java.awt.Color(204, 204, 204));
+        lblUpdateNewGalleryName.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblUpdateNewGalleryName.setText("New Gallery Name:");
+
+        tbxOldGalleryName.setBackground(new java.awt.Color(51, 51, 51));
+        tbxOldGalleryName.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        tbxOldGalleryName.setForeground(new java.awt.Color(204, 204, 204));
+        tbxOldGalleryName.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxOldGalleryName.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true), javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1)));
+
+        tbxUpdateNewGalleryName.setBackground(new java.awt.Color(51, 51, 51));
+        tbxUpdateNewGalleryName.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        tbxUpdateNewGalleryName.setForeground(new java.awt.Color(204, 204, 204));
+        tbxUpdateNewGalleryName.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxUpdateNewGalleryName.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true), javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1)));
+
+        lblUpdateGallery.setBackground(new java.awt.Color(51, 51, 51));
+        lblUpdateGallery.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblUpdateGallery.setForeground(new java.awt.Color(204, 204, 204));
+        lblUpdateGallery.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblUpdateGallery.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/update32.png"))); // NOI18N
+        lblUpdateGallery.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblUpdateGallery.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        lblUpdateGallery.setOpaque(true);
+        lblUpdateGallery.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblUpdateGalleryMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlUpdateGalleryLayout = new javax.swing.GroupLayout(pnlUpdateGallery);
+        pnlUpdateGallery.setLayout(pnlUpdateGalleryLayout);
+        pnlUpdateGalleryLayout.setHorizontalGroup(
+            pnlUpdateGalleryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlUpdateGalleryLayout.createSequentialGroup()
+                .addGap(104, 104, 104)
+                .addComponent(lblUpdateGallery, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(pnlUpdateGalleryLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlUpdateGalleryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlUpdateGalleryLayout.createSequentialGroup()
+                        .addComponent(lblUpdateNewGalleryName, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tbxUpdateNewGalleryName, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
+                    .addGroup(pnlUpdateGalleryLayout.createSequentialGroup()
+                        .addComponent(lblOldGalleryName, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tbxOldGalleryName)))
+                .addContainerGap())
+        );
+        pnlUpdateGalleryLayout.setVerticalGroup(
+            pnlUpdateGalleryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlUpdateGalleryLayout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addGroup(pnlUpdateGalleryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblOldGalleryName, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tbxOldGalleryName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlUpdateGalleryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblUpdateNewGalleryName, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tbxUpdateNewGalleryName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblUpdateGallery, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        layeredPaneGallery.add(pnlUpdateGallery, "card3");
+
+        pnlDeleteGallery.setBackground(new java.awt.Color(51, 51, 51));
+
+        lblGalleryName.setBackground(new java.awt.Color(242, 243, 244));
+        lblGalleryName.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblGalleryName.setForeground(new java.awt.Color(204, 204, 204));
+        lblGalleryName.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblGalleryName.setText("Gallery Name");
+
+        tbxDeleteGalleryName.setBackground(new java.awt.Color(51, 51, 51));
+        tbxDeleteGalleryName.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        tbxDeleteGalleryName.setForeground(new java.awt.Color(204, 204, 204));
+        tbxDeleteGalleryName.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxDeleteGalleryName.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+
+        lblGalleryDelete.setBackground(new java.awt.Color(51, 51, 51));
+        lblGalleryDelete.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblGalleryDelete.setForeground(new java.awt.Color(204, 204, 204));
+        lblGalleryDelete.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblGalleryDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/delete32.png"))); // NOI18N
+        lblGalleryDelete.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblGalleryDelete.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        lblGalleryDelete.setOpaque(true);
+        lblGalleryDelete.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblGalleryDeleteMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlDeleteGalleryLayout = new javax.swing.GroupLayout(pnlDeleteGallery);
+        pnlDeleteGallery.setLayout(pnlDeleteGalleryLayout);
+        pnlDeleteGalleryLayout.setHorizontalGroup(
+            pnlDeleteGalleryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlDeleteGalleryLayout.createSequentialGroup()
+                .addContainerGap(41, Short.MAX_VALUE)
+                .addGroup(pnlDeleteGalleryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlDeleteGalleryLayout.createSequentialGroup()
+                        .addComponent(lblGalleryDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(99, 99, 99))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlDeleteGalleryLayout.createSequentialGroup()
+                        .addGroup(pnlDeleteGalleryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(lblGalleryName, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
+                            .addComponent(tbxDeleteGalleryName, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE))
+                        .addGap(27, 27, 27))))
+        );
+        pnlDeleteGalleryLayout.setVerticalGroup(
+            pnlDeleteGalleryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlDeleteGalleryLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblGalleryName)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tbxDeleteGalleryName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblGalleryDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        layeredPaneGallery.add(pnlDeleteGallery, "card4");
+
+        javax.swing.GroupLayout pnlGalleryProccessLayout = new javax.swing.GroupLayout(pnlGalleryProccess);
+        pnlGalleryProccess.setLayout(pnlGalleryProccessLayout);
+        pnlGalleryProccessLayout.setHorizontalGroup(
+            pnlGalleryProccessLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlGalleryProccessLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(layeredPaneGallery, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlGalleryProccessLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(radBtnAdd)
+                .addGap(18, 18, 18)
+                .addComponent(radBtnUpdate)
+                .addGap(18, 18, 18)
+                .addComponent(radBtnDelete)
+                .addGap(43, 43, 43))
+        );
+        pnlGalleryProccessLayout.setVerticalGroup(
+            pnlGalleryProccessLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlGalleryProccessLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlGalleryProccessLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(radBtnAdd)
+                    .addComponent(radBtnUpdate)
+                    .addComponent(radBtnDelete))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(layeredPaneGallery, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        pnlUpdateTheCar.setBackground(new java.awt.Color(51, 51, 51));
+        pnlUpdateTheCar.setBorder(javax.swing.BorderFactory.createTitledBorder(null, " Update The Car ", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Segoe UI", 1, 15), new java.awt.Color(122, 72, 255))); // NOI18N
+
+        layeredPaneUpdateCar.setLayout(new java.awt.CardLayout());
+
+        pnlUpdateCarFirst.setBackground(new java.awt.Color(51, 51, 51));
+
+        lblCarID_Update.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarID_Update.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarID_Update.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarID_Update.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCarID_Update.setText("Enter Car ID");
+
+        tbxCarID_Update.setBackground(new java.awt.Color(51, 51, 51));
+        tbxCarID_Update.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        tbxCarID_Update.setForeground(new java.awt.Color(204, 204, 204));
+        tbxCarID_Update.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxCarID_Update.setText("0");
+        tbxCarID_Update.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        tbxCarID_Update.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                tbxCarID_UpdateKeyTyped(evt);
+            }
+        });
+
+        lblCarConfirmUpdate.setBackground(new java.awt.Color(51, 51, 51));
+        lblCarConfirmUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarConfirmUpdate.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarConfirmUpdate.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCarConfirmUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/confirm32.png"))); // NOI18N
+        lblCarConfirmUpdate.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblCarConfirmUpdate.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        lblCarConfirmUpdate.setOpaque(true);
+        lblCarConfirmUpdate.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblCarConfirmUpdateMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlUpdateCarFirstLayout = new javax.swing.GroupLayout(pnlUpdateCarFirst);
+        pnlUpdateCarFirst.setLayout(pnlUpdateCarFirstLayout);
+        pnlUpdateCarFirstLayout.setHorizontalGroup(
+            pnlUpdateCarFirstLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlUpdateCarFirstLayout.createSequentialGroup()
+                .addGap(43, 43, 43)
+                .addGroup(pnlUpdateCarFirstLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(lblCarID_Update, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(tbxCarID_Update, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(50, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlUpdateCarFirstLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblCarConfirmUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(125, 125, 125))
+        );
+        pnlUpdateCarFirstLayout.setVerticalGroup(
+            pnlUpdateCarFirstLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlUpdateCarFirstLayout.createSequentialGroup()
+                .addGap(80, 80, 80)
+                .addComponent(lblCarID_Update)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tbxCarID_Update, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(lblCarConfirmUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(100, Short.MAX_VALUE))
+        );
+
+        layeredPaneUpdateCar.add(pnlUpdateCarFirst, "card2");
+
+        pnlUpdateCarSecond.setBackground(new java.awt.Color(51, 51, 51));
+
+        lblCarBrandUpdate.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarBrandUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarBrandUpdate.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarBrandUpdate.setText("Brand:");
+
+        lblCarModelUpdate.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarModelUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarModelUpdate.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarModelUpdate.setText("Model:");
+
+        lblCarModelYearUpdate.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarModelYearUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarModelYearUpdate.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarModelYearUpdate.setText("Model Year:");
+
+        lblCarKmUpdate.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarKmUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarKmUpdate.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarKmUpdate.setText("Total Km");
+
+        lblCarDailyPriceUpdate.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarDailyPriceUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarDailyPriceUpdate.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarDailyPriceUpdate.setText("Daily Price:");
+
+        lblCarTypeUpdate.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarTypeUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarTypeUpdate.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarTypeUpdate.setText("Type:");
+
+        cbxBrandUpdate.setBackground(new java.awt.Color(0, 0, 0));
+        cbxBrandUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        cbxBrandUpdate.setForeground(new java.awt.Color(204, 204, 204));
+        cbxBrandUpdate.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "MERCEDES", "JEEP", "BMW", "VOLKSWAGEN", "NISSAN", "FIAT", "PORCHE", "FERRARI", "PEUGEOUT", "VOLVO", "AUDI", "CITROEN", "DACIA", "FORD", "HONDA", "HYUNDAI", "MASERATI", "TOYOTA", "LANDROVER", "SKODA" }));
+
+        tbxCarModelUpdate.setBackground(new java.awt.Color(51, 51, 51));
+        tbxCarModelUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        tbxCarModelUpdate.setForeground(new java.awt.Color(204, 204, 204));
+        tbxCarModelUpdate.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxCarModelUpdate.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true), javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1)));
+
+        cbxTypeUpdate.setBackground(new java.awt.Color(0, 0, 0));
+        cbxTypeUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        cbxTypeUpdate.setForeground(new java.awt.Color(204, 204, 204));
+        cbxTypeUpdate.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sedan", "Coupe", "Hatchback", "SUV" }));
+        cbxTypeUpdate.setSelectedIndex(-1);
+
+        cbxModelYearUpdate.setBackground(new java.awt.Color(0, 0, 0));
+        cbxModelYearUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        cbxModelYearUpdate.setForeground(new java.awt.Color(204, 204, 204));
+        cbxModelYearUpdate.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021" }));
+        cbxModelYearUpdate.setSelectedIndex(-1);
+
+        tbxCarKmUpdate.setBackground(new java.awt.Color(51, 51, 51));
+        tbxCarKmUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        tbxCarKmUpdate.setForeground(new java.awt.Color(204, 204, 204));
+        tbxCarKmUpdate.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxCarKmUpdate.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true), javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1)));
+
+        tbxCarDailyPriceUpdate.setBackground(new java.awt.Color(51, 51, 51));
+        tbxCarDailyPriceUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        tbxCarDailyPriceUpdate.setForeground(new java.awt.Color(204, 204, 204));
+        tbxCarDailyPriceUpdate.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxCarDailyPriceUpdate.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true), javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1)));
+
+        lblPrevSecondPage.setBackground(new java.awt.Color(51, 51, 51));
+        lblPrevSecondPage.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblPrevSecondPage.setForeground(new java.awt.Color(204, 204, 204));
+        lblPrevSecondPage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblPrevSecondPage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/previous32.png"))); // NOI18N
+        lblPrevSecondPage.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblPrevSecondPage.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        lblPrevSecondPage.setOpaque(true);
+        lblPrevSecondPage.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblPrevSecondPageMouseClicked(evt);
+            }
+        });
+
+        lblNextSecondPage.setBackground(new java.awt.Color(51, 51, 51));
+        lblNextSecondPage.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblNextSecondPage.setForeground(new java.awt.Color(204, 204, 204));
+        lblNextSecondPage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblNextSecondPage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/next32.png"))); // NOI18N
+        lblNextSecondPage.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblNextSecondPage.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        lblNextSecondPage.setOpaque(true);
+        lblNextSecondPage.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblNextSecondPageMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlUpdateCarSecondLayout = new javax.swing.GroupLayout(pnlUpdateCarSecond);
+        pnlUpdateCarSecond.setLayout(pnlUpdateCarSecondLayout);
+        pnlUpdateCarSecondLayout.setHorizontalGroup(
+            pnlUpdateCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlUpdateCarSecondLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlUpdateCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlUpdateCarSecondLayout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addGroup(pnlUpdateCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lblCarModelUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblCarModelYearUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblCarBrandUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblCarTypeUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(pnlUpdateCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(cbxBrandUpdate, 0, 125, Short.MAX_VALUE)
+                            .addComponent(tbxCarModelUpdate)
+                            .addComponent(cbxTypeUpdate, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cbxModelYearUpdate, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(pnlUpdateCarSecondLayout.createSequentialGroup()
+                        .addComponent(lblCarKmUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(tbxCarKmUpdate))
+                    .addGroup(pnlUpdateCarSecondLayout.createSequentialGroup()
+                        .addComponent(lblCarDailyPriceUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(tbxCarDailyPriceUpdate)))
+                .addContainerGap(33, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlUpdateCarSecondLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblPrevSecondPage, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(lblNextSecondPage, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(68, 68, 68))
+        );
+        pnlUpdateCarSecondLayout.setVerticalGroup(
+            pnlUpdateCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlUpdateCarSecondLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlUpdateCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblCarBrandUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cbxBrandUpdate))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlUpdateCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblCarModelUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tbxCarModelUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlUpdateCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblCarTypeUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbxTypeUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlUpdateCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblCarModelYearUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbxModelYearUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlUpdateCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(tbxCarKmUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
+                    .addComponent(lblCarKmUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlUpdateCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblCarDailyPriceUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+                    .addComponent(tbxCarDailyPriceUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(pnlUpdateCarSecondLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lblPrevSecondPage, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblNextSecondPage, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(4, 4, 4))
+        );
+
+        layeredPaneUpdateCar.add(pnlUpdateCarSecond, "card3");
+
+        pnlUpdateCarThirdPage.setBackground(new java.awt.Color(51, 51, 51));
+
+        lblCarFuelTypeUpdate.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarFuelTypeUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarFuelTypeUpdate.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarFuelTypeUpdate.setText("Fuel Type:");
+
+        lblCarFuelCapUpdate.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarFuelCapUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarFuelCapUpdate.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarFuelCapUpdate.setText("Fuel Capapcity:");
+
+        tbxCarFuelCapUpdate.setBackground(new java.awt.Color(51, 51, 51));
+        tbxCarFuelCapUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        tbxCarFuelCapUpdate.setForeground(new java.awt.Color(204, 204, 204));
+        tbxCarFuelCapUpdate.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxCarFuelCapUpdate.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true), javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1)));
+
+        cbxFuelTypeUpdate.setBackground(new java.awt.Color(0, 0, 0));
+        cbxFuelTypeUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        cbxFuelTypeUpdate.setForeground(new java.awt.Color(204, 204, 204));
+        cbxFuelTypeUpdate.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Diesel", "Hybrid", "Benzine" }));
+
+        lblCarTransmissionUpdate.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarTransmissionUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarTransmissionUpdate.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarTransmissionUpdate.setText("Transmission:");
+
+        cbxTransmissionUpdate.setBackground(new java.awt.Color(0, 0, 0));
+        cbxTransmissionUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        cbxTransmissionUpdate.setForeground(new java.awt.Color(204, 204, 204));
+        cbxTransmissionUpdate.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Automatic", "Manual" }));
+        cbxTransmissionUpdate.setSelectedIndex(-1);
+
+        lblCarTrunkVolUpdate.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarTrunkVolUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarTrunkVolUpdate.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarTrunkVolUpdate.setText("Trunk Volume:");
+
+        tbxCarTrunkVolUpdate.setBackground(new java.awt.Color(51, 51, 51));
+        tbxCarTrunkVolUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        tbxCarTrunkVolUpdate.setForeground(new java.awt.Color(204, 204, 204));
+        tbxCarTrunkVolUpdate.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxCarTrunkVolUpdate.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true), javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1)));
+
+        lblCarGalNameUpdate.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarGalNameUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarGalNameUpdate.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarGalNameUpdate.setText("Gallery Name:");
+
+        cbxGalleryNameUpdate.setBackground(new java.awt.Color(0, 0, 0));
+        cbxGalleryNameUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        cbxGalleryNameUpdate.setForeground(new java.awt.Color(204, 204, 204));
+
+        lblCarUpdate.setBackground(new java.awt.Color(51, 51, 51));
+        lblCarUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarUpdate.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarUpdate.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCarUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/update32.png"))); // NOI18N
+        lblCarUpdate.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblCarUpdate.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        lblCarUpdate.setOpaque(true);
+        lblCarUpdate.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblCarUpdateMouseClicked(evt);
+            }
+        });
+
+        lblPrevThirdPage.setBackground(new java.awt.Color(51, 51, 51));
+        lblPrevThirdPage.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblPrevThirdPage.setForeground(new java.awt.Color(204, 204, 204));
+        lblPrevThirdPage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblPrevThirdPage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/previous32.png"))); // NOI18N
+        lblPrevThirdPage.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblPrevThirdPage.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        lblPrevThirdPage.setOpaque(true);
+        lblPrevThirdPage.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblPrevThirdPageMouseClicked(evt);
+            }
+        });
+
+        lblCarSmall_image.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarSmall_image.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarSmall_image.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarSmall_image.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCarSmall_image.setText("Small Image");
+        lblCarSmall_image.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true));
+        lblCarSmall_image.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblCarSmall_image.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblCarSmall_imageMouseClicked(evt);
+            }
+        });
+
+        lblCarLarge_image.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarLarge_image.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarLarge_image.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarLarge_image.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCarLarge_image.setText("Large Image");
+        lblCarLarge_image.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true));
+        lblCarLarge_image.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblCarLarge_image.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblCarLarge_imageMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlUpdateCarThirdPageLayout = new javax.swing.GroupLayout(pnlUpdateCarThirdPage);
+        pnlUpdateCarThirdPage.setLayout(pnlUpdateCarThirdPageLayout);
+        pnlUpdateCarThirdPageLayout.setHorizontalGroup(
+            pnlUpdateCarThirdPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlUpdateCarThirdPageLayout.createSequentialGroup()
+                .addGap(77, 77, 77)
+                .addComponent(lblPrevThirdPage, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lblCarUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlUpdateCarThirdPageLayout.createSequentialGroup()
+                .addContainerGap(22, Short.MAX_VALUE)
+                .addGroup(pnlUpdateCarThirdPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlUpdateCarThirdPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(pnlUpdateCarThirdPageLayout.createSequentialGroup()
+                            .addComponent(lblCarTransmissionUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(cbxTransmissionUpdate, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(pnlUpdateCarThirdPageLayout.createSequentialGroup()
+                            .addGroup(pnlUpdateCarThirdPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(lblCarFuelCapUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lblCarFuelTypeUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(18, 18, 18)
+                            .addGroup(pnlUpdateCarThirdPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(cbxFuelTypeUpdate, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(tbxCarFuelCapUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(pnlUpdateCarThirdPageLayout.createSequentialGroup()
+                        .addGroup(pnlUpdateCarThirdPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(lblCarGalNameUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblCarTrunkVolUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblCarSmall_image, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(pnlUpdateCarThirdPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(tbxCarTrunkVolUpdate)
+                            .addComponent(cbxGalleryNameUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblCarLarge_image, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addGap(20, 20, 20))
+        );
+        pnlUpdateCarThirdPageLayout.setVerticalGroup(
+            pnlUpdateCarThirdPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlUpdateCarThirdPageLayout.createSequentialGroup()
+                .addGroup(pnlUpdateCarThirdPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblCarFuelTypeUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cbxFuelTypeUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlUpdateCarThirdPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblCarFuelCapUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tbxCarFuelCapUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlUpdateCarThirdPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblCarTransmissionUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cbxTransmissionUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlUpdateCarThirdPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblCarTrunkVolUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tbxCarTrunkVolUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlUpdateCarThirdPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblCarGalNameUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cbxGalleryNameUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(pnlUpdateCarThirdPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblCarSmall_image, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblCarLarge_image, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(19, 19, 19)
+                .addGroup(pnlUpdateCarThirdPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblPrevThirdPage, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblCarUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+
+        layeredPaneUpdateCar.add(pnlUpdateCarThirdPage, "card4");
+
+        javax.swing.GroupLayout pnlUpdateTheCarLayout = new javax.swing.GroupLayout(pnlUpdateTheCar);
+        pnlUpdateTheCar.setLayout(pnlUpdateTheCarLayout);
+        pnlUpdateTheCarLayout.setHorizontalGroup(
+            pnlUpdateTheCarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlUpdateTheCarLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(layeredPaneUpdateCar)
+                .addContainerGap())
+        );
+        pnlUpdateTheCarLayout.setVerticalGroup(
+            pnlUpdateTheCarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlUpdateTheCarLayout.createSequentialGroup()
+                .addComponent(layeredPaneUpdateCar)
+                .addContainerGap())
+        );
+
+        pnlDeleteCar.setBackground(new java.awt.Color(51, 51, 51));
+        pnlDeleteCar.setBorder(javax.swing.BorderFactory.createTitledBorder(null, " Delete Car ", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Segoe UI", 1, 15), new java.awt.Color(122, 72, 255))); // NOI18N
+
+        lblCarID_Delete.setBackground(new java.awt.Color(242, 243, 244));
+        lblCarID_Delete.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarID_Delete.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarID_Delete.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCarID_Delete.setText("Enter Car ID");
+
+        tbxCarID_Delete.setBackground(new java.awt.Color(51, 51, 51));
+        tbxCarID_Delete.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        tbxCarID_Delete.setForeground(new java.awt.Color(204, 204, 204));
+        tbxCarID_Delete.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxCarID_Delete.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+
+        lblCarDelete.setBackground(new java.awt.Color(51, 51, 51));
+        lblCarDelete.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCarDelete.setForeground(new java.awt.Color(204, 204, 204));
+        lblCarDelete.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCarDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/delete32.png"))); // NOI18N
+        lblCarDelete.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblCarDelete.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        lblCarDelete.setOpaque(true);
+        lblCarDelete.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblCarDeleteMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlDeleteCarLayout = new javax.swing.GroupLayout(pnlDeleteCar);
+        pnlDeleteCar.setLayout(pnlDeleteCarLayout);
+        pnlDeleteCarLayout.setHorizontalGroup(
+            pnlDeleteCarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlDeleteCarLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(pnlDeleteCarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlDeleteCarLayout.createSequentialGroup()
+                        .addComponent(lblCarDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(99, 99, 99))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlDeleteCarLayout.createSequentialGroup()
+                        .addGroup(pnlDeleteCarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(lblCarID_Delete, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
+                            .addComponent(tbxCarID_Delete, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
+                            .addComponent(jSeparator3, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addGap(27, 27, 27))))
+        );
+        pnlDeleteCarLayout.setVerticalGroup(
+            pnlDeleteCarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlDeleteCarLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblCarID_Delete)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tbxCarID_Delete, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblCarDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout pnlLayeredHomePageLayout = new javax.swing.GroupLayout(pnlLayeredHomePage);
@@ -565,19 +1757,19 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
         pnlLayeredHomePageLayout.setHorizontalGroup(
             pnlLayeredHomePageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlLayeredHomePageLayout.createSequentialGroup()
-                .addComponent(pnlInPnlLayerdHomePagefilter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(pnlLayeredHomePageLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlLayeredHomePageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(pnlInPnlLayerdHomePagefilter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPaneTable)
                     .addGroup(pnlLayeredHomePageLayout.createSequentialGroup()
-                        .addComponent(pnlAddNewGallery, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(pnlLayeredHomePageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(pnlGalleryProccess, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(pnlDeleteCar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pnlAddNewCar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(6, 6, 6))
-                    .addGroup(pnlLayeredHomePageLayout.createSequentialGroup()
-                        .addComponent(jScrollPane1)
-                        .addContainerGap())))
+                        .addComponent(pnlUpdateTheCar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(pnlAddNewCar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         pnlLayeredHomePageLayout.setVerticalGroup(
             pnlLayeredHomePageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -585,13 +1777,16 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
                 .addGap(7, 7, 7)
                 .addComponent(pnlInPnlLayerdHomePagefilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPaneTable, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlLayeredHomePageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlLayeredHomePageLayout.createSequentialGroup()
-                        .addComponent(pnlAddNewGallery, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addComponent(pnlAddNewCar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(pnlLayeredHomePageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(pnlUpdateTheCar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlLayeredHomePageLayout.createSequentialGroup()
+                        .addComponent(pnlGalleryProccess, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(pnlDeleteCar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(pnlAddNewCar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pnlLayered.add(pnlLayeredHomePage, "card3");
@@ -599,222 +1794,255 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
         pnlLayeredProfile.setBackground(new java.awt.Color(51, 51, 51));
 
         pnlInPnlLayerdProfileFilter.setBackground(new java.awt.Color(51, 51, 51));
-        pnlInPnlLayerdProfileFilter.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Filter", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 15), new java.awt.Color(122, 72, 255))); // NOI18N
+        pnlInPnlLayerdProfileFilter.setBorder(javax.swing.BorderFactory.createTitledBorder(null, " Filter ", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Segoe UI", 1, 15), new java.awt.Color(122, 72, 255))); // NOI18N
 
+        lblOrderPrice.setBackground(new java.awt.Color(51, 51, 51));
         lblOrderPrice.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblOrderPrice.setText("    Price:");
+        lblOrderPrice.setForeground(new java.awt.Color(204, 204, 204));
+        lblOrderPrice.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblOrderPrice.setText("Price:");
 
-        cbxOrderPrice.setBackground(new java.awt.Color(242, 243, 244));
+        cbxOrderPrice.setBackground(new java.awt.Color(51, 51, 51));
         cbxOrderPrice.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        cbxOrderPrice.setForeground(new java.awt.Color(204, 204, 204));
         cbxOrderPrice.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ascending", "Descending" }));
 
+        lblOrderPerson.setBackground(new java.awt.Color(51, 51, 51));
         lblOrderPerson.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblOrderPerson.setForeground(new java.awt.Color(204, 204, 204));
         lblOrderPerson.setText("  Gallery:");
 
-        cbxOrderGalery.setBackground(new java.awt.Color(242, 243, 244));
+        cbxOrderGalery.setBackground(new java.awt.Color(51, 51, 51));
         cbxOrderGalery.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        cbxOrderGalery.setForeground(new java.awt.Color(204, 204, 204));
         cbxOrderGalery.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All" }));
 
+        lblRange1.setBackground(new java.awt.Color(51, 51, 51));
         lblRange1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblRange1.setText("  Range:");
+        lblRange1.setForeground(new java.awt.Color(204, 204, 204));
+        lblRange1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblRange1.setText("Range:");
 
-        tbxMin1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        tbxMin1.setText("      Min");
+        tbxOrderMin.setBackground(new java.awt.Color(51, 51, 51));
+        tbxOrderMin.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        tbxOrderMin.setForeground(new java.awt.Color(204, 204, 204));
+        tbxOrderMin.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxOrderMin.setText("0");
+        tbxOrderMin.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                tbxOrderMinKeyTyped(evt);
+            }
+        });
 
-        tbxMax1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        tbxMax1.setText("     Max");
+        tbxOrderMax.setBackground(new java.awt.Color(51, 51, 51));
+        tbxOrderMax.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        tbxOrderMax.setForeground(new java.awt.Color(204, 204, 204));
+        tbxOrderMax.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxOrderMax.setText("10000");
+        tbxOrderMax.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                tbxOrderMaxKeyTyped(evt);
+            }
+        });
 
-        btnFilterOrders.setBackground(new java.awt.Color(211, 84, 0));
+        btnFilterOrders.setBackground(new java.awt.Color(0, 0, 0));
         btnFilterOrders.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnFilterOrders.setForeground(new java.awt.Color(122, 72, 255));
         btnFilterOrders.setText("Filter");
+        btnFilterOrders.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFilterOrdersActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnlInPnlLayerdProfileFilterLayout = new javax.swing.GroupLayout(pnlInPnlLayerdProfileFilter);
         pnlInPnlLayerdProfileFilter.setLayout(pnlInPnlLayerdProfileFilterLayout);
         pnlInPnlLayerdProfileFilterLayout.setHorizontalGroup(
             pnlInPnlLayerdProfileFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlInPnlLayerdProfileFilterLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(38, 38, 38)
                 .addComponent(lblOrderPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbxOrderPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(38, 38, 38)
+                .addComponent(cbxOrderPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lblRange1, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tbxMin1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tbxOrderMin, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tbxMax1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28)
+                .addComponent(tbxOrderMax, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(47, 47, 47)
                 .addComponent(lblOrderPerson, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbxOrderGalery, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(cbxOrderGalery, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(62, 62, 62)
                 .addComponent(btnFilterOrders, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(21, 21, 21))
+                .addGap(27, 27, 27))
         );
         pnlInPnlLayerdProfileFilterLayout.setVerticalGroup(
             pnlInPnlLayerdProfileFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlInPnlLayerdProfileFilterLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlInPnlLayerdProfileFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblOrderPerson, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(cbxOrderPrice)
+                    .addComponent(tbxOrderMin)
+                    .addComponent(tbxOrderMax, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lblOrderPerson, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlInPnlLayerdProfileFilterLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnFilterOrders, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(tbxMin1)
-                    .addComponent(tbxMax1, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(cbxOrderGalery, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(pnlInPnlLayerdProfileFilterLayout.createSequentialGroup()
                         .addGap(3, 3, 3)
-                        .addGroup(pnlInPnlLayerdProfileFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblOrderPrice, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblRange1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(cbxOrderGalery, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addComponent(lblOrderPrice, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lblRange1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
         listOrders.setBackground(new java.awt.Color(51, 51, 51));
-        listOrders.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Orders", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 15), new java.awt.Color(122, 72, 255))); // NOI18N
-        listOrders.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        listOrders.setBorder(javax.swing.BorderFactory.createTitledBorder(null, " Orders ", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Segoe UI", 1, 15), new java.awt.Color(122, 72, 255))); // NOI18N
+        listOrders.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        listOrders.setForeground(new java.awt.Color(204, 204, 204));
+        listOrders.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        listOrders.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                listOrdersValueChanged(evt);
+            }
+        });
         jScrollPane2.setViewportView(listOrders);
 
-        pnlInLayeredHomePageCarInfo1.setBackground(new java.awt.Color(51, 51, 51));
-        pnlInLayeredHomePageCarInfo1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Order Detail", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 15), new java.awt.Color(255, 102, 0))); // NOI18N
+        pnlInLayeredHomePageOrderInfo.setBackground(new java.awt.Color(51, 51, 51));
+        pnlInLayeredHomePageOrderInfo.setBorder(javax.swing.BorderFactory.createTitledBorder(null, " Order Detail ", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Segoe UI", 1, 15), new java.awt.Color(122, 72, 255))); // NOI18N
+        pnlInLayeredHomePageOrderInfo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblOrderedCarBrand.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lblOrderedCarBrand.setForeground(new java.awt.Color(204, 204, 204));
         lblOrderedCarBrand.setText("Brand:");
         lblOrderedCarBrand.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 0));
+        pnlInLayeredHomePageOrderInfo.add(lblOrderedCarBrand, new org.netbeans.lib.awtextra.AbsoluteConstraints(11, 32, 73, -1));
 
         lblOrderedCarPickUpDate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lblOrderedCarPickUpDate.setForeground(new java.awt.Color(204, 204, 204));
         lblOrderedCarPickUpDate.setText("Pick-up Date:");
         lblOrderedCarPickUpDate.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 0));
+        pnlInLayeredHomePageOrderInfo.add(lblOrderedCarPickUpDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 30, 120, -1));
 
         lblOrderedCarReturnDate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lblOrderedCarReturnDate.setForeground(new java.awt.Color(204, 204, 204));
         lblOrderedCarReturnDate.setText("Return Date:");
         lblOrderedCarReturnDate.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 0));
+        pnlInLayeredHomePageOrderInfo.add(lblOrderedCarReturnDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 60, 120, -1));
 
         lblOrderedCarMoedl.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lblOrderedCarMoedl.setForeground(new java.awt.Color(204, 204, 204));
         lblOrderedCarMoedl.setText("Model:");
         lblOrderedCarMoedl.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 0));
-
-        lblOrderedCarType.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblOrderedCarType.setForeground(new java.awt.Color(204, 204, 204));
-        lblOrderedCarType.setText("Type:");
-        lblOrderedCarType.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 0));
+        pnlInLayeredHomePageOrderInfo.add(lblOrderedCarMoedl, new org.netbeans.lib.awtextra.AbsoluteConstraints(11, 64, 73, -1));
 
         lblOrderedCarUsedPromotionCode.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lblOrderedCarUsedPromotionCode.setForeground(new java.awt.Color(204, 204, 204));
         lblOrderedCarUsedPromotionCode.setText("Promotion Code:");
         lblOrderedCarUsedPromotionCode.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 0));
+        pnlInLayeredHomePageOrderInfo.add(lblOrderedCarUsedPromotionCode, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 90, -1, -1));
 
         lblOrderedCarGallery.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lblOrderedCarGallery.setForeground(new java.awt.Color(204, 204, 204));
         lblOrderedCarGallery.setText("Gallery:");
         lblOrderedCarGallery.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 0));
+        pnlInLayeredHomePageOrderInfo.add(lblOrderedCarGallery, new org.netbeans.lib.awtextra.AbsoluteConstraints(11, 128, 73, -1));
 
         lblOrderedCharge.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lblOrderedCharge.setForeground(new java.awt.Color(204, 204, 204));
         lblOrderedCharge.setText("Charge:");
         lblOrderedCharge.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 0));
+        pnlInLayeredHomePageOrderInfo.add(lblOrderedCharge, new org.netbeans.lib.awtextra.AbsoluteConstraints(11, 160, 73, -1));
+        pnlInLayeredHomePageOrderInfo.add(lblOrderCarImage, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 30, 203, 166));
 
-        btnDeleteOrder.setBackground(new java.awt.Color(0, 0, 0));
-        btnDeleteOrder.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        btnDeleteOrder.setForeground(new java.awt.Color(122, 72, 255));
-        btnDeleteOrder.setText("Delete");
-        btnDeleteOrder.setToolTipText("");
+        lblOrderCarBrandVal.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblOrderCarBrandVal.setForeground(new java.awt.Color(224, 224, 224));
+        lblOrderCarBrandVal.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblOrderCarBrandVal.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 0));
+        pnlInLayeredHomePageOrderInfo.add(lblOrderCarBrandVal, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 32, 140, 20));
 
-        btnDeleteOrder1.setBackground(new java.awt.Color(0, 0, 0));
-        btnDeleteOrder1.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        btnDeleteOrder1.setForeground(new java.awt.Color(122, 72, 255));
-        btnDeleteOrder1.setText("Print");
-        btnDeleteOrder1.setToolTipText("");
+        lblOrderCarModelVal.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblOrderCarModelVal.setForeground(new java.awt.Color(224, 224, 224));
+        lblOrderCarModelVal.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblOrderCarModelVal.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 0));
+        pnlInLayeredHomePageOrderInfo.add(lblOrderCarModelVal, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 64, 140, 20));
 
-        javax.swing.GroupLayout pnlInLayeredHomePageCarInfo1Layout = new javax.swing.GroupLayout(pnlInLayeredHomePageCarInfo1);
-        pnlInLayeredHomePageCarInfo1.setLayout(pnlInLayeredHomePageCarInfo1Layout);
-        pnlInLayeredHomePageCarInfo1Layout.setHorizontalGroup(
-            pnlInLayeredHomePageCarInfo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-            .addGroup(pnlInLayeredHomePageCarInfo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(pnlInLayeredHomePageCarInfo1Layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addGroup(pnlInLayeredHomePageCarInfo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(pnlInLayeredHomePageCarInfo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(lblOrderedCarGallery, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE)
-                            .addComponent(lblOrderedCharge, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblOrderedCarType, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblOrderedCarMoedl, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblOrderedCarBrand, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(pnlInLayeredHomePageCarInfo1Layout.createSequentialGroup()
-                            .addGroup(pnlInLayeredHomePageCarInfo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(pnlInLayeredHomePageCarInfo1Layout.createSequentialGroup()
-                                    .addGap(186, 186, 186)
-                                    .addGroup(pnlInLayeredHomePageCarInfo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(lblOrderedCarUsedPromotionCode, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnlInLayeredHomePageCarInfo1Layout.createSequentialGroup()
-                                            .addGroup(pnlInLayeredHomePageCarInfo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                .addComponent(lblOrderedCarPickUpDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(lblOrderedCarReturnDate, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                            .addGap(25, 25, 25)))
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlInLayeredHomePageCarInfo1Layout.createSequentialGroup()
-                                    .addComponent(btnDeleteOrder1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(38, 38, 38)))
-                            .addComponent(btnDeleteOrder, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap()))
-        );
-        pnlInLayeredHomePageCarInfo1Layout.setVerticalGroup(
-            pnlInLayeredHomePageCarInfo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 231, Short.MAX_VALUE)
-            .addGroup(pnlInLayeredHomePageCarInfo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(pnlInLayeredHomePageCarInfo1Layout.createSequentialGroup()
-                    .addGap(9, 9, 9)
-                    .addGroup(pnlInLayeredHomePageCarInfo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(pnlInLayeredHomePageCarInfo1Layout.createSequentialGroup()
-                            .addGroup(pnlInLayeredHomePageCarInfo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(pnlInLayeredHomePageCarInfo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(pnlInLayeredHomePageCarInfo1Layout.createSequentialGroup()
-                                        .addComponent(lblOrderedCarPickUpDate)
-                                        .addGap(12, 12, 12)
-                                        .addComponent(lblOrderedCarReturnDate)
-                                        .addGap(32, 32, 32))
-                                    .addComponent(lblOrderedCarUsedPromotionCode))
-                                .addGroup(pnlInLayeredHomePageCarInfo1Layout.createSequentialGroup()
-                                    .addComponent(lblOrderedCarBrand)
-                                    .addGap(12, 12, 12)
-                                    .addComponent(lblOrderedCarMoedl)
-                                    .addGap(12, 12, 12)
-                                    .addComponent(lblOrderedCarType)))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(lblOrderedCarGallery)
-                            .addGap(12, 12, 12)
-                            .addComponent(lblOrderedCharge))
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
-                    .addGroup(pnlInLayeredHomePageCarInfo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnDeleteOrder, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnDeleteOrder1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGap(9, 9, 9)))
-        );
+        lblOrderCarGalleryVal.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblOrderCarGalleryVal.setForeground(new java.awt.Color(224, 224, 224));
+        lblOrderCarGalleryVal.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblOrderCarGalleryVal.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 0));
+        pnlInLayeredHomePageOrderInfo.add(lblOrderCarGalleryVal, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 128, 140, 20));
+
+        lblOrderChargeVal.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblOrderChargeVal.setForeground(new java.awt.Color(224, 224, 224));
+        lblOrderChargeVal.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblOrderChargeVal.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 0));
+        pnlInLayeredHomePageOrderInfo.add(lblOrderChargeVal, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 160, 140, 20));
+
+        lblOrderPromotionCode.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblOrderPromotionCode.setForeground(new java.awt.Color(224, 224, 224));
+        lblOrderPromotionCode.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblOrderPromotionCode.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 0));
+        pnlInLayeredHomePageOrderInfo.add(lblOrderPromotionCode, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 90, 140, 20));
+
+        lblOrderReturnVal.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblOrderReturnVal.setForeground(new java.awt.Color(224, 224, 224));
+        lblOrderReturnVal.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblOrderReturnVal.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 0));
+        pnlInLayeredHomePageOrderInfo.add(lblOrderReturnVal, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 60, 140, 20));
+
+        lblOrderPickupDate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblOrderPickupDate.setForeground(new java.awt.Color(224, 224, 224));
+        lblOrderPickupDate.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblOrderPickupDate.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 0));
+        pnlInLayeredHomePageOrderInfo.add(lblOrderPickupDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 30, 140, 20));
+
+        lblOrderPhoneNum.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblOrderPhoneNum.setForeground(new java.awt.Color(204, 204, 204));
+        lblOrderPhoneNum.setText("Phone:");
+        lblOrderPhoneNum.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 0));
+        pnlInLayeredHomePageOrderInfo.add(lblOrderPhoneNum, new org.netbeans.lib.awtextra.AbsoluteConstraints(11, 96, 73, -1));
+
+        lblOrderPhoneNumVal.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblOrderPhoneNumVal.setForeground(new java.awt.Color(224, 224, 224));
+        lblOrderPhoneNumVal.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblOrderPhoneNumVal.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 0));
+        pnlInLayeredHomePageOrderInfo.add(lblOrderPhoneNumVal, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 96, 140, 20));
+
+        lbl_iconPrevGallery1.setBackground(new java.awt.Color(51, 51, 51));
+        lbl_iconPrevGallery1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lbl_iconPrevGallery1.setForeground(new java.awt.Color(204, 204, 204));
+        lbl_iconPrevGallery1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl_iconPrevGallery1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/print48.png"))); // NOI18N
+        lbl_iconPrevGallery1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbl_iconPrevGallery1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        lbl_iconPrevGallery1.setOpaque(true);
+        lbl_iconPrevGallery1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl_iconPrevGallery1MouseClicked(evt);
+            }
+        });
+        pnlInLayeredHomePageOrderInfo.add(lbl_iconPrevGallery1, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 190, 84, 48));
 
         pnlUserInformation.setBackground(new java.awt.Color(51, 51, 51));
-        pnlUserInformation.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Accaunt Information", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 15), new java.awt.Color(122, 72, 255))); // NOI18N
+        pnlUserInformation.setBorder(javax.swing.BorderFactory.createTitledBorder(null, " Account Information ", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Segoe UI", 1, 15), new java.awt.Color(122, 72, 255))); // NOI18N
+        pnlUserInformation.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         pnlUserBankInformation.setBackground(new java.awt.Color(51, 51, 51));
-        pnlUserBankInformation.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Gallery Information", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 15), new java.awt.Color(122, 72, 255))); // NOI18N
+        pnlUserBankInformation.setBorder(javax.swing.BorderFactory.createTitledBorder(null, " Galleries' Information ", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Segoe UI", 1, 15), new java.awt.Color(122, 72, 255))); // NOI18N
+        pnlUserBankInformation.setOpaque(false);
 
         lblUserCurrentCarNumber.setBackground(new java.awt.Color(0, 0, 0));
         lblUserCurrentCarNumber.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lblUserCurrentCarNumber.setForeground(new java.awt.Color(204, 204, 204));
-        lblUserCurrentCarNumber.setText("Current Car Number:");
+        lblUserCurrentCarNumber.setText("Car Number:");
 
-        lblUserCurrentCashValue.setBackground(new java.awt.Color(0, 0, 0));
-        lblUserCurrentCashValue.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblUserCurrentCashValue.setForeground(new java.awt.Color(204, 204, 204));
+        lblListGalleryCarNumber.setBackground(new java.awt.Color(0, 0, 0));
+        lblListGalleryCarNumber.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblListGalleryCarNumber.setForeground(new java.awt.Color(204, 204, 204));
+        lblListGalleryCarNumber.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
         lblUserCurrentOrderNumber.setBackground(new java.awt.Color(0, 0, 0));
         lblUserCurrentOrderNumber.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -826,17 +2054,49 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
         lblUserTotalEarnedMoney.setForeground(new java.awt.Color(204, 204, 204));
         lblUserTotalEarnedMoney.setText("Total Earned Money: ");
 
-        lblUserTotalEarnedMoneyValue.setBackground(new java.awt.Color(0, 0, 0));
-        lblUserTotalEarnedMoneyValue.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblUserTotalEarnedMoneyValue.setForeground(new java.awt.Color(204, 204, 204));
+        lblListEarnedMoneyFromGallery.setBackground(new java.awt.Color(0, 0, 0));
+        lblListEarnedMoneyFromGallery.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblListEarnedMoneyFromGallery.setForeground(new java.awt.Color(204, 204, 204));
+        lblListEarnedMoneyFromGallery.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
-        btnUserDeleteGallery.setBackground(new java.awt.Color(211, 84, 0));
-        btnUserDeleteGallery.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        btnUserDeleteGallery.setText("Delete Gallery");
+        lblListGalleryOrderNumber.setBackground(new java.awt.Color(0, 0, 0));
+        lblListGalleryOrderNumber.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblListGalleryOrderNumber.setForeground(new java.awt.Color(204, 204, 204));
+        lblListGalleryOrderNumber.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
-        lblUserCurrentOrderNumberValue.setBackground(new java.awt.Color(0, 0, 0));
-        lblUserCurrentOrderNumberValue.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblUserCurrentOrderNumberValue.setForeground(new java.awt.Color(204, 204, 204));
+        lblListGalleryName.setBackground(new java.awt.Color(0, 0, 0));
+        lblListGalleryName.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblListGalleryName.setForeground(new java.awt.Color(220, 220, 220));
+        lblListGalleryName.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblListGalleryName.setText("Gallery Name");
+
+        lbl_iconPrevGallery.setBackground(new java.awt.Color(51, 51, 51));
+        lbl_iconPrevGallery.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lbl_iconPrevGallery.setForeground(new java.awt.Color(204, 204, 204));
+        lbl_iconPrevGallery.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl_iconPrevGallery.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/previous32.png"))); // NOI18N
+        lbl_iconPrevGallery.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbl_iconPrevGallery.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        lbl_iconPrevGallery.setOpaque(true);
+        lbl_iconPrevGallery.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl_iconPrevGalleryMouseClicked(evt);
+            }
+        });
+
+        lbl_iconNextGallery.setBackground(new java.awt.Color(51, 51, 51));
+        lbl_iconNextGallery.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lbl_iconNextGallery.setForeground(new java.awt.Color(204, 204, 204));
+        lbl_iconNextGallery.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl_iconNextGallery.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/next32.png"))); // NOI18N
+        lbl_iconNextGallery.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbl_iconNextGallery.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        lbl_iconNextGallery.setOpaque(true);
+        lbl_iconNextGallery.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl_iconNextGalleryMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnlUserBankInformationLayout = new javax.swing.GroupLayout(pnlUserBankInformation);
         pnlUserBankInformation.setLayout(pnlUserBankInformationLayout);
@@ -845,246 +2105,197 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
             .addGroup(pnlUserBankInformationLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlUserBankInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblListGalleryName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(pnlUserBankInformationLayout.createSequentialGroup()
                         .addGroup(pnlUserBankInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblUserCurrentOrderNumber)
-                            .addComponent(lblUserCurrentCarNumber))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(pnlUserBankInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblUserCurrentCashValue, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblUserCurrentOrderNumberValue, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(pnlUserBankInformationLayout.createSequentialGroup()
-                        .addComponent(lblUserTotalEarnedMoney)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(lblUserTotalEarnedMoneyValue, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(lblUserTotalEarnedMoney)
+                            .addComponent(lblUserCurrentCarNumber, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblUserCurrentOrderNumber, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(4, 4, 4)
+                        .addGroup(pnlUserBankInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lblListEarnedMoneyFromGallery, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblListGalleryCarNumber, javax.swing.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
+                            .addComponent(lblListGalleryOrderNumber, javax.swing.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE))))
                 .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlUserBankInformationLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnUserDeleteGallery, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(41, 41, 41))
+            .addGroup(pnlUserBankInformationLayout.createSequentialGroup()
+                .addGap(49, 49, 49)
+                .addComponent(lbl_iconPrevGallery, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lbl_iconNextGallery, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(52, Short.MAX_VALUE))
         );
         pnlUserBankInformationLayout.setVerticalGroup(
             pnlUserBankInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlUserBankInformationLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblListGalleryName, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(pnlUserBankInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lblUserCurrentCashValue, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblListGalleryCarNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblUserCurrentCarNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(pnlUserBankInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblUserCurrentOrderNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblUserCurrentOrderNumberValue, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblListGalleryOrderNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(pnlUserBankInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblUserTotalEarnedMoney, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblUserTotalEarnedMoneyValue, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(33, 33, 33)
-                .addComponent(btnUserDeleteGallery, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGroup(pnlUserBankInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lblUserTotalEarnedMoney, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
+                    .addComponent(lblListEarnedMoneyFromGallery, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(26, 26, 26)
+                .addGroup(pnlUserBankInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lbl_iconPrevGallery, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbl_iconNextGallery, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(24, 24, 24))
         );
+
+        pnlUserInformation.add(pnlUserBankInformation, new org.netbeans.lib.awtextra.AbsoluteConstraints(739, 23, -1, 304));
 
         lblUserName1.setBackground(new java.awt.Color(242, 243, 244));
         lblUserName1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lblUserName1.setForeground(new java.awt.Color(204, 204, 204));
         lblUserName1.setText("User Name:");
+        pnlUserInformation.add(lblUserName1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 30, 88, 30));
 
         tbxUserName.setEditable(false);
         tbxUserName.setBackground(new java.awt.Color(51, 51, 51));
+        tbxUserName.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         tbxUserName.setForeground(new java.awt.Color(102, 102, 102));
         tbxUserName.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true), javax.swing.BorderFactory.createEmptyBorder(1, 4, 1, 1)));
         tbxUserName.setDisabledTextColor(new java.awt.Color(250, 250, 250));
+        pnlUserInformation.add(tbxUserName, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 30, 155, 30));
 
         tbxUserFullName.setEditable(false);
         tbxUserFullName.setBackground(new java.awt.Color(51, 51, 51));
+        tbxUserFullName.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         tbxUserFullName.setForeground(new java.awt.Color(102, 102, 102));
         tbxUserFullName.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true), javax.swing.BorderFactory.createEmptyBorder(1, 4, 1, 1)));
         tbxUserFullName.setDisabledTextColor(new java.awt.Color(250, 250, 250));
+        pnlUserInformation.add(tbxUserFullName, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 70, 155, 30));
 
         lblUserFullName.setBackground(new java.awt.Color(242, 243, 244));
         lblUserFullName.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lblUserFullName.setForeground(new java.awt.Color(204, 204, 204));
         lblUserFullName.setText("Full Name");
+        pnlUserInformation.add(lblUserFullName, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, 88, 30));
 
         lblUserGender.setBackground(new java.awt.Color(242, 243, 244));
         lblUserGender.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lblUserGender.setForeground(new java.awt.Color(204, 204, 204));
         lblUserGender.setText("Gender:");
+        pnlUserInformation.add(lblUserGender, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 100, 88, 30));
 
         tbxUserGender.setEditable(false);
         tbxUserGender.setBackground(new java.awt.Color(51, 51, 51));
+        tbxUserGender.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         tbxUserGender.setForeground(new java.awt.Color(102, 102, 102));
         tbxUserGender.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true), javax.swing.BorderFactory.createEmptyBorder(1, 4, 1, 1)));
         tbxUserGender.setDisabledTextColor(new java.awt.Color(250, 250, 250));
+        pnlUserInformation.add(tbxUserGender, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 110, 155, 30));
 
         tbxUserAge.setEditable(false);
         tbxUserAge.setBackground(new java.awt.Color(51, 51, 51));
+        tbxUserAge.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         tbxUserAge.setForeground(new java.awt.Color(102, 102, 102));
         tbxUserAge.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true), javax.swing.BorderFactory.createEmptyBorder(1, 4, 1, 1)));
         tbxUserAge.setDisabledTextColor(new java.awt.Color(250, 250, 250));
+        pnlUserInformation.add(tbxUserAge, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 150, 155, 30));
 
         lblUserAge.setBackground(new java.awt.Color(242, 243, 244));
         lblUserAge.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lblUserAge.setForeground(new java.awt.Color(204, 204, 204));
         lblUserAge.setText("Age");
+        pnlUserInformation.add(lblUserAge, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, 88, 30));
 
         lblUserEmail.setBackground(new java.awt.Color(242, 243, 244));
         lblUserEmail.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lblUserEmail.setForeground(new java.awt.Color(204, 204, 204));
         lblUserEmail.setText("Email");
+        pnlUserInformation.add(lblUserEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 190, 88, 30));
 
         tbxUserEmail.setBackground(new java.awt.Color(51, 51, 51));
+        tbxUserEmail.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         tbxUserEmail.setForeground(new java.awt.Color(204, 204, 204));
         tbxUserEmail.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true), javax.swing.BorderFactory.createEmptyBorder(1, 4, 1, 1)));
-
-        lblConfNewPassword.setBackground(new java.awt.Color(242, 243, 244));
-        lblConfNewPassword.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblConfNewPassword.setForeground(new java.awt.Color(204, 204, 204));
-        lblConfNewPassword.setText("Confirm New Password:");
-
-        tbxConfNewPass.setEditable(false);
-        tbxConfNewPass.setBackground(new java.awt.Color(51, 51, 51));
-        tbxConfNewPass.setForeground(new java.awt.Color(204, 204, 204));
-        tbxConfNewPass.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true), javax.swing.BorderFactory.createEmptyBorder(1, 4, 1, 1)));
-
-        tbxNewPass.setEditable(false);
-        tbxNewPass.setBackground(new java.awt.Color(51, 51, 51));
-        tbxNewPass.setForeground(new java.awt.Color(204, 204, 204));
-        tbxNewPass.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true), javax.swing.BorderFactory.createEmptyBorder(1, 4, 1, 1)));
-
-        tbxCurrentPass.setEditable(false);
-        tbxCurrentPass.setBackground(new java.awt.Color(51, 51, 51));
-        tbxCurrentPass.setForeground(new java.awt.Color(204, 204, 204));
-        tbxCurrentPass.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true), javax.swing.BorderFactory.createEmptyBorder(1, 4, 1, 1)));
-
-        lblCurrentPassword.setBackground(new java.awt.Color(242, 243, 244));
-        lblCurrentPassword.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblCurrentPassword.setForeground(new java.awt.Color(204, 204, 204));
-        lblCurrentPassword.setText("Current Password:");
-
-        lblNewPassword.setBackground(new java.awt.Color(242, 243, 244));
-        lblNewPassword.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblNewPassword.setForeground(new java.awt.Color(204, 204, 204));
-        lblNewPassword.setText("New Password:");
-
-        btnModifyUser.setBackground(new java.awt.Color(0, 0, 0));
-        btnModifyUser.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        btnModifyUser.setForeground(new java.awt.Color(122, 72, 255));
-        btnModifyUser.setText("Modify Account");
-        btnModifyUser.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnModifyUserActionPerformed(evt);
-            }
-        });
+        pnlUserInformation.add(tbxUserEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 190, 155, 30));
 
         btnSaveChanges.setBackground(new java.awt.Color(0, 0, 0));
         btnSaveChanges.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         btnSaveChanges.setForeground(new java.awt.Color(122, 72, 255));
         btnSaveChanges.setText("Save Changes");
+        btnSaveChanges.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveChangesActionPerformed(evt);
+            }
+        });
+        pnlUserInformation.add(btnSaveChanges, new org.netbeans.lib.awtextra.AbsoluteConstraints(334, 258, -1, 46));
 
         btnDeleteUser.setBackground(new java.awt.Color(0, 0, 0));
         btnDeleteUser.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         btnDeleteUser.setForeground(new java.awt.Color(122, 72, 255));
         btnDeleteUser.setText("Delete Account");
+        btnDeleteUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteUserActionPerformed(evt);
+            }
+        });
+        pnlUserInformation.add(btnDeleteUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(477, 258, 155, 46));
 
-        javax.swing.GroupLayout pnlUserInformationLayout = new javax.swing.GroupLayout(pnlUserInformation);
-        pnlUserInformation.setLayout(pnlUserInformationLayout);
-        pnlUserInformationLayout.setHorizontalGroup(
-            pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlUserInformationLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlUserInformationLayout.createSequentialGroup()
-                        .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(lblUserAge, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(lblUserEmail, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(lblUserName1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblUserFullName, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblUserGender, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(tbxUserEmail, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(tbxUserAge, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(pnlUserInformationLayout.createSequentialGroup()
-                                .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(tbxUserGender)
-                                    .addComponent(tbxUserFullName)
-                                    .addComponent(tbxUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
-                                .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(pnlUserInformationLayout.createSequentialGroup()
-                                        .addComponent(lblConfNewPassword)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(tbxConfNewPass, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(pnlUserInformationLayout.createSequentialGroup()
-                                        .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(lblCurrentPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(lblNewPassword, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGap(41, 41, 41)
-                                        .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(tbxNewPass, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(tbxCurrentPass, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(pnlUserInformationLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnModifyUser, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnSaveChanges)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnDeleteUser, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(81, 81, 81)
-                .addComponent(pnlUserBankInformation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-        pnlUserInformationLayout.setVerticalGroup(
-            pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlUserInformationLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlUserInformationLayout.createSequentialGroup()
-                        .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlUserInformationLayout.createSequentialGroup()
-                                .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(lblUserName1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(tbxUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(tbxUserFullName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblUserFullName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(tbxUserGender, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblUserGender, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(pnlUserInformationLayout.createSequentialGroup()
-                                        .addGap(42, 42, 42)
-                                        .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                            .addComponent(lblUserEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(tbxUserEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(tbxUserAge, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(lblUserAge, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(pnlUserInformationLayout.createSequentialGroup()
-                                .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(tbxCurrentPass, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblCurrentPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(tbxNewPass, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblNewPassword))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(lblConfNewPassword)
-                                    .addComponent(tbxConfNewPass, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(104, 104, 104)))
-                        .addGroup(pnlUserInformationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnSaveChanges, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnModifyUser, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnDeleteUser, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(pnlUserBankInformation, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-        );
+        jTogg_btn_modifyAcc.setBackground(new java.awt.Color(0, 0, 0));
+        jTogg_btn_modifyAcc.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jTogg_btn_modifyAcc.setForeground(new java.awt.Color(122, 72, 255));
+        jTogg_btn_modifyAcc.setText("Modify Account");
+        jTogg_btn_modifyAcc.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jTogg_btn_modifyAccİtemStateChanged(evt);
+            }
+        });
+        pnlUserInformation.add(jTogg_btn_modifyAcc, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 259, -1, 46));
+
+        lblNewPhoNum.setBackground(new java.awt.Color(242, 243, 244));
+        lblNewPhoNum.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblNewPhoNum.setForeground(new java.awt.Color(204, 204, 204));
+        lblNewPhoNum.setText("New Phone Number :");
+        pnlUserInformation.add(lblNewPhoNum, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 30, 160, 31));
+
+        tbxNewPhoneNum.setEditable(false);
+        tbxNewPhoneNum.setBackground(new java.awt.Color(51, 51, 51));
+        tbxNewPhoneNum.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        tbxNewPhoneNum.setForeground(new java.awt.Color(204, 204, 204));
+        tbxNewPhoneNum.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true), javax.swing.BorderFactory.createEmptyBorder(1, 4, 1, 1)));
+        tbxNewPhoneNum.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                tbxNewPhoneNumKeyTyped(evt);
+            }
+        });
+        pnlUserInformation.add(tbxNewPhoneNum, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 30, 141, 30));
+
+        lblNewPhoNum1.setBackground(new java.awt.Color(242, 243, 244));
+        lblNewPhoNum1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblNewPhoNum1.setForeground(new java.awt.Color(204, 204, 204));
+        lblNewPhoNum1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblNewPhoNum1.setText("Change Password");
+        lblNewPhoNum1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true));
+        lblNewPhoNum1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblNewPhoNum1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblNewPhoNum1MouseClicked(evt);
+            }
+        });
+        pnlUserInformation.add(lblNewPhoNum1, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 140, 160, 40));
+
+        lblChangePic.setBackground(new java.awt.Color(242, 243, 244));
+        lblChangePic.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblChangePic.setForeground(new java.awt.Color(204, 204, 204));
+        lblChangePic.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblChangePic.setText("Change Picture");
+        lblChangePic.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true));
+        lblChangePic.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblChangePic.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblChangePicMouseClicked(evt);
+            }
+        });
+        pnlUserInformation.add(lblChangePic, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 90, 160, 40));
 
         javax.swing.GroupLayout pnlLayeredProfileLayout = new javax.swing.GroupLayout(pnlLayeredProfile);
         pnlLayeredProfile.setLayout(pnlLayeredProfileLayout);
@@ -1097,7 +2308,7 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
                     .addGroup(pnlLayeredProfileLayout.createSequentialGroup()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pnlInLayeredHomePageCarInfo1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(pnlInLayeredHomePageOrderInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(2, 2, 2))
         );
         pnlLayeredProfileLayout.setVerticalGroup(
@@ -1107,10 +2318,10 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
                 .addComponent(pnlInPnlLayerdProfileFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlLayeredProfileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane2)
-                    .addComponent(pnlInLayeredHomePageCarInfo1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
+                    .addComponent(pnlInLayeredHomePageOrderInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlUserInformation, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(pnlUserInformation, javax.swing.GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE))
         );
 
         pnlLayered.add(pnlLayeredProfile, "card2");
@@ -1193,64 +2404,864 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
         lblExitColor.setIcon( new ImageIcon(getClass().getResource("/images/color2.png")) );
     }//GEN-LAST:event_lblExitColorMouseExited
 
-    private void btnModifyUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModifyUserActionPerformed
+    private void btnDeleteUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteUserActionPerformed
         // TODO add your handling code here:
-        tbxCurrentPass.setEditable( true );
-        tbxNewPass.setEditable( true );
-        tbxConfNewPass.setEditable( true );
-        tbxUserEmail.setEditable( true );
+    }//GEN-LAST:event_btnDeleteUserActionPerformed
 
-    }//GEN-LAST:event_btnModifyUserActionPerformed
+    private void radBtnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radBtnAddActionPerformed
+        // TODO add your handling code here:
+        HelperMethods.changePage(pnlAddGallery, layeredPaneGallery);
+    }//GEN-LAST:event_radBtnAddActionPerformed
 
+    private void radBtnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radBtnUpdateActionPerformed
+        // TODO add your handling code here:
+        HelperMethods.changePage(pnlUpdateGallery, layeredPaneGallery);
+    }//GEN-LAST:event_radBtnUpdateActionPerformed
+
+    private void radBtnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radBtnDeleteActionPerformed
+        // TODO add your handling code here:
+        HelperMethods.changePage(pnlDeleteGallery, layeredPaneGallery);
+    }//GEN-LAST:event_radBtnDeleteActionPerformed
+
+    private void lblPrevSecondPageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblPrevSecondPageMouseClicked
+        // TODO add your handling code here:
+        HelperMethods.changePage(pnlUpdateCarFirst, layeredPaneUpdateCar);
+    }//GEN-LAST:event_lblPrevSecondPageMouseClicked
+
+    private void lblPrevThirdPageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblPrevThirdPageMouseClicked
+        // TODO add your handling code here:
+        HelperMethods.changePage(pnlUpdateCarSecond, layeredPaneUpdateCar);
+    }//GEN-LAST:event_lblPrevThirdPageMouseClicked
+
+    private void lblNextSecondPageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblNextSecondPageMouseClicked
+        // TODO add your handling code here:
+        HelperMethods.changePage(pnlUpdateCarThirdPage, layeredPaneUpdateCar);
+    }//GEN-LAST:event_lblNextSecondPageMouseClicked
+
+    private void lblCarSmall_imageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblCarSmall_imageMouseClicked
+        // TODO add your handling code here:
+        chooseSmallCarImage();
+    }//GEN-LAST:event_lblCarSmall_imageMouseClicked
+
+    private void lblCarLarge_imageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblCarLarge_imageMouseClicked
+        // TODO add your handling code here:
+        chooseLargeCarImage();
+    }//GEN-LAST:event_lblCarLarge_imageMouseClicked
+
+    private void lblNextFirstPageAddCarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblNextFirstPageAddCarMouseClicked
+        // TODO add your handling code here:
+        HelperMethods.changePage(pnlAddCarSecond, layeredPaneAddCar);
+    }//GEN-LAST:event_lblNextFirstPageAddCarMouseClicked
+
+    private void lblCarSmall_imageAddMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblCarSmall_imageAddMouseClicked
+        // TODO add your handling code here:
+        chooseSmallCarImage();
+    }//GEN-LAST:event_lblCarSmall_imageAddMouseClicked
+
+    private void lblCarLarge_imageAddMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblCarLarge_imageAddMouseClicked
+        // TODO add your handling code here:
+        chooseLargeCarImage();
+    }//GEN-LAST:event_lblCarLarge_imageAddMouseClicked
+
+    private void lblPrevSecondPageAddMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblPrevSecondPageAddMouseClicked
+        // TODO add your handling code here:
+        HelperMethods.changePage(pnlAddCarFirst, layeredPaneAddCar);
+    }//GEN-LAST:event_lblPrevSecondPageAddMouseClicked
+
+    private void jTogg_btn_modifyAccİtemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jTogg_btn_modifyAccİtemStateChanged
+        // TODO add your handling code here:
+        if ( evt.getStateChange() == evt.SELECTED ) {
+            tbxUserEmail.setEditable( true );
+            tbxNewPhoneNum.setEditable( true );
+        } else if ( evt.getStateChange() == evt.DESELECTED ) {
+            tbxUserEmail.setEditable( false );
+            tbxNewPhoneNum.setEditable( false );
+        }
+        
+    }//GEN-LAST:event_jTogg_btn_modifyAccİtemStateChanged
+
+    private void lbl_iconPrevGalleryMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_iconPrevGalleryMouseClicked
+        // TODO add your handling code here:
+        currentGalleryIndex--;
+        if ( currentGalleryIndex == -1 )
+            currentGalleryIndex = galleryOwner.getGalleries().size() - 1;
+        initializeGallery();
+    }//GEN-LAST:event_lbl_iconPrevGalleryMouseClicked
+
+    private void lbl_iconNextGalleryMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_iconNextGalleryMouseClicked
+        // TODO add your handling code here:
+        currentGalleryIndex++;
+        if ( currentGalleryIndex == galleryOwner.getGalleries().size() )
+            currentGalleryIndex = 0;
+        initializeGallery();
+    }//GEN-LAST:event_lbl_iconNextGalleryMouseClicked
+
+    private void btnFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFilterActionPerformed
+        // TODO add your handling code here:
+        double min = 0;
+        double max = 100;
+        
+        try {
+            min = Double.parseDouble(tbxMin.getText() );
+            max = Double.parseDouble(tbxMax.getText() );
+        } catch(NumberFormatException ex) {
+            HelperMethods.showErrorMessage("Please fill the min and max fields in a correct way!", "Error" );
+        }
+        
+        if ( (min == max) && min == 0 && max == 0 ){
+            min = 0;
+            max = 100;
+        }
+        
+        if ( min > max ) {
+            double temp = min;
+            min = max;
+            max = temp;
+            tbxMin.setText( min + "");
+            tbxMax.setText( max + "");
+        }
+        
+        String galleryName = "";
+        galleryName = (String) cbxGallery.getSelectedItem();
+        
+        if ( galleryName.equalsIgnoreCase("All") ) {
+            galleryOwnerCars.clear();
+            fillTheCars();
+            for ( int i = 0; i < galleryOwnerCars.size(); i++ ) {
+                Car car = galleryOwnerCars.get(i);
+                if ( !( min <= car.getPrice() && car.getPrice() <= max) ) {
+                    galleryOwnerCars.remove(i);
+                    i--; // galleryOwnerCars.size()'i dustugu icin index numarasini da dusurmeliyiz. Eger dusurmezsek listeyi tam gezemeyiz.
+                    // Bu sorunu cozmek icin iterator'da kullanabiliriz!!!
+                }
+            }
+            
+        } else {
+            galleryOwnerCars.clear();
+            fillTheCars();
+            Gallery gallery = RentCarSystem.getGalleryByName(galleryName);
+            ArrayList<Car> cars = new ArrayList<>();
+            for ( int i = 0; i < galleryOwnerCars.size(); i++ ) {
+                Car car = galleryOwnerCars.get(i);
+                if ( (car.getGalleryId() == gallery.getId()) && ( min <= car.getPrice() && car.getPrice() <= max) )
+                    cars.add(car);
+            }
+            
+            galleryOwnerCars.clear();
+            galleryOwnerCars.addAll( cars );
+        }
+        
+        String accordingTo = null;
+        accordingTo = (String) cbxSort.getSelectedItem();
+        
+        if ( accordingTo != null ) {
+            RentCarSystem.sortCarList(galleryOwnerCars, accordingTo);
+        } else if ( accordingTo ==  null ){
+            RentCarSystem.sortCarList(galleryOwnerCars, "Default" );
+        }
+        
+        fillTheTable();
+        fillTheCars();
+    }//GEN-LAST:event_btnFilterActionPerformed
+
+    private void tbxMinKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tbxMinKeyTyped
+        // TODO add your handling code here:
+        HelperMethods.wirteOnlyNumber(evt, tbxMin);
+    }//GEN-LAST:event_tbxMinKeyTyped
+
+    private void tbxMaxKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tbxMaxKeyTyped
+        HelperMethods.wirteOnlyNumber(evt, tbxMax);
+    }//GEN-LAST:event_tbxMaxKeyTyped
+
+    private void tbxCarID_UpdateKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tbxCarID_UpdateKeyTyped
+        // TODO add your handling code here:
+        HelperMethods.wirteOnlyNumber(evt, tbxCarID_Update);
+    }//GEN-LAST:event_tbxCarID_UpdateKeyTyped
+
+    private void lblCarConfirmUpdateMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblCarConfirmUpdateMouseClicked
+        // TODO add your handling code here:
+        try {
+            
+            int carID = Integer.parseInt(tbxCarID_Update.getText());
+            Car car = RentCarSystem.getCarById( carID );
+            
+            cbxBrandUpdate.setSelectedItem( car.getBrand() );
+            tbxCarModelUpdate.setText( car.getModel() );
+            cbxTypeUpdate.setSelectedItem( car.getType() );
+            cbxModelYearUpdate.setSelectedItem( String.valueOf( car.getYear() ) );
+            tbxCarKmUpdate.setText( String.valueOf(car.getKm()) );
+            tbxCarDailyPriceUpdate.setText( String.valueOf(car.getPrice()) );
+            cbxFuelTypeUpdate.setSelectedItem( car.getFuelType() );
+            tbxCarFuelCapUpdate.setText( String.valueOf(car.getFuelCapacity()) );
+            cbxTransmissionUpdate.setSelectedItem( car.getTransmissionType() );
+            tbxCarTrunkVolUpdate.setText( String.valueOf( car.getTrunkVolume() ) );
+            cbxGalleryNameUpdate.setSelectedItem( RentCarSystem.getGalleryById(car.getGalleryId()));
+            smallImgPath = car.getSmall_imgPath();
+            largeImgPath = car.getLarge_imgPath();
+            
+            HelperMethods.changePage(pnlUpdateCarSecond, layeredPaneUpdateCar);
+        } catch ( NumberFormatException ex ) {
+            HelperMethods.showErrorMessage("Please, write an integer in a correct way!", "Misspelling");
+        } catch ( NullPointerException ex ) {
+            HelperMethods.showErrorMessage("Please, input a valid car id!", "Not Found Car");
+        }
+        
+    }//GEN-LAST:event_lblCarConfirmUpdateMouseClicked
+
+    private void tableCarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableCarMouseClicked
+        // TODO add your handling code here:
+        int row = tableCar.getSelectedRow();
+        int col = 0;
+        String value = tableCar.getModel().getValueAt(row, col).toString();
+        tbxCarID_Update.setText( value );
+        tbxCarID_Delete.setText( value );
+        HelperMethods.changePage(pnlUpdateCarFirst, layeredPaneUpdateCar);
+    }//GEN-LAST:event_tableCarMouseClicked
+
+    private void lblCarUpdateMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblCarUpdateMouseClicked
+        // TODO add your handling code here:
+        Car car = null;
+        try {
+            int carID = Integer.parseInt(tbxCarID_Update.getText());
+            car = RentCarSystem.getCarById(carID);
+
+            car.setBrand( (String) cbxBrandUpdate.getSelectedItem() );
+            car.setModel( tbxCarModelUpdate.getText() );
+            car.setType(( String) cbxTypeUpdate.getSelectedItem() );
+            car.setYear( Integer.parseInt((String) cbxModelYearUpdate.getSelectedItem()));
+            car.setKm( Integer.parseInt( tbxCarKmUpdate.getText() ) );
+            car.setPrice( Double.parseDouble( tbxCarDailyPriceUpdate.getText() ));
+            car.setFuelType((String) cbxFuelTypeUpdate.getSelectedItem() );
+            car.setFuelCapacity( Double.parseDouble( tbxCarFuelCapUpdate.getText() ));
+            car.setTransmissionType( cbxTransmissionUpdate.getSelectedItem().toString() );
+            car.setTrunkVolume( Double.parseDouble( tbxCarTrunkVolUpdate.getText() ) );
+            car.setGalleryId( RentCarSystem.getGalleryByName( cbxGalleryNameUpdate.getSelectedItem().toString() ).getId() );
+            car.setSmall_imgPath(smallImgPath);
+            car.setLarge_imgPath(largeImgPath);
+            RentCarSystem.updateCarDatabase(car);
+            HelperMethods.showSuccessfulMessage("Updating car is successful!", "Successful Update");
+            fillTheTable();
+        } catch ( NumberFormatException ex ) {
+            HelperMethods.showErrorMessage("Please, enter a valid car id!", "Not Found Car");
+        } catch ( SQLException ex) {
+            HelperMethods.showErrorMessage("We couldn't update database", "Database Error");
+            ex.printStackTrace();
+        }
+    }//GEN-LAST:event_lblCarUpdateMouseClicked
+
+    private void lblGalleryAddMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblGalleryAddMouseClicked
+        // TODO add your handling code here:
+        try {
+            String galleryName = tbxNewGalleryName.getText();
+            galleryOwner.addGallery(galleryName);
+            HelperMethods.showSuccessfulMessage("Adding new gallery is successful", "Successful Adding");
+            clearTheGalleryNames();
+            fillTheGalleryNames();
+        } catch (NullPointerException ex) {
+            HelperMethods.showErrorMessage("Gallery list is empty", "List Error");  // galeri sahibinin en azından bir tane galerisi olmalı.
+            ex.printStackTrace();
+        } catch (SQLException ex) {
+            HelperMethods.showErrorMessage("We couldn't add new gallery to database", "Database Error");
+            ex.printStackTrace();
+        }
+    }//GEN-LAST:event_lblGalleryAddMouseClicked
+
+    private void lblUpdateGalleryMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblUpdateGalleryMouseClicked
+        try {
+           String oldGalleryName = tbxOldGalleryName.getText();
+           String newGalleryName = tbxUpdateNewGalleryName.getText();
+           galleryOwner.updateGallery(oldGalleryName, newGalleryName);
+           galleryOwnerCars.clear();
+           fillTheCars();
+           clearTheGalleryNames();
+           fillTheGalleryNames();
+           fillTheTable();
+           HelperMethods.showSuccessfulMessage("Updating gallery is successful!", "Successful Update");
+        } catch (NullPointerException ex) {
+            HelperMethods.showErrorMessage("We couldn't find " + tbxOldGalleryName.getText() + " gallery!", "Gallery Not Found!");
+            ex.printStackTrace();
+        } catch (SQLException ex) {
+            HelperMethods.showErrorMessage("We couldn't update database", "Database Error");
+            ex.printStackTrace();
+        }
+        
+        
+    }//GEN-LAST:event_lblUpdateGalleryMouseClicked
+
+    private void lblGalleryDeleteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblGalleryDeleteMouseClicked
+        // TODO add your handling code here:
+        Gallery gallery = null;
+        
+        try {
+            gallery = RentCarSystem.getGalleryByName( tbxDeleteGalleryName.getText() );
+            //RentCarSystem.deleteGalleryFromDatabase( gallery );
+            //RentCarSystem.getGalleries().remove( gallery );
+            //galleryOwner.getGalleries().remove( gallery );
+            galleryOwner.deleteGallery( gallery.getId() );
+            clearTheGalleryNames();
+            fillTheGalleryNames();
+            fillTheTable();
+            String message = "Deleting gallery is successful!\n" +
+                             "However, if you do not update the galleries of the cars in the deleted gallery,\n" + 
+                             "these cars will be inaccessible when you reopen the program.";
+            HelperMethods.showSuccessfulMessage(message, "Successful Delete");
+        } catch ( NullPointerException ex ) {
+            HelperMethods.showErrorMessage("We couldn't find this gallery!", "Not Found Gallery");
+            ex.printStackTrace();
+        } catch (SQLException ex) {
+            HelperMethods.showErrorMessage("We couldn't delete gallery from database", "Database Error");
+            ex.printStackTrace();
+        }
+    }//GEN-LAST:event_lblGalleryDeleteMouseClicked
+
+    private void lblCarDeleteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblCarDeleteMouseClicked
+        // TODO add your handling code here:
+        try {
+            int carID = Integer.parseInt( tbxCarID_Delete.getText() );
+            galleryOwner.deleteCar( carID );
+            galleryOwnerCars.clear();
+            fillTheCars();
+            fillTheTable();
+            HelperMethods.showSuccessfulMessage("Car delete proccess is successful...", "Car Delete");
+        } catch ( NumberFormatException ex ) {
+            HelperMethods.showErrorMessage("Please, write an integer in a correct way!", "Misspelling");
+            ex.printStackTrace();
+        } catch ( NullPointerException ex ) {
+            HelperMethods.showErrorMessage("Please, enter a valid car id!", "Misspelling");
+            ex.printStackTrace();
+        } catch ( SQLException ex ) {
+            HelperMethods.showErrorMessage("We couldn't delete car from database", "Database Error");
+            ex.printStackTrace();
+        }
+    }//GEN-LAST:event_lblCarDeleteMouseClicked
+
+    private void lblCarAddMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblCarAddMouseClicked
+        try {
+            // TODO add your handling code here:
+            int id = RentCarSystem.getCars().get( RentCarSystem.getCars().size() - 1).getId() + 1;
+            int galleryID = RentCarSystem.getGalleryByName( cbxGalleryNameAdd.getSelectedItem().toString() ).getId();
+            String brand = (String) cbxBrandAdd.getSelectedItem();
+            String model = tbxCarModelAdd.getText();
+            String type = cbxTypeAdd.getSelectedItem().toString();
+            String fuelType = cbxFuelTypeAdd.getSelectedItem().toString();
+            String transmissionType = cbxTransmissionAdd.getSelectedItem().toString();
+            int year = Integer.parseInt( cbxModelYearAdd.getSelectedItem().toString() );
+            double price = Double.parseDouble( tbxCarDailyPriceAdd.getText() );
+            double fuelCapaciy = Double.parseDouble( tbxCarFuelCapAdd.getText() );
+            double trnukVol = Double.parseDouble( tbxCarTrunkVolAdd.getText() );
+            int km = Integer.parseInt( tbxCarKmAdd.getText() );
+            
+            if ( smallImgPath.isBlank() || largeImgPath.isBlank() )
+                throw new NullPointerException();
+            
+            Car car = new Car(id, galleryID, brand, model, type, fuelType, transmissionType, year, price, fuelCapaciy, trnukVol, km, smallImgPath, largeImgPath);
+            galleryOwner.addCar(car);
+            galleryOwnerCars.clear();
+            fillTheCars();
+            fillTheTable();
+            HelperMethods.showSuccessfulMessage("The new car is added successfully", "Successfull Car Adding");
+        } catch (NumberFormatException ex) {
+            ex.printStackTrace();
+            HelperMethods.showErrorMessage("At least one the field filled in a wrong way!!", "Misspelling");
+        } catch (NullPointerException ex) {
+            ex.printStackTrace();
+            HelperMethods.showErrorMessage("One of the file is not selected!", "Empty File");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            HelperMethods.showErrorMessage("We couldn't add car to database", "Database Error");
+        }
+        
+    }//GEN-LAST:event_lblCarAddMouseClicked
+
+    private void tbxOrderMinKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tbxOrderMinKeyTyped
+        // TODO add your handling code here:
+        HelperMethods.wirteOnlyNumber(evt, tbxOrderMin);
+    }//GEN-LAST:event_tbxOrderMinKeyTyped
+
+    private void tbxOrderMaxKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tbxOrderMaxKeyTyped
+        // TODO add your handling code here:
+        HelperMethods.wirteOnlyNumber(evt, tbxOrderMax);
+    }//GEN-LAST:event_tbxOrderMaxKeyTyped
+
+    private void btnSaveChangesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveChangesActionPerformed
+        // TODO add your handling code here:
+        
+        if ( profPictPath == null )
+            profPictPath = galleryOwner.getImgPath();
+        
+        try{
+            Mail mail = RentCarSystem.getMailByName( tbxUserEmail.getText() );
+            String phoneNum = tbxNewPhoneNum.getText();
+            
+            HelperMethods.controlPhoneNum(phoneNum, galleryOwner.getUsername());
+            
+            if ( RentCarSystem.isMailUsedAnyOtherUser( mail.getMail_id() ) )
+                throw new Exception("This mail is already in use!!!");
+            
+            if ( galleryOwner.updateInformation(phoneNum, profPictPath, mail) ) {
+                HelperMethods.showSuccessfulMessage("Updating profile information is successful", "Successful Update");
+                initializeFields();
+                jTogg_btn_modifyAcc.setSelected( false );
+            }
+                
+            
+        } catch( NullPointerException ex ) {
+            HelperMethods.showErrorMessage("Unvalid mail name!!", "Not Found Mail");
+            ex.printStackTrace();
+        } catch( SQLException ex ) {
+            HelperMethods.showErrorMessage("We couldn't update in the database... ", "Database Error");
+            ex.printStackTrace();
+        } catch (IllegalArgumentException ex) {
+            HelperMethods.showErrorMessage(ex.getMessage(), "In use Mail or Phone Number");
+        } catch (Exception ex) {
+            HelperMethods.showErrorMessage(ex.getMessage(), "In use Mail or Phone Number");
+        }
+        
+    }//GEN-LAST:event_btnSaveChangesActionPerformed
+
+    private void tbxNewPhoneNumKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tbxNewPhoneNumKeyTyped
+        // TODO add your handling code here:
+        if ( (evt.getKeyChar() >= '0' &&  evt.getKeyChar() <= '9') || evt.getKeyChar() == ' ' ) {
+            
+        } else {
+            evt.consume();
+        }
+        
+        if ( tbxNewPhoneNum.getText().isBlank() )
+            tbxNewPhoneNum.setText( galleryOwner.getPhoneNumber() );
+    }//GEN-LAST:event_tbxNewPhoneNumKeyTyped
+
+    private void listOrdersValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listOrdersValueChanged
+        // TODO add your handling code here:
+        currentOrderIndex = listOrders.getSelectedIndex();
+        if ( currentOrderIndex < 0 )
+            currentOrderIndex = 0;
+        fillOrderDetails();
+    }//GEN-LAST:event_listOrdersValueChanged
+
+    private void btnFilterOrdersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFilterOrdersActionPerformed
+        // TODO add your handling code here:
+        String accordingTo = "";
+        accordingTo = cbxOrderPrice.getSelectedItem().toString();
+        
+        double min = 0;
+        double max = 1234567;
+        
+        try {
+            min = Double.parseDouble(tbxOrderMin.getText() );
+            max = Double.parseDouble(tbxOrderMax.getText() );
+        } catch(NumberFormatException ex) {
+            HelperMethods.showErrorMessage("Please fill the min and max fields in a correct way!", "Error" );
+        }
+        
+        if ( (min == max) && min == 0 && max == 0 ){
+            min = 0;
+            max = 1234567;
+        }
+        
+        if ( min > max ) {
+            double temp = min;
+            min = max;
+            max = temp;
+            tbxOrderMin.setText( min + "");
+            tbxOrderMax.setText( max + "");
+        }
+        
+        String galleryName = "";
+        galleryName = cbxOrderGalery.getSelectedItem().toString();
+        if ( galleryName.equalsIgnoreCase("All") ) {
+            galleryOwnerOrders.clear();
+            fillTheOrders();
+            for ( int i = 0; i < galleryOwnerOrders.size(); i++ ) {
+                Order order = galleryOwnerOrders.get(i);
+                if ( !( min <= order.getAmountPaid() && order.getAmountPaid() <= max) ) {
+                    galleryOwnerOrders.remove(i);
+                    i--;
+                }
+            }
+            
+        } else {
+            galleryOwnerOrders.clear();
+            fillTheOrders();
+            Gallery gallery = RentCarSystem.getGalleryByName(galleryName);
+            ArrayList<Order> orders = new ArrayList<>();
+            for ( int i = 0; i < galleryOwnerOrders.size(); i++ ) {
+                Order order = galleryOwnerOrders.get(i);
+                if ( (order.getGalleryId() == gallery.getId()) && ( min <= order.getAmountPaid() && order.getAmountPaid()<= max) )
+                    orders.add(order);
+            }
+            
+            galleryOwnerOrders.clear();
+            galleryOwnerOrders.addAll( orders );
+            
+            
+        }
+        
+        if ( accordingTo.equals("Ascending") ) {
+            Collections.sort( galleryOwnerOrders , new Comparator<Order>() {
+                @Override
+                public int compare(Order o1, Order o2) {
+                   return Double.compare(o1.getAmountPaid(), o2.getAmountPaid());
+                }
+                
+            });
+        } else if ( accordingTo.equals("Descending") ) {
+            Collections.sort( galleryOwnerOrders , new Comparator<Order>() {
+                @Override
+                public int compare(Order o1, Order o2) {
+                   return Double.compare(o2.getAmountPaid(), o1.getAmountPaid());
+                }
+                
+            });
+        }
+        
+        fill_list();
+        listOrders.setSelectedIndex( 0 );
+        currentOrderIndex = 0;
+        fillOrderDetails();
+        
+    }//GEN-LAST:event_btnFilterOrdersActionPerformed
+
+    private void lblChangePicMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblChangePicMouseClicked
+        // TODO add your handling code here:
+        if ( jTogg_btn_modifyAcc.isSelected() ) {
+            try {
+                profPictPath = "";
+                chooser.setBackground( new Color(51, 51, 51) );
+                chooser.showOpenDialog( null );
+                chooser.setCurrentDirectory(chooser.getCurrentDirectory());
+                File f = chooser.getSelectedFile();
+                profPictPath = f.getName();
+                profPictPath = "/images/" + profPictPath;
+                System.out.println( profPictPath );
+            } catch ( NullPointerException ex ) {
+                HelperMethods.showErrorMessage("You didn't choose a picture", "Not Selected Picture");
+                profPictPath = galleryOwner.getImgPath();
+            }
+        }
+            
+    }//GEN-LAST:event_lblChangePicMouseClicked
+
+    private void lblNewPhoNum1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblNewPhoNum1MouseClicked
+        // TODO add your handling code here:
+        if ( jTogg_btn_modifyAcc.isSelected() ) {
+            ResetPasswordPanel resetPasswordPanel = new ResetPasswordPanel( galleryOwner );
+            resetPasswordPanel.setVisible( true );
+            resetPasswordPanel.setLocationRelativeTo( null );
+        }
+    }//GEN-LAST:event_lblNewPhoNum1MouseClicked
+
+    private void lbl_iconPrevGallery1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_iconPrevGallery1MouseClicked
+        // TODO add your handling code here:
+        Order order = galleryOwnerOrders.get( currentOrderIndex );
+        Bill frameBill = new Bill( order );
+        frameBill.setVisible( true );
+        frameBill.setLocationRelativeTo( null );
+    }//GEN-LAST:event_lbl_iconPrevGallery1MouseClicked
+
+    
+    private void fillTheTable() {
+        DefaultTableModel model = (DefaultTableModel) tableCar.getModel();
+        model.setRowCount( 0 );
+        int index = 0;
+        while ( galleryOwnerCars.size() > index ) {
+            Car car = galleryOwnerCars.get(index);
+            if ( RentCarSystem.getGalleryById( car.getGalleryId() ) != null ) {
+                model.addRow( new Object[]{car.getId(), car.getBrand(), car.getModel(), car.getType(), car.getFuelType(), 
+                                       car.getFuelCapacity(), car.getTrunkVolume(), car.getTransmissionType(),
+                                       car.getYear(), car.getKm(), car.getPrice(), RentCarSystem.getGalleryById(car.getGalleryId()).getName()});
+            } else
+                model.addRow( new Object[]{car.getId(), car.getBrand(), car.getModel(), car.getType(), car.getFuelType(), 
+                                       car.getFuelCapacity(), car.getTrunkVolume(), car.getTransmissionType(),
+                                       car.getYear(), car.getKm(), car.getPrice(), ""});
+            
+            index++;
+        }
+        
+    }
+    
+    private void fillTheCars() {
+        ArrayList<Car> cars = RentCarSystem.getCars();
+        for (Car car : cars ) {
+            if ( isMatchedGalleryID( car.getGalleryId() ) )
+                galleryOwnerCars.add( car );
+        }
+    }
+    
+    private void fillTheGalleryNames() {
+        ArrayList<Gallery> galleries = galleryOwner.getGalleries();
+        cbxGallery.addItem("All");
+        for ( Gallery gallery : galleries ) {
+            cbxGallery.addItem( gallery.getName() );
+            cbxGalleryNameUpdate.addItem( gallery.getName() );
+            cbxGalleryNameAdd.addItem( gallery.getName() );
+            cbxOrderGalery.addItem( gallery.getName() );
+        }
+           
+    }
+    
+    private void clearTheGalleryNames() {
+        cbxGallery.removeAllItems();
+        cbxGalleryNameUpdate.removeAllItems();
+        cbxGalleryNameAdd.removeAllItems();
+        cbxOrderGalery.removeAllItems();
+    }
+    
+    private void renderAllComboBoxes() {
+        cbxBrandAdd.setRenderer( new MyCellRenderer() );
+        cbxBrandUpdate.setRenderer( new MyCellRenderer() );
+        cbxFuelTypeAdd.setRenderer( new MyCellRenderer() );
+        cbxFuelTypeUpdate.setRenderer( new MyCellRenderer() );
+        cbxGallery.setRenderer( new MyCellRenderer() );
+        cbxGalleryNameAdd.setRenderer( new MyCellRenderer() );
+        cbxGalleryNameUpdate.setRenderer( new MyCellRenderer() );
+        cbxModelYearAdd.setRenderer( new MyCellRenderer() );
+        cbxModelYearUpdate.setRenderer( new MyCellRenderer() );
+        cbxOrderGalery.setRenderer( new MyCellRenderer() );
+        cbxOrderPrice.setRenderer( new MyCellRenderer() );
+        cbxSort.setRenderer( new MyCellRenderer() );
+        cbxTransmissionAdd.setRenderer( new MyCellRenderer() );
+        cbxTransmissionUpdate.setRenderer( new MyCellRenderer() );
+        cbxTypeAdd.setRenderer( new MyCellRenderer() );
+        cbxTypeUpdate.setRenderer( new MyCellRenderer() );
+    }
+    
+    // Bu fonksiyon aracı, sisteme giris yapan galeri sahbininin galerilerinden birisinde olup olmadigini kontrol ediyor.
+    private boolean isMatchedGalleryID(int galleryID) {
+        ArrayList<Gallery> galleries = new ArrayList<>( galleryOwner.getGalleries() );
+        for ( Gallery gallery : galleries ) {
+            if ( gallery.getId() == galleryID )
+                return true;
+        }
+        return false;
+    }
+    
+    private void chooseLargeCarImage() {
+        try {
+            largeImgPath = "";
+            chooser.setBackground( new Color(51, 51, 51) );
+            chooser.showOpenDialog( null );
+            chooser.setCurrentDirectory(chooser.getCurrentDirectory());
+            File f = chooser.getSelectedFile();
+            largeImgPath = f.getName();
+            largeImgPath = "/images/" + largeImgPath;
+            System.out.println( largeImgPath );
+        } catch ( NullPointerException ex ) {
+            HelperMethods.showErrorMessage("You didn't choose a picture", "Not Selected Picture");
+        }
+    }
+    
+    private void chooseSmallCarImage() {
+        try {
+            smallImgPath = "";
+            chooser.setBackground( new Color(51, 51, 51) );
+            chooser.showOpenDialog( null );
+            chooser.setCurrentDirectory(chooser.getCurrentDirectory());
+            File f = chooser.getSelectedFile();
+            smallImgPath = f.getName();
+            smallImgPath = "/images/" + smallImgPath;
+            System.out.println( smallImgPath );
+        } catch ( NullPointerException ex ) {
+            HelperMethods.showErrorMessage("You didn't choose a picture", "Not Selected Picture");
+        }
+    }
+    
+    private void initializeGallery() {
+        Gallery gallery = galleryOwner.getGalleries().get( currentGalleryIndex );
+        lblListGalleryName.setText( gallery.getName() );
+        lblListGalleryCarNumber.setText( gallery.getCars().size() + "" );
+        
+        int numOfOrder = 0;
+        double earnedMoney = 0.0D;
+        for ( Order order : RentCarSystem.getOrders() ) {
+            if ( order.getGalleryId() == gallery.getId() ) {
+                numOfOrder++;
+                earnedMoney += order.getAmountPaid();
+            }
+        }
+        
+        lblListGalleryOrderNumber.setText( numOfOrder + "");
+        lblListEarnedMoneyFromGallery.setText( String.format("%.2f", earnedMoney) );
+    }
+    
+    private void fillOrderDetails() {
+        
+        int id;
+        Order order = null;
+        boolean isSuccessFull = true;
+        
+        try {
+            //System.out.println("" + currentOrderIndex);
+            id = galleryOwnerOrders.get( currentOrderIndex ).getOrderId();
+            order = RentCarSystem.getOrderById( id );
+            lblOrderCarBrandVal.setText( order.getBrand() );
+            lblOrderCarModelVal.setText( order.getModel() );
+            lblOrderPhoneNumVal.setText( order.getPhoneNumber() );
+            lblOrderCarGalleryVal.setText( RentCarSystem.getGalleryById( order.getGalleryId() ).getName() );
+            lblOrderPickupDate.setText( order.getRentDate().substring(0, 11 ) + order.getRentDate().substring( order.getRentDate().length() - 4));
+            lblOrderReturnVal.setText( order.getReturnDate().substring(0, 11) + order.getReturnDate().substring( order.getReturnDate().length() - 4));
+            lblOrderPromotionCode.setText( order.getPromotionCodeId() );
+            lblOrderChargeVal.setText( String.format("$%.2f", order.getAmountPaid() ) );
+            lblOrderCarImage.setIcon( new ImageIcon( getClass().getResource( order.getImgCarPath() ) ) );
+        } catch (NullPointerException ex) {
+            HelperMethods.showErrorMessage("In orders something gone wrong!!", "Unexpected Error");
+            ex.printStackTrace();
+            isSuccessFull = false;
+        } catch ( IndexOutOfBoundsException ex ) {
+            HelperMethods.showErrorMessage("There is nothing to show!!!", "Empty List");
+            ex.printStackTrace();
+            isSuccessFull = false;
+        }
+        
+        if ( !isSuccessFull ) {
+            lblOrderCarBrandVal.setText( "" );
+            lblOrderCarModelVal.setText( "" );
+            lblOrderPhoneNumVal.setText( "" );
+            lblOrderCarGalleryVal.setText( "" );
+            lblOrderPickupDate.setText( "" );
+            lblOrderReturnVal.setText( "" );
+            lblOrderPromotionCode.setText( "" );
+            lblOrderChargeVal.setText( "" );
+            lblOrderCarImage.setIcon( ( null ) );
+        }
+        
+    }
+    
+    private void fill_list() {
+        listOrders.setListData( new String[0] );
+        String[] orderStrings = new String[ galleryOwnerOrders.size() ];
+        for ( int i = 0; i < galleryOwnerOrders.size(); i++ ) {
+            Order order = galleryOwnerOrders.get(i);
+            orderStrings[i] = order.getBrand() + " " + order.getModel();
+        }
+        listOrders.setListData( orderStrings );
+    }
+    
+    private void fillTheOrders() {
+        ArrayList<String> orderStrings = new ArrayList<>();
+        for ( Order order : RentCarSystem.getOrders() ) {
+            if ( isMatchedGalleryID(order.getGalleryId()) ) {
+                galleryOwnerOrders.add(order);
+                orderStrings.add( order.getBrand() + " " + order.getModel() );
+            }
+        }
+        
+        String[] strings = new String[ orderStrings.size() ];
+        strings = orderStrings.toArray(strings);
+        listOrders.setListData( strings );
+        
+    }
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel PnlLeftSide;
     private javax.swing.JPanel PnlParent;
-    private javax.swing.JButton btnAddCar;
-    private javax.swing.JButton btnDeleteOrder;
-    private javax.swing.JButton btnDeleteOrder1;
     private javax.swing.JButton btnDeleteUser;
     private javax.swing.JButton btnFilter;
     private javax.swing.JButton btnFilterOrders;
-    private javax.swing.JButton btnModifyUser;
     private javax.swing.JButton btnSaveChanges;
-    private javax.swing.JButton btnUserDeleteGallery;
-    private javax.swing.JComboBox<String> cbxBrand;
+    private javax.swing.JComboBox<String> cbxBrandAdd;
+    private javax.swing.JComboBox<String> cbxBrandUpdate;
+    private javax.swing.JComboBox<String> cbxFuelTypeAdd;
+    private javax.swing.JComboBox<String> cbxFuelTypeUpdate;
     private javax.swing.JComboBox<String> cbxGallery;
-    private javax.swing.JComboBox<String> cbxModel;
-    private javax.swing.JComboBox<String> cbxModelYear;
+    private javax.swing.JComboBox<String> cbxGalleryNameAdd;
+    private javax.swing.JComboBox<String> cbxGalleryNameUpdate;
+    private javax.swing.JComboBox<String> cbxModelYearAdd;
+    private javax.swing.JComboBox<String> cbxModelYearUpdate;
     private javax.swing.JComboBox<String> cbxOrderGalery;
     private javax.swing.JComboBox<String> cbxOrderPrice;
-    private javax.swing.JComboBox<String> cbxPrice;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JComboBox<String> cbxSort;
+    private javax.swing.JComboBox<String> cbxTransmissionAdd;
+    private javax.swing.JComboBox<String> cbxTransmissionUpdate;
+    private javax.swing.JComboBox<String> cbxTypeAdd;
+    private javax.swing.JComboBox<String> cbxTypeUpdate;
+    private javax.swing.ButtonGroup galleryBtnGrp;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JLabel lblCarBrand;
-    private javax.swing.JLabel lblCarDailyPrice;
-    private javax.swing.JLabel lblCarKm;
-    private javax.swing.JLabel lblCarModel;
-    private javax.swing.JLabel lblCarModelYear;
-    private javax.swing.JLabel lblConfNewPassword;
-    private javax.swing.JLabel lblCurrentPassword;
+    private javax.swing.JScrollPane jScrollPaneTable;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JSeparator jSeparator4;
+    private javax.swing.JToggleButton jTogg_btn_modifyAcc;
+    private javax.swing.JLayeredPane layeredPaneAddCar;
+    private javax.swing.JLayeredPane layeredPaneGallery;
+    private javax.swing.JLayeredPane layeredPaneUpdateCar;
+    private javax.swing.JLabel lblCarAdd;
+    private javax.swing.JLabel lblCarBrandAdd;
+    private javax.swing.JLabel lblCarBrandUpdate;
+    private javax.swing.JLabel lblCarConfirmUpdate;
+    private javax.swing.JLabel lblCarDailyPriceAdd;
+    private javax.swing.JLabel lblCarDailyPriceUpdate;
+    private javax.swing.JLabel lblCarDelete;
+    private javax.swing.JLabel lblCarFuelCapUpdate;
+    private javax.swing.JLabel lblCarFuelCarAdd;
+    private javax.swing.JLabel lblCarFuelTypeAdd;
+    private javax.swing.JLabel lblCarFuelTypeUpdate;
+    private javax.swing.JLabel lblCarGalNameAdd;
+    private javax.swing.JLabel lblCarGalNameUpdate;
+    private javax.swing.JLabel lblCarID_Delete;
+    private javax.swing.JLabel lblCarID_Update;
+    private javax.swing.JLabel lblCarKmAdd;
+    private javax.swing.JLabel lblCarKmUpdate;
+    private javax.swing.JLabel lblCarLarge_image;
+    private javax.swing.JLabel lblCarLarge_imageAdd;
+    private javax.swing.JLabel lblCarModelAdd;
+    private javax.swing.JLabel lblCarModelUpdate;
+    private javax.swing.JLabel lblCarModelYearAdd;
+    private javax.swing.JLabel lblCarModelYearUpdate;
+    private javax.swing.JLabel lblCarSmall_image;
+    private javax.swing.JLabel lblCarSmall_imageAdd;
+    private javax.swing.JLabel lblCarTransmissionAdd;
+    private javax.swing.JLabel lblCarTransmissionUpdate;
+    private javax.swing.JLabel lblCarTrunkVolAdd;
+    private javax.swing.JLabel lblCarTrunkVolUpdate;
+    private javax.swing.JLabel lblCarTypeAdd;
+    private javax.swing.JLabel lblCarTypeUpdate;
+    private javax.swing.JLabel lblCarUpdate;
+    private javax.swing.JLabel lblChangePic;
     private javax.swing.JLabel lblExitColor;
     private javax.swing.JLabel lblExitIcon;
     private javax.swing.JLabel lblExitText;
     private javax.swing.JLabel lblGallery;
+    private javax.swing.JLabel lblGalleryAdd;
+    private javax.swing.JLabel lblGalleryDelete;
+    private javax.swing.JLabel lblGalleryName;
     private javax.swing.JLabel lblHomeColor;
     private javax.swing.JLabel lblHomeIcon;
     private javax.swing.JLabel lblHomeText;
-    private javax.swing.JLabel lblNewPassword;
+    private javax.swing.JLabel lblListEarnedMoneyFromGallery;
+    private javax.swing.JLabel lblListGalleryCarNumber;
+    private javax.swing.JLabel lblListGalleryName;
+    private javax.swing.JLabel lblListGalleryOrderNumber;
+    private javax.swing.JLabel lblNewGalleryName;
+    private javax.swing.JLabel lblNewPhoNum;
+    private javax.swing.JLabel lblNewPhoNum1;
+    private javax.swing.JLabel lblNextFirstPageAddCar;
+    private javax.swing.JLabel lblNextSecondPage;
+    private javax.swing.JLabel lblOldGalleryName;
+    private javax.swing.JLabel lblOrderCarBrandVal;
+    private javax.swing.JLabel lblOrderCarGalleryVal;
+    private javax.swing.JLabel lblOrderCarImage;
+    private javax.swing.JLabel lblOrderCarModelVal;
+    private javax.swing.JLabel lblOrderChargeVal;
     private javax.swing.JLabel lblOrderPerson;
+    private javax.swing.JLabel lblOrderPhoneNum;
+    private javax.swing.JLabel lblOrderPhoneNumVal;
+    private javax.swing.JLabel lblOrderPickupDate;
     private javax.swing.JLabel lblOrderPrice;
+    private javax.swing.JLabel lblOrderPromotionCode;
+    private javax.swing.JLabel lblOrderReturnVal;
     private javax.swing.JLabel lblOrderedCarBrand;
     private javax.swing.JLabel lblOrderedCarGallery;
     private javax.swing.JLabel lblOrderedCarMoedl;
     private javax.swing.JLabel lblOrderedCarPickUpDate;
     private javax.swing.JLabel lblOrderedCarReturnDate;
-    private javax.swing.JLabel lblOrderedCarType;
     private javax.swing.JLabel lblOrderedCarUsedPromotionCode;
     private javax.swing.JLabel lblOrderedCharge;
+    private javax.swing.JLabel lblPrevSecondPage;
+    private javax.swing.JLabel lblPrevSecondPageAdd;
+    private javax.swing.JLabel lblPrevThirdPage;
     private javax.swing.JLabel lblPrice;
     private javax.swing.JLabel lblProfileColor;
     private javax.swing.JLabel lblProfileIcon;
@@ -1260,23 +3271,30 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
     private javax.swing.JLabel lblRange1;
     private javax.swing.JLabel lblTheUserMail;
     private javax.swing.JLabel lblTheUserName;
+    private javax.swing.JLabel lblUpdateGallery;
+    private javax.swing.JLabel lblUpdateNewGalleryName;
     private javax.swing.JLabel lblUserAge;
     private javax.swing.JLabel lblUserCurrentCarNumber;
-    private javax.swing.JLabel lblUserCurrentCashValue;
     private javax.swing.JLabel lblUserCurrentOrderNumber;
-    private javax.swing.JLabel lblUserCurrentOrderNumberValue;
     private javax.swing.JLabel lblUserEmail;
     private javax.swing.JLabel lblUserFullName;
     private javax.swing.JLabel lblUserGender;
     private javax.swing.JLabel lblUserName1;
     private javax.swing.JLabel lblUserTotalEarnedMoney;
-    private javax.swing.JLabel lblUserTotalEarnedMoneyValue;
+    private javax.swing.JLabel lbl_iconNextGallery;
+    private javax.swing.JLabel lbl_iconPrevGallery;
+    private javax.swing.JLabel lbl_iconPrevGallery1;
     private javax.swing.JList<String> listOrders;
+    private javax.swing.JPanel pnlAddCarFirst;
+    private javax.swing.JPanel pnlAddCarSecond;
+    private javax.swing.JPanel pnlAddGallery;
     private javax.swing.JPanel pnlAddNewCar;
-    private javax.swing.JPanel pnlAddNewGallery;
+    private javax.swing.JPanel pnlDeleteCar;
+    private javax.swing.JPanel pnlDeleteGallery;
     private javax.swing.JPanel pnlExit;
+    private javax.swing.JPanel pnlGalleryProccess;
     private javax.swing.JPanel pnlHomePage;
-    private javax.swing.JPanel pnlInLayeredHomePageCarInfo1;
+    private javax.swing.JPanel pnlInLayeredHomePageOrderInfo;
     private javax.swing.JPanel pnlInPnlLayerdHomePagefilter;
     private javax.swing.JPanel pnlInPnlLayerdProfileFilter;
     private javax.swing.JLayeredPane pnlLayered;
@@ -1284,18 +3302,38 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
     private javax.swing.JPanel pnlLayeredProfile;
     private javax.swing.JPanel pnlProfile;
     private javax.swing.JPanel pnlProfileInfo;
+    private javax.swing.JPanel pnlUpdateCarFirst;
+    private javax.swing.JPanel pnlUpdateCarSecond;
+    private javax.swing.JPanel pnlUpdateCarThirdPage;
+    private javax.swing.JPanel pnlUpdateGallery;
+    private javax.swing.JPanel pnlUpdateTheCar;
     private javax.swing.JPanel pnlUserBankInformation;
     private javax.swing.JPanel pnlUserInformation;
+    private javax.swing.JRadioButton radBtnAdd;
+    private javax.swing.JRadioButton radBtnDelete;
+    private javax.swing.JRadioButton radBtnUpdate;
     private javax.swing.JTable tableCar;
-    private javax.swing.JPasswordField tbxConfNewPass;
-    private javax.swing.JPasswordField tbxCurrentPass;
-    private javax.swing.JTextField tbxKm;
+    private javax.swing.JTextField tbxCarDailyPriceAdd;
+    private javax.swing.JTextField tbxCarDailyPriceUpdate;
+    private javax.swing.JTextField tbxCarFuelCapAdd;
+    private javax.swing.JTextField tbxCarFuelCapUpdate;
+    private javax.swing.JTextField tbxCarID_Delete;
+    private javax.swing.JTextField tbxCarID_Update;
+    private javax.swing.JTextField tbxCarKmAdd;
+    private javax.swing.JTextField tbxCarKmUpdate;
+    private javax.swing.JTextField tbxCarModelAdd;
+    private javax.swing.JTextField tbxCarModelUpdate;
+    private javax.swing.JTextField tbxCarTrunkVolAdd;
+    private javax.swing.JTextField tbxCarTrunkVolUpdate;
+    private javax.swing.JTextField tbxDeleteGalleryName;
     private javax.swing.JTextField tbxMax;
-    private javax.swing.JTextField tbxMax1;
     private javax.swing.JTextField tbxMin;
-    private javax.swing.JTextField tbxMin1;
-    private javax.swing.JPasswordField tbxNewPass;
-    private javax.swing.JTextField tbxPrice;
+    private javax.swing.JTextField tbxNewGalleryName;
+    private javax.swing.JTextField tbxNewPhoneNum;
+    private javax.swing.JTextField tbxOldGalleryName;
+    private javax.swing.JTextField tbxOrderMax;
+    private javax.swing.JTextField tbxOrderMin;
+    private javax.swing.JTextField tbxUpdateNewGalleryName;
     private javax.swing.JTextField tbxUserAge;
     private javax.swing.JTextField tbxUserEmail;
     private javax.swing.JTextField tbxUserFullName;

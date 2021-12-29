@@ -6,15 +6,9 @@
 package GUI;
 
 import Business.RentCarSystem;
-import Entities.Concrete.Customer;
-import Entities.Concrete.Mail;
-import DataAccessLayer.DBConnection;
 import Helper.HelperMethods;
 import java.io.File;
-import java.sql.*;
 import javax.swing.JFileChooser;
-import javax.swing.JPasswordField;
-import javax.swing.JToggleButton;
 
 /**
  *
@@ -23,10 +17,6 @@ import javax.swing.JToggleButton;
 public class RegisterPanel extends javax.swing.JFrame {
     
     private String imgPath;
-    private DBConnection dbConnection = new DBConnection();
-    private Connection connection = dbConnection.connDb();
-    private Statement st = null;
-    private ResultSet rs = null;
     
     public RegisterPanel() {
         
@@ -645,20 +635,39 @@ public class RegisterPanel extends javax.swing.JFrame {
 
     private void password_JLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_password_JLabel1MouseClicked
         // TODO add your handling code here:
-        boolean isSuccesful = RentCarSystem.addUserToDatabase(age_JText.getText(), email_JText.getText(), fullName_JText.getText(), 
-                                          getGender(), imgPath, phoneNum_JText.getText(), userName_JText.getText(), 
-                                          String.valueOf(pass_JPass.getPassword()), rstPasswrdQue_JText.getText(), 
-                                          String.valueOf(rstPasswrdAns_JPass.getPassword()));
+        boolean isSuccesful = false;
         
-        if ( isSuccesful )
-            dispose();
-        else
-            HelperMethods.showErrorMessage("We couldn't include you our database", "Unexpected Error");
+        try {
+            if ( RentCarSystem.isMailUsedAnyOtherUser( RentCarSystem.getMailByName(email_JText.getText()).getMail_id() ) ) {
+                throw new Exception("This mail is already in use");
+            } else if( !HelperMethods.controlPhoneNum( phoneNum_JText.getText(), userName_JText.getText() ) ) {
+                throw new Exception("This phone number is already in use");
+            } else if( RentCarSystem.isUserName_inUse( userName_JText.getText() ) ) {
+                throw new Exception("This user name is already in use");
+            } else if( imgPath == null ) {
+                throw new Exception("This user name is already in use");
+            } else {
+                isSuccesful = RentCarSystem.addUserToDatabase(age_JText.getText(), email_JText.getText(), fullName_JText.getText(), 
+                                              getGender(), imgPath, phoneNum_JText.getText(), userName_JText.getText(), 
+                                              String.valueOf(pass_JPass.getPassword()), rstPasswrdQue_JText.getText(), 
+                                              String.valueOf(rstPasswrdAns_JPass.getPassword()));
+            }
+            
+            if ( isSuccesful )
+                dispose();
+            else
+                HelperMethods.showErrorMessage("We couldn't include you our database", "Unexpected Error");
+            
+        } catch (Exception ex) {
+            HelperMethods.showErrorMessage(ex.getMessage(), "Register Error");
+        }
+        
+        
     }//GEN-LAST:event_password_JLabel1MouseClicked
 
     private void age_JTextKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_age_JTextKeyTyped
         // TODO add your handling code here:
-         if ( (evt.getKeyChar() >= '0' &&  evt.getKeyChar() <= '9') ) {
+        if ( (evt.getKeyChar() >= '0' &&  evt.getKeyChar() <= '9') ) {
             
         } else {
             evt.consume();

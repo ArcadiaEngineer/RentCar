@@ -1106,7 +1106,7 @@
                                   <Component id="lblTotalCashAfterRentalOfUser" alignment="0" max="32767" attributes="0"/>
                                   <Component id="lblCurrentCashOfUser" alignment="0" max="32767" attributes="0"/>
                                   <Component id="lblTotalPaymentOfUser" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="pick_upDate_JDatechooser" alignment="1" pref="150" max="32767" attributes="0"/>
+                                  <Component id="pick_upDate_JDatechooser" alignment="1" max="32767" attributes="0"/>
                                   <Component id="returnDate_JDatechooser" alignment="0" max="32767" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="textPromotionCode" min="-2" pref="83" max="-2" attributes="0"/>
@@ -1743,10 +1743,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Group type="102" attributes="0">
-                                              <EmptySpace max="32767" attributes="0"/>
-                                              <Component id="btnDeleteOrder1" min="-2" pref="120" max="-2" attributes="0"/>
-                                          </Group>
+                                          <Component id="btnDeleteOrder1" min="-2" pref="120" max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                               <Component id="lblOrderedCarBrandValue" alignment="0" pref="112" max="32767" attributes="0"/>
                                               <Component id="lblOrderedCarModelValue" alignment="0" max="32767" attributes="0"/>
@@ -1775,15 +1772,10 @@
                                           </Group>
                                       </Group>
                                   </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="lblOrderedCarRentDateValue" alignment="0" min="-2" pref="311" max="-2" attributes="0"/>
-                                          <Component id="lblOrderedCarReturnDateValue" alignment="0" min="-2" pref="311" max="-2" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                                  </Group>
+                                  <Component id="lblOrderedCarRentDateValue" alignment="0" min="-2" pref="311" max="-2" attributes="0"/>
+                                  <Component id="lblOrderedCarReturnDateValue" alignment="0" min="-2" pref="311" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>

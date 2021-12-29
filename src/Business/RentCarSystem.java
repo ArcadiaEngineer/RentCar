@@ -125,7 +125,16 @@ public class RentCarSystem {
         return null;
     }
     
-    public static boolean updateUserPassword(String mailName, String newPassword) throws IllegalArgumentException {
+    public static boolean isUserName_inUse(String userName) {
+        for ( User user : userList ) {
+            if ( user.getUsername().equals( userName ) )
+                return true;
+        }
+        
+        return false;
+    }
+    
+    public static boolean updateCustomerPassword(String mailName, String newPassword) throws IllegalArgumentException {
         
         if ( !HelperMethods.checkPasswordWriting(newPassword) ) {
             throw new IllegalArgumentException("Please try another password!" + "\n"+
@@ -138,7 +147,36 @@ public class RentCarSystem {
             
             try {
                 
+                
                 String query = "UPDATE customer SET password = " + customer.getPassword() + " WHERE customer_id = " + customer.getCustomerId();
+            
+                st = connection.createStatement();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                preparedStatement.executeUpdate(); 
+                
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        
+        return true;
+    }
+    
+    public static boolean updateGalleryOwnerPassword(String mailName, String newPassword) throws IllegalArgumentException {
+        
+        if ( !HelperMethods.checkPasswordWriting(newPassword) ) {
+            throw new IllegalArgumentException("Please try another password!" + "\n"+
+                                               "Do not use blanks!" + "\n" + 
+                                               "Your passwor must include at least three characters!");
+        } else {
+            GalleryOwner galleryOwner = (GalleryOwner) RentCarSystem.getUserByMailName( mailName );
+        
+            galleryOwner.setPassword( newPassword );
+            
+            try {
+                
+                
+                String query = "UPDATE galleryowner SET password = " + galleryOwner.getPassword() + " WHERE galleryOwner_id = " + galleryOwner.getGalleryOwner_id();
             
                 st = connection.createStatement();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -161,12 +199,15 @@ public class RentCarSystem {
         return null;
     }
     
-    public static Gallery getGalleryById(int id) {
-        for ( Gallery gallery : galleries )
-            if ( gallery.getId() == id )
-                return gallery;
-        
-        return null;
+    public static void updateGalleryOwner(GalleryOwner galleryOwner) throws SQLException {
+        String query = "UPDATE galleryowner SET mail_id = ?, imgPath = ?, phoneNum = ? WHERE galleryOwner_id = ?";
+        st = connection.createStatement();
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(1, galleryOwner.getMailAdress().getMail_id() );
+        preparedStatement.setString(2, galleryOwner.getImgPath());
+        preparedStatement.setString(3, galleryOwner.getPhoneNumber() );
+        preparedStatement.setInt(4, galleryOwner.getGalleryOwner_id() );
+        preparedStatement.executeUpdate(); 
     }
     
     ////////////////////////////////////////////////////////////////////////////
@@ -227,7 +268,7 @@ public class RentCarSystem {
         
         String query = "INSERT INTO orders" + "( promotionCode, fullName, phoneNumber, brand, model, rentDate, returnDate, amountPaid, customerId, galleryId, carImgPath) VALUES" + 
                        "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
+
         try {
             st = connection.createStatement();
             PreparedStatement preparedStatement = connection.prepareStatement( query );
@@ -280,12 +321,84 @@ public class RentCarSystem {
     public static ArrayList<Gallery> getGalleries(){
         return galleries;
     }
+    
+    public static Gallery getGalleryById(int id) {
+        for ( Gallery gallery : galleries )
+            if ( gallery.getId() == id )
+                return gallery;
+        
+        return null;
+    }
+    
+    public static Gallery getGalleryByName(String galleryName) {
+        for ( Gallery gallery : galleries ) {
+            if ( gallery.getName().equalsIgnoreCase( galleryName ) )
+                return gallery;
+        }
+        
+        return null;
+    }
+    
+    public static void addGalleryToDatabase(Gallery gallery, int galleryOwner_id) throws SQLException {
+        
+        String query = "INSERT INTO galleries (gallery_id, name, galleryOwner_id) " +
+                       "VALUES (?, ?, ?)";
+        
+        st = connection.createStatement();
+        PreparedStatement preparedStatement = connection.prepareStatement( query );
+        preparedStatement.setInt(1, gallery.getId());
+        preparedStatement.setString(2, gallery.getName());
+        preparedStatement.setInt(3, galleryOwner_id);
+        preparedStatement.executeUpdate();
+    }
+    
+    public static void updateGalleryInDatabase(Gallery gallery) throws SQLException {
+        String query = "UPDATE galleries SET name = ? WHERE gallery_id = ?";
+        st = connection.createStatement();
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, gallery.getName());
+        preparedStatement.setInt(2, gallery.getId());
+        preparedStatement.executeUpdate(); 
+    }
+    
+    public static void deleteGalleryFromDatabase(Gallery gallery) throws SQLException {
+        String query = "DELETE FROM galleries WHERE gallery_id = ?";
+        st = connection.createStatement();
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(1, gallery.getId());
+        preparedStatement.executeUpdate(); 
+    }
+    
+    
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
     public static ArrayList<Order> getOrders(){
         return orders;
     }
     ////////////////////////////////////////////////////////////////////////////
+    
+    public static void getOrdersFromDatabase() {
+        
+        orders.clear();
+        
+        try {
+            st = connection.createStatement();
+            rs = st.executeQuery("SELECT * FROM orders");
+            
+            while ( rs.next() ) {
+                
+                Order order = new Order(rs.getInt("order_id"),rs.getString("promotionCode"),rs.getString("fullName"),rs.getString("phoneNumber"),
+                rs.getString("brand"),rs.getString("model"),rs.getString("rentDate"),
+                rs.getString("returnDate"),rs.getDouble("amountPaid"),rs.getInt("customerId"),
+                rs.getInt("galleryId"),rs.getString("carImgPath"));
+                orders.add(order);
+                
+                System.out.println(""+ order.toString());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
     
     public static void getDataFromDatabase() {
         try {
@@ -358,6 +471,8 @@ public class RentCarSystem {
                         rs.getString("transmissionType"), rs.getInt("year"), rs.getDouble("daily_price"), rs.getDouble("fuelCapacity"), 
                         rs.getDouble("trunkVolume"), rs.getInt("km"),rs.getString("small_imgPath"), rs.getString("large_imgPath"));
                 cars.add( car );
+                
+                if ( getGalleryById(rs.getInt("gallery_id")) != null )
                 getGalleryById( rs.getInt("gallery_id") ).getCars().add( car );
             }
             
@@ -388,12 +503,28 @@ public class RentCarSystem {
         return null;
     }
     
-    public static Mail getMailByName(String name) throws NullPointerException {
+    public static Mail getMailByName(String name) {
         for ( Mail mail : mailList ) 
             if ( mail.getName().equals( name ) )
                 return mail;
         
         return null;
+    }
+    
+    public static boolean isMailUsedAnyOtherUser(int id) {
+        for ( User user : userList ) {
+            if ( user instanceof Customer ) {
+                if ( ((Customer)user).getCustomerId() == id )
+                    return true;
+            }
+            
+            if ( user instanceof GalleryOwner ) {
+                if ( ((GalleryOwner)user).getGalleryOwner_id()== id )
+                    return true;
+            }
+        }
+        
+        return false;
     }
     
     ////////////////////////////////////////////////////////////////////////////
@@ -422,9 +553,93 @@ public class RentCarSystem {
                                cars.addAll(sortedCars);
                                break;
                                
+            case "ID" : sortedCars = new TreeSet<>( new CarIDComparator() );
+                               sortedCars.addAll(cars);
+                               cars.clear();
+                               cars.addAll(sortedCars);
+                               break;
+            case "Brand":
             case "Default" : Collections.sort(cars);
                              break;
         }
+        
+    }
+    
+    public static Car getCarById(int carID) {
+        for( Car car : cars ) {
+            if ( car.getId() == carID )
+                return car;
+        }
+        
+        return null;
+    }
+    
+    public static Car getCarByImagePath(String imgPath) {
+        for( Car car : cars ) {
+            if ( car.getSmall_imgPath().equalsIgnoreCase(imgPath) )
+                return car;
+        }
+        
+        return null;
+    }
+    
+    public static void updateCarDatabase(Car car) throws SQLException {
+        
+        String query = "UPDATE cars SET brand = ?, model = ?, type = ?, fuelType = ?, transmissionType = ?, year = ?," + 
+                " daily_price = ?, fuelCapacity = ?, trunkVolume = ?, km = ?, small_imgPath = ?, large_imgPath = ?, gallery_id = ? WHERE car_id = ?";
+        
+        
+            st = connection.createStatement();
+            PreparedStatement preparedStatement = connection.prepareStatement( query );
+            
+            preparedStatement.setString(1, car.getBrand());
+            preparedStatement.setString(2, car.getBrand());
+            preparedStatement.setString(3, car.getType());
+            preparedStatement.setString(4, car.getFuelType());
+            preparedStatement.setString(5, car.getTransmissionType());
+            preparedStatement.setInt(6, car.getYear());
+            preparedStatement.setDouble(7, car.getPrice());
+            preparedStatement.setDouble(8, car.getFuelCapacity());
+            preparedStatement.setDouble(9, car.getTrunkVolume());
+            preparedStatement.setInt(10, car.getKm());
+            preparedStatement.setString(11, car.getSmall_imgPath());
+            preparedStatement.setString(12, car.getLarge_imgPath());
+            preparedStatement.setInt(13, car.getGalleryId());
+            preparedStatement.setInt(14, car.getId());
+            
+            preparedStatement.executeUpdate();
+    }
+    
+    public static void deleteCarFromDatabase( Car car ) throws SQLException {
+        String query = "DELETE FROM cars WHERE car_id = ?";
+        st = connection.createStatement();
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(1, car.getId() );
+        preparedStatement.executeUpdate(); 
+    }
+    
+    public static void addCarToDatabase(Car car) throws SQLException {
+        
+        String query = "INSERT INTO cars (car_id, brand, model, type, fuelType, transmissionType, year, daily_price, fuelCapacity, trunkVolume, km, small_imgPath, large_imgPath, gallery_id) " + 
+                       "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        st = connection.createStatement();
+        PreparedStatement preparedStatement = connection.prepareStatement( query );
+        preparedStatement.setInt(1, car.getId());
+        preparedStatement.setString(2, car.getBrand());
+        preparedStatement.setString(3, car.getModel());
+        preparedStatement.setString(4, car.getType());
+        preparedStatement.setString(5, car.getFuelType());
+        preparedStatement.setString(6, car.getTransmissionType());
+        preparedStatement.setInt(7, car.getYear());
+        preparedStatement.setDouble(8, car.getPrice());
+        preparedStatement.setDouble(9, car.getFuelCapacity());
+        preparedStatement.setDouble(10, car.getTrunkVolume());
+        preparedStatement.setInt(11, car.getKm());
+        preparedStatement.setString(12, car.getSmall_imgPath());
+        preparedStatement.setString(13, car.getLarge_imgPath());
+        preparedStatement.setInt(14, car.getGalleryId());
+        preparedStatement.executeUpdate();
         
     }
 }

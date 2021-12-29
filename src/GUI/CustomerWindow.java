@@ -67,7 +67,7 @@ public final class CustomerWindow extends javax.swing.JFrame {
         this.visitor = (Visitor) visitor;
         initComponents();
         lblProfilePic.setIcon( new ImageIcon(getClass().getResource( "/images/visitor125.png" )));
-        lblTheUserName.setText( ((Visitor)visitor).getFullName() );
+        lblTheUserName.setText(((Visitor)visitor).getFullName() );
         designColorsAndComponents();
         pnlProfile.setVisible( false );
         pnlLayeredProfile.setVisible( false );
@@ -146,7 +146,7 @@ public final class CustomerWindow extends javax.swing.JFrame {
     }
     
     public void visitorNotPermitedAction() {
-        int choice = JOptionPane.showConfirmDialog(null, "You must register to the application. Do you want to register?", "Unsopperdet Operation", JOptionPane.YES_NO_OPTION);
+        int choice = JOptionPane.showConfirmDialog(null, "You must register to the application. \nDo you want to register?", "Unsopperdet Operation", JOptionPane.YES_NO_OPTION);
                 System.out.println("" + choice);
                 
                 if ( choice == 0){
@@ -890,7 +890,7 @@ public final class CustomerWindow extends javax.swing.JFrame {
                     .addComponent(lblTotalCashAfterRentalOfUser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblCurrentCashOfUser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblTotalPaymentOfUser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pick_upDate_JDatechooser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                    .addComponent(pick_upDate_JDatechooser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(returnDate_JDatechooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(pnlApprovalLayout.createSequentialGroup()
                         .addComponent(textPromotionCode, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1182,9 +1182,7 @@ public final class CustomerWindow extends javax.swing.JFrame {
                 .addGroup(pnlInLayeredHomePageCarInfo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlInLayeredHomePageCarInfo1Layout.createSequentialGroup()
                         .addGroup(pnlInLayeredHomePageCarInfo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlInLayeredHomePageCarInfo1Layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnDeleteOrder1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(btnDeleteOrder1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(pnlInLayeredHomePageCarInfo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(lblOrderedCarBrandValue, javax.swing.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE)
                                 .addComponent(lblOrderedCarModelValue, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1205,12 +1203,9 @@ public final class CustomerWindow extends javax.swing.JFrame {
                                     .addComponent(lblOrderedCarPromotionCodeValue, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGap(18, 18, 18)
                                 .addComponent(lblOrderDetailCarImg, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(pnlInLayeredHomePageCarInfo1Layout.createSequentialGroup()
-                        .addGroup(pnlInLayeredHomePageCarInfo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblOrderedCarRentDateValue, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblOrderedCarReturnDateValue, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                    .addComponent(lblOrderedCarRentDateValue, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblOrderedCarReturnDateValue, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnlInLayeredHomePageCarInfo1Layout.setVerticalGroup(
             pnlInLayeredHomePageCarInfo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1643,6 +1638,20 @@ public final class CustomerWindow extends javax.swing.JFrame {
     private void lblProfileColorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblProfileColorMouseClicked
         // TODO add your handling code here:
         HelperMethods.changePage(pnlLayeredProfile, pnlLayered);
+        RentCarSystem.getOrdersFromDatabase();
+        orders.addAll(RentCarSystem.getOrders());
+        defaultListModel = new DefaultListModel();
+        for (Order order : orders) {
+            if(order.getCustomerId()==customer.getCustomerId()){
+                defaultListModel.addElement(order);
+            }
+        }
+        
+        if ( !orders.isEmpty() ) {
+            currentOrder = orders.get(currentOrderIndex);
+            listOrders.setModel(defaultListModel);
+            setOrderDetails(currentOrder);
+        }
     }//GEN-LAST:event_lblProfileColorMouseClicked
 
     private void lblExitColorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblExitColorMouseClicked
@@ -1697,7 +1706,8 @@ public final class CustomerWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_textPromotionCodeKeyTyped
 
     private void lblNextMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblNextMouseClicked
-        if(currentCarIndex<cars.size() && currentCarIndex > 0){
+        /*
+        if(currentCarIndex < cars.size() && currentCarIndex > 0){
             currentCar = cars.get(currentCarIndex);
             setCarInformation(currentCar);
             currentCarIndex++;
@@ -1707,10 +1717,21 @@ public final class CustomerWindow extends javax.swing.JFrame {
             setCarInformation(currentCar);
             currentCarIndex++;
         }
+        */
+        
+        currentCarIndex++;
+        if ( currentCarIndex == cars.size() )
+            currentCarIndex = 0;
+        
+        currentCar =  cars.get( currentCarIndex );
+        setCarInformation( currentCar );
+        
+        //System.out.println("" + cars.toString());
     }//GEN-LAST:event_lblNextMouseClicked
 
     private void lblPreviousMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblPreviousMouseClicked
-        if(currentCarIndex>-1 && currentCarIndex < cars.size()){
+        /*
+        if(currentCarIndex > -1 && currentCarIndex < cars.size()){
             currentCar = cars.get(currentCarIndex);
             setCarInformation(currentCar);
             currentCarIndex--;
@@ -1720,6 +1741,15 @@ public final class CustomerWindow extends javax.swing.JFrame {
             setCarInformation(currentCar);
             currentCarIndex--;
         }
+        */
+        
+        currentCarIndex--;
+        
+        if ( currentCarIndex == -1 ) {
+            currentCarIndex = cars.size()-1;
+        }
+        currentCar = cars.get( currentCarIndex );
+        setCarInformation(currentCar);
     }//GEN-LAST:event_lblPreviousMouseClicked
 
     private void btnFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFilterActionPerformed
@@ -1801,7 +1831,8 @@ public final class CustomerWindow extends javax.swing.JFrame {
     private void lblRentMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblRentMouseClicked
         lblCurrentCashOfUser.setText("$" + String.valueOf(customer.getTotalCash()));
         if(pick_upDate_JDatechooser.getDate()!=null && returnDate_JDatechooser.getDate()!=null){
-            var totalPayment = computeDiff(pick_upDate_JDatechooser.getDate(),returnDate_JDatechooser.getDate()).get(TimeUnit.DAYS) * currentCar.getPrice();
+            //var totalPayment = computeDiff(pick_upDate_JDatechooser.getDate(),returnDate_JDatechooser.getDate()).get(TimeUnit.DAYS) * currentCar.getPrice();
+            double totalPayment = ((returnDate_JDatechooser.getDate().getTime() - pick_upDate_JDatechooser.getDate().getTime()) / 86_400_000) * currentCar.getPrice();
             lblTotalPaymentOfUser.setText(String.valueOf(totalPayment));
             lblTotalCashAfterRentalOfUser.setText(String.valueOf(customer.getTotalCash() - totalPayment));
         }
@@ -2087,9 +2118,12 @@ public final class CustomerWindow extends javax.swing.JFrame {
                 defaultListModel.addElement(order);
             }
         }
-        currentOrder = orders.get(currentOrderIndex);
-        listOrders.setModel(defaultListModel);
-        setOrderDetails(currentOrder);
+        
+        if ( !orders.isEmpty() ) {
+            currentOrder = orders.get(currentOrderIndex);
+            listOrders.setModel(defaultListModel);
+            setOrderDetails(currentOrder);
+        }
     }
     private void setCarInformation(Car currentCar) {
         
@@ -2172,6 +2206,8 @@ public final class CustomerWindow extends javax.swing.JFrame {
         orders.clear();
         orders.addAll(filteredOrder);
     }
+    
+    /*
     public static Map<TimeUnit,Long> computeDiff(Date date1, Date date2) {
 
         long diffInMillies = date2.getTime() - date1.getTime();
@@ -2197,6 +2233,8 @@ public final class CustomerWindow extends javax.swing.JFrame {
 
         return result;
     }
+    */
+    
     private void fulfillGalleryCbx() {
         String [] galleryIds =  new String[RentCarSystem.getGalleries().size()+ 1];
         galleryIds[0] = "All";
@@ -2228,7 +2266,7 @@ public final class CustomerWindow extends javax.swing.JFrame {
     private void setOrderList(){
         defaultListModel = new DefaultListModel();
         for (Order order : orders) {
-            if(order.getCustomerId()==customer.getCustomerId()){
+            if(order.getCustomerId() == customer.getCustomerId()){
                 defaultListModel.addElement(order);
             }
         }

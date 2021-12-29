@@ -11,7 +11,7 @@ public abstract class User extends Person {
     protected String phoneNumber;
     protected Mail mailAdress ;
     protected String Username;
-    protected String Password;
+    protected String password;
     protected String resetPasswordQuestion;
     protected String resetPasswordAnswer;
 
@@ -23,7 +23,7 @@ public abstract class User extends Person {
         this.phoneNumber = phoneNumber;
         this.mailAdress = mailAdress;
         this.Username = Username;
-        this.Password = Password;
+        this.password = Password;
         this.resetPasswordQuestion = resetPasswordQuestion;
         this.resetPasswordAnswer = resetPasswordAnswer;
     }
@@ -58,11 +58,11 @@ public abstract class User extends Person {
     }
 
     public String getPassword() {
-        return Password;
+        return password;
     }
 
     public void setPassword(String Password) {
-        this.Password = Password;
+        this.password = Password;
     }
 
     public String getFullName() {

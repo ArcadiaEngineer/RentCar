@@ -6,32 +6,44 @@
 package GUI;
 
 import Business.RentCarSystem;
+import Entities.Abstract.User;
 import Entities.Concrete.Customer;
-import DataAccessLayer.DBConnection;
+import Entities.Concrete.GalleryOwner;
 import Helper.HelperMethods;
-import java.sql.*;
 
 /**
  *
  * @author Lian La-Fey
  */
-public class ResetPasswordPanel extends javax.swing.JFrame {
+public final class ResetPasswordPanel extends javax.swing.JFrame {
 
     /**
      * Creates new form ResetPassword
      */
     
-    DBConnection dBConnection = new DBConnection();
-    Connection connection = dBConnection.connDb();
-    Statement st = null;
-    ResultSet rs = null;
-    
-    private Customer customer;
+    private User user;
     
     public ResetPasswordPanel() {
         initComponents();
-        rstPasswrdAns_JPass.setEchoChar((char)'\u2022');
-        newPassword_JPass.setEchoChar((char)'\u2022');
+        f1();
+    }
+    
+    public ResetPasswordPanel(GalleryOwner galleryOwner) {
+        initComponents();
+        f1();
+        
+        user = galleryOwner;
+        HelperMethods.changePage(secondPage, jLayeredPane1);
+        rstPasswordQue_JText.setText( user.getResetPasswordQuestion() );
+    }
+    
+    public ResetPasswordPanel(Customer customer) {
+        initComponents();
+        f1();
+        
+        user = customer;
+        HelperMethods.changePage(secondPage, jLayeredPane1);
+        rstPasswordQue_JText.setText( user.getResetPasswordQuestion() );
     }
     
     /**
@@ -384,11 +396,11 @@ public class ResetPasswordPanel extends javax.swing.JFrame {
 
     private void firstPageContinue_JButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_firstPageContinue_JButtonActionPerformed
         // TODO add your handling code here:
-        customer = (Customer) RentCarSystem.getUserByMailName( mail_JText.getText() );
+        user =  RentCarSystem.getUserByMailName( mail_JText.getText() );
         
-        if ( customer != null ) {
+        if ( user != null ) {
             HelperMethods.changePage(secondPage, jLayeredPane1);
-            rstPasswordQue_JText.setText( customer.getResetPasswordQuestion() );
+            rstPasswordQue_JText.setText( user.getResetPasswordQuestion() );
         } else {
             HelperMethods.showErrorMessage("We cannot found your email!", "Unregistered Email");
         }
@@ -396,7 +408,7 @@ public class ResetPasswordPanel extends javax.swing.JFrame {
 
     private void secondPageContinue_JButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_secondPageContinue_JButtonActionPerformed
         // TODO add your handling code here:
-        if ( String.valueOf( rstPasswrdAns_JPass.getPassword() ).equals( customer.getResetPasswordAnswer() ) ) {
+        if ( String.valueOf( rstPasswrdAns_JPass.getPassword() ).equals( user.getResetPasswordAnswer() ) ) {
             HelperMethods.changePage(thirdPage, jLayeredPane1);
         } else {
             HelperMethods.showErrorMessage("Unmatched Answer", "Wrong");
@@ -407,7 +419,12 @@ public class ResetPasswordPanel extends javax.swing.JFrame {
        // TODO add your handling code here:
        boolean isSuccesful = false;
         try {
-            RentCarSystem.updateUserPassword(mail_JText.getText(), String.valueOf(newPassword_JPass.getPassword()) );
+            
+            if ( user instanceof Customer ) 
+                RentCarSystem.updateCustomerPassword(user.getMailAdress().getName(), String.valueOf(newPassword_JPass.getPassword()) );
+            else if ( user instanceof GalleryOwner )
+                RentCarSystem.updateGalleryOwnerPassword(user.getMailAdress().getName(), String.valueOf(newPassword_JPass.getPassword()) );
+            
             isSuccesful = true;
         } catch (IllegalArgumentException exception) {
             HelperMethods.showErrorMessage(exception.getMessage(), "Invalid Password");
@@ -417,6 +434,10 @@ public class ResetPasswordPanel extends javax.swing.JFrame {
             dispose();
     }//GEN-LAST:event_thirdPageContinue_JButActionPerformed
 
+    public void f1() {
+        rstPasswrdAns_JPass.setEchoChar((char)'\u2022');
+        newPassword_JPass.setEchoChar((char)'\u2022');
+    }
     
     
 

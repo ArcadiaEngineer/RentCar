@@ -30,6 +30,12 @@ public class TRY extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tableCar = new javax.swing.JTable();
+        lblConfNewPassword = new javax.swing.JLabel();
+        lblNewPassword = new javax.swing.JLabel();
+        tbxNewPass = new javax.swing.JPasswordField();
+        tbxConfNewPass = new javax.swing.JPasswordField();
+        tbxCurrentPass = new javax.swing.JPasswordField();
+        lblCurrentPassword = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -79,25 +85,102 @@ public class TRY extends javax.swing.JFrame {
         tableCar.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(tableCar);
 
+        lblConfNewPassword.setBackground(new java.awt.Color(242, 243, 244));
+        lblConfNewPassword.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblConfNewPassword.setForeground(new java.awt.Color(204, 204, 204));
+        lblConfNewPassword.setText("Confirm New Password:");
+
+        lblNewPassword.setBackground(new java.awt.Color(242, 243, 244));
+        lblNewPassword.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblNewPassword.setForeground(new java.awt.Color(204, 204, 204));
+        lblNewPassword.setText("New Password:");
+
+        tbxNewPass.setEditable(false);
+        tbxNewPass.setBackground(new java.awt.Color(51, 51, 51));
+        tbxNewPass.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        tbxNewPass.setForeground(new java.awt.Color(204, 204, 204));
+        tbxNewPass.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true), javax.swing.BorderFactory.createEmptyBorder(1, 4, 1, 1)));
+        tbxNewPass.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                tbxNewPassKeyTyped(evt);
+            }
+        });
+
+        tbxConfNewPass.setEditable(false);
+        tbxConfNewPass.setBackground(new java.awt.Color(51, 51, 51));
+        tbxConfNewPass.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        tbxConfNewPass.setForeground(new java.awt.Color(204, 204, 204));
+        tbxConfNewPass.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true), javax.swing.BorderFactory.createEmptyBorder(1, 4, 1, 1)));
+        tbxConfNewPass.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                tbxConfNewPassKeyTyped(evt);
+            }
+        });
+
+        tbxCurrentPass.setEditable(false);
+        tbxCurrentPass.setBackground(new java.awt.Color(51, 51, 51));
+        tbxCurrentPass.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        tbxCurrentPass.setForeground(new java.awt.Color(204, 204, 204));
+        tbxCurrentPass.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(122, 72, 255), 1, true), javax.swing.BorderFactory.createEmptyBorder(1, 4, 1, 1)));
+        tbxCurrentPass.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                tbxCurrentPassKeyTyped(evt);
+            }
+        });
+
+        lblCurrentPassword.setBackground(new java.awt.Color(242, 243, 244));
+        lblCurrentPassword.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCurrentPassword.setForeground(new java.awt.Color(204, 204, 204));
+        lblCurrentPassword.setText("Current Password:");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1054, Short.MAX_VALUE)
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(279, 279, 279)
-                    .addComponent(jScrollPane1)
-                    .addGap(280, 280, 280)))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(182, 182, 182)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(lblCurrentPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(19, 19, 19)
+                        .addComponent(tbxCurrentPass, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(lblNewPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(19, 19, 19)
+                        .addComponent(tbxNewPass, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(lblConfNewPassword)
+                        .addGap(18, 18, 18)
+                        .addComponent(tbxConfNewPass, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 316, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 642, Short.MAX_VALUE)
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(45, 45, 45)
-                    .addComponent(jScrollPane1)
-                    .addGap(46, 46, 46)))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(59, 59, 59)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 718, Short.MAX_VALUE)
+                .addGap(32, 32, 32))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(249, 249, 249)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(4, 4, 4)
+                        .addComponent(lblCurrentPassword))
+                    .addComponent(tbxCurrentPass, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(6, 6, 6)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(4, 4, 4)
+                        .addComponent(lblNewPassword))
+                    .addComponent(tbxNewPass, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(6, 6, 6)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(4, 4, 4)
+                        .addComponent(lblConfNewPassword))
+                    .addComponent(tbxConfNewPass, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -114,6 +197,24 @@ public class TRY extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void tbxNewPassKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tbxNewPassKeyTyped
+        // TODO add your handling code here:
+        if ( Character.isWhitespace(evt.getKeyChar()) )
+        evt.consume();
+    }//GEN-LAST:event_tbxNewPassKeyTyped
+
+    private void tbxConfNewPassKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tbxConfNewPassKeyTyped
+        // TODO add your handling code here:
+        if ( Character.isWhitespace(evt.getKeyChar()) )
+        evt.consume();
+    }//GEN-LAST:event_tbxConfNewPassKeyTyped
+
+    private void tbxCurrentPassKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tbxCurrentPassKeyTyped
+        // TODO add your handling code here:
+        if ( Character.isWhitespace(evt.getKeyChar()) )
+        evt.consume();
+    }//GEN-LAST:event_tbxCurrentPassKeyTyped
+
     /**
      * @param args the command line arguments
      */
@@ -123,6 +224,12 @@ public class TRY extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblConfNewPassword;
+    private javax.swing.JLabel lblCurrentPassword;
+    private javax.swing.JLabel lblNewPassword;
     private javax.swing.JTable tableCar;
+    private javax.swing.JPasswordField tbxConfNewPass;
+    private javax.swing.JPasswordField tbxCurrentPass;
+    private javax.swing.JPasswordField tbxNewPass;
     // End of variables declaration//GEN-END:variables
 }
