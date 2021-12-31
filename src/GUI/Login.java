@@ -2,23 +2,30 @@ package GUI;
 
 import Business.RentCarSystem;
 import Entities.Abstract.User;
-import Entities.Concrete.*;
+import Entities.Concrete.Customer;
+import Entities.Concrete.GalleryOwner;
+import Entities.Concrete.Visitor;
+import GUI.GalleryOwnerWindow;
 import Helper.HelperMethods;
+import java.awt.event.ItemEvent;
 import javax.swing.ImageIcon;
 
 /**
  *
  * @author Lian La-Fey
  */
-
 public class Login extends javax.swing.JFrame {
+
+    /**
+     * Creates new form Login
+     */
     
     
     public Login() {
         RentCarSystem.getDataFromDatabase();
         initComponents();
-        pass_JPass.setEchoChar((char)'\u2022');
         changePics();
+        pass_JPass.setEchoChar((char)'\u2022');
         
     }
     
@@ -39,9 +46,8 @@ public class Login extends javax.swing.JFrame {
         jSeparator2 = new javax.swing.JSeparator();
         password_JLabel = new javax.swing.JLabel();
         guest_JLabel = new javax.swing.JLabel();
-        emailWar_JLabel = new javax.swing.JLabel();
+        checkEmail_JLabel = new javax.swing.JLabel();
         tanitim_JPanel = new javax.swing.JPanel();
-        girisGorsel = new javax.swing.JLabel();
         loginPic = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         closeLogin_JLabel = new javax.swing.JLabel();
@@ -76,7 +82,6 @@ public class Login extends javax.swing.JFrame {
         hideShowPass_Btn.setBackground(new java.awt.Color(50, 45, 44));
         hideShowPass_Btn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/closeEye2.png"))); // NOI18N
         hideShowPass_Btn.setBorder(null);
-        hideShowPass_Btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         hideShowPass_Btn.setOpaque(true);
         hideShowPass_Btn.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -87,7 +92,6 @@ public class Login extends javax.swing.JFrame {
         register_btn.setBackground(new java.awt.Color(51, 204, 0));
         register_btn.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         register_btn.setText("REGISTER");
-        register_btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         register_btn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 register_btnActionPerformed(evt);
@@ -97,7 +101,6 @@ public class Login extends javax.swing.JFrame {
         login_btn.setBackground(new java.awt.Color(51, 204, 255));
         login_btn.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         login_btn.setText("LOGIN");
-        login_btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         login_btn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 login_btnActionPerformed(evt);
@@ -107,7 +110,6 @@ public class Login extends javax.swing.JFrame {
         resetPassword_btn.setBackground(new java.awt.Color(255, 102, 102));
         resetPassword_btn.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         resetPassword_btn.setText("RESET PASSWORD");
-        resetPassword_btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         resetPassword_btn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 resetPassword_btnActionPerformed(evt);
@@ -138,9 +140,9 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
-        emailWar_JLabel.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        emailWar_JLabel.setForeground(new java.awt.Color(255, 0, 102));
-        emailWar_JLabel.setText("          ");
+        checkEmail_JLabel.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        checkEmail_JLabel.setForeground(new java.awt.Color(255, 0, 0));
+        checkEmail_JLabel.setText("           ");
 
         javax.swing.GroupLayout biligi_jPanelLayout = new javax.swing.GroupLayout(biligi_jPanel);
         biligi_jPanel.setLayout(biligi_jPanelLayout);
@@ -150,7 +152,7 @@ public class Login extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(biligi_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(biligi_jPanelLayout.createSequentialGroup()
-                        .addGap(11, 11, 11)
+                        .addGap(13, 13, 13)
                         .addComponent(guest_JLabel)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(biligi_jPanelLayout.createSequentialGroup()
@@ -162,46 +164,49 @@ public class Login extends javax.swing.JFrame {
                                 .addComponent(register_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(biligi_jPanelLayout.createSequentialGroup()
                                 .addGroup(biligi_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(biligi_jPanelLayout.createSequentialGroup()
-                                        .addGap(95, 95, 95)
-                                        .addComponent(password_JLabel))
-                                    .addGroup(biligi_jPanelLayout.createSequentialGroup()
-                                        .addGap(26, 26, 26)
-                                        .addGroup(biligi_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(jSeparator1)
-                                            .addComponent(jSeparator2)
-                                            .addGroup(biligi_jPanelLayout.createSequentialGroup()
-                                                .addComponent(pass_JPass, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(0, 0, 0)
-                                                .addComponent(hideShowPass_Btn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                                    .addGroup(biligi_jPanelLayout.createSequentialGroup()
-                                        .addGap(115, 115, 115)
-                                        .addComponent(email_jLabel))
                                     .addComponent(logo_label)
                                     .addGroup(biligi_jPanelLayout.createSequentialGroup()
                                         .addGap(64, 64, 64)
-                                        .addComponent(resetPassword_btn))
-                                    .addGroup(biligi_jPanelLayout.createSequentialGroup()
-                                        .addGap(19, 19, 19)
-                                        .addGroup(biligi_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(mail_JText, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(emailWar_JLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                        .addComponent(resetPassword_btn)))
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addContainerGap())))
+            .addGroup(biligi_jPanelLayout.createSequentialGroup()
+                .addGap(22, 22, 22)
+                .addGroup(biligi_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(checkEmail_JLabel)
+                    .addGroup(biligi_jPanelLayout.createSequentialGroup()
+                        .addGap(96, 96, 96)
+                        .addComponent(email_jLabel))
+                    .addComponent(mail_JText, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(biligi_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(biligi_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(biligi_jPanelLayout.createSequentialGroup()
+                                .addGap(69, 69, 69)
+                                .addComponent(password_JLabel))
+                            .addGroup(biligi_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jSeparator2)
+                                .addGroup(biligi_jPanelLayout.createSequentialGroup()
+                                    .addComponent(pass_JPass, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(0, 0, 0)
+                                    .addComponent(hideShowPass_Btn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(biligi_jPanelLayout.createSequentialGroup()
+                            .addGap(7, 7, 7)
+                            .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         biligi_jPanelLayout.setVerticalGroup(
             biligi_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(biligi_jPanelLayout.createSequentialGroup()
-                .addComponent(logo_label, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(logo_label, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(emailWar_JLabel)
-                .addGap(6, 6, 6)
+                .addComponent(checkEmail_JLabel)
+                .addGap(7, 7, 7)
                 .addComponent(email_jLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(mail_JText, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(password_JLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(biligi_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -209,15 +214,15 @@ public class Login extends javax.swing.JFrame {
                     .addComponent(hideShowPass_Btn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(biligi_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(register_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(login_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(resetPassword_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(45, 45, 45)
+                .addGap(52, 52, 52)
                 .addComponent(guest_JLabel)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(58, Short.MAX_VALUE))
         );
 
         tanitim_JPanel.setBackground(new java.awt.Color(50, 45, 44));
@@ -228,22 +233,17 @@ public class Login extends javax.swing.JFrame {
         tanitim_JPanel.setLayout(tanitim_JPanelLayout);
         tanitim_JPanelLayout.setHorizontalGroup(
             tanitim_JPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(tanitim_JPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(girisGorsel)
-                .addGap(94, 94, 94))
-            .addGroup(tanitim_JPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(loginPic, javax.swing.GroupLayout.PREFERRED_SIZE, 511, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tanitim_JPanelLayout.createSequentialGroup()
+                .addContainerGap(11, Short.MAX_VALUE)
+                .addComponent(loginPic)
+                .addContainerGap())
         );
         tanitim_JPanelLayout.setVerticalGroup(
             tanitim_JPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tanitim_JPanelLayout.createSequentialGroup()
-                .addContainerGap(35, Short.MAX_VALUE)
-                .addComponent(girisGorsel)
-                .addGap(60, 60, 60)
+                .addGap(48, 48, 48)
                 .addComponent(loginPic, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(90, 90, 90))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel1.setBackground(new java.awt.Color(50, 45, 44));
@@ -254,7 +254,6 @@ public class Login extends javax.swing.JFrame {
         closeLogin_JLabel.setText("X");
         closeLogin_JLabel.setToolTipText("");
         closeLogin_JLabel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        closeLogin_JLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         closeLogin_JLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 closeLogin_JLabelMouseClicked(evt);
@@ -319,9 +318,9 @@ public class Login extends javax.swing.JFrame {
     private void mail_JTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_mail_JTextKeyReleased
         // TODO add your handling code here:
         if ( !HelperMethods.checkEmailWriting( mail_JText.getText() ) ) {
-            emailWar_JLabel.setText("Invalid email!");
+            checkEmail_JLabel.setText("Invalid email!");
         } else {
-            emailWar_JLabel.setText("              ");
+            checkEmail_JLabel.setText("              ");
         }
     }//GEN-LAST:event_mail_JTextKeyReleased
 
@@ -372,7 +371,7 @@ public class Login extends javax.swing.JFrame {
                     } catch (InterruptedException ex) {
                         System.out.println(ex);
                     }
-                    girisGorsel.setIcon(new ImageIcon(getClass().getResource("/images/girisGorsel" + i + ".png")));
+                    loginPic.setIcon(new ImageIcon(getClass().getResource("/images/girisGorsel" + i + ".png")));
                     
                     i++;
                     if ( i == 4 )
@@ -388,7 +387,6 @@ public class Login extends javax.swing.JFrame {
      */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
-        
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
@@ -423,10 +421,9 @@ public class Login extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel biligi_jPanel;
+    private javax.swing.JLabel checkEmail_JLabel;
     private javax.swing.JLabel closeLogin_JLabel;
-    private javax.swing.JLabel emailWar_JLabel;
     private javax.swing.JLabel email_jLabel;
-    private javax.swing.JLabel girisGorsel;
     private javax.swing.JLabel guest_JLabel;
     private javax.swing.JToggleButton hideShowPass_Btn;
     private javax.swing.JPanel jPanel1;

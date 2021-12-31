@@ -20,7 +20,7 @@ public class HeaderColor extends DefaultTableCellRenderer {
         super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); //To change body of generated methods, choose Tools | Templates.
         
         setBackground( new Color(99, 82, 255) );
-        setFont( new Font("Tahoma", Font.BOLD, 14) );
+        setFont( new Font("Tahoma", Font.BOLD, 11) );
         setForeground(new Color(255, 255, 255));
         setHorizontalAlignment(CENTER);
         

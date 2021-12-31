@@ -1,6 +1,9 @@
 package Entities.Abstract;
 
+import Business.RentCarSystem;
 import Entities.Concrete.Mail;
+import Entities.Concrete.Order;
+import java.sql.SQLException;
 
 
 public abstract class User extends Person {
@@ -11,11 +14,12 @@ public abstract class User extends Person {
     protected String phoneNumber;
     protected Mail mailAdress ;
     protected String Username;
-    protected String Password;
+    protected String homeAddress;
+    protected String password;
     protected String resetPasswordQuestion;
     protected String resetPasswordAnswer;
 
-    public User(String fullName, String gender, int age, String imgPath, String phoneNumber, Mail mailAdress, String Username, String Password, String resetPasswordQuestion, String resetPasswordAnswer) {
+    public User(String fullName, String gender, int age, String imgPath, String phoneNumber, Mail mailAdress, String Username, String homeAddress, String Password, String resetPasswordQuestion, String resetPasswordAnswer) {
         super(fullName);
         this.gender = gender;
         this.age = age;
@@ -23,13 +27,22 @@ public abstract class User extends Person {
         this.phoneNumber = phoneNumber;
         this.mailAdress = mailAdress;
         this.Username = Username;
-        this.Password = Password;
+        this.homeAddress = homeAddress;
+        this.password = Password;
         this.resetPasswordQuestion = resetPasswordQuestion;
         this.resetPasswordAnswer = resetPasswordAnswer;
     }
 
+    public boolean updateInformation(String newPhoneNum, String newImgPath, String newHomeAddress, String databaseName, Mail newMail ) throws SQLException {
+        phoneNumber = newPhoneNum;
+        mailAdress = newMail;
+        imgPath = newImgPath;
+        homeAddress = newHomeAddress;
+        RentCarSystem.updateUserInDatabase(this, databaseName);
+        return true;
+    }
     
-    public abstract void printOrder();
+    public abstract void printOrder(Order order);
     
 
     public String getResetPasswordQuestion() {
@@ -57,12 +70,20 @@ public abstract class User extends Person {
         this.Username = Username;
     }
 
+    public String getHomeAddress() {
+        return homeAddress;
+    }
+
+    public void setHomeAddress(String homeAddress) {
+        this.homeAddress = homeAddress;
+    }
+    
     public String getPassword() {
-        return Password;
+        return password;
     }
 
     public void setPassword(String Password) {
-        this.Password = Password;
+        this.password = Password;
     }
 
     public String getFullName() {

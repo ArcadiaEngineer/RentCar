@@ -8,13 +8,9 @@ package GUI;
 import Business.RentCarSystem;
 import Entities.Concrete.Customer;
 import Entities.Concrete.Mail;
-import DataAccessLayer.DBConnection;
 import Helper.HelperMethods;
 import java.io.File;
-import java.sql.*;
 import javax.swing.JFileChooser;
-import javax.swing.JPasswordField;
-import javax.swing.JToggleButton;
 
 /**
  *
@@ -23,13 +19,8 @@ import javax.swing.JToggleButton;
 public class RegisterPanel extends javax.swing.JFrame {
     
     private String imgPath;
-    private DBConnection dbConnection = new DBConnection();
-    private Connection connection = dbConnection.connDb();
-    private Statement st = null;
-    private ResultSet rs = null;
     
     public RegisterPanel() {
-        
         initComponents();
         pass_JPass.setEchoChar((char)'\u2022');
         rstPasswrdAns_JPass.setEchoChar((char)'\u2022');
@@ -68,6 +59,8 @@ public class RegisterPanel extends javax.swing.JFrame {
         jSeparator2 = new javax.swing.JSeparator();
         jSeparator5 = new javax.swing.JSeparator();
         profileAvatar_JLabel = new javax.swing.JLabel();
+        lblHomeAdd = new javax.swing.JLabel();
+        tbxHomeAddr = new javax.swing.JTextArea();
         secondPage = new javax.swing.JPanel();
         userName_JLabel = new javax.swing.JLabel();
         userName_JText = new javax.swing.JTextField();
@@ -88,7 +81,7 @@ public class RegisterPanel extends javax.swing.JFrame {
         hideShowPass_Btn2 = new javax.swing.JToggleButton();
         goPreviousPage_JLabel = new javax.swing.JLabel();
         emailWarning_JLabel = new javax.swing.JLabel();
-        password_JLabel1 = new javax.swing.JLabel();
+        lblComplete = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -128,12 +121,13 @@ public class RegisterPanel extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(registerPanelPic, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(8, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         page_JLayeredPane.setLayout(new java.awt.CardLayout());
 
         firstPage.setBackground(new java.awt.Color(37, 41, 88));
+        firstPage.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         fullName_JLabel.setBackground(new java.awt.Color(255, 255, 255));
         fullName_JLabel.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
@@ -141,16 +135,18 @@ public class RegisterPanel extends javax.swing.JFrame {
         fullName_JLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         fullName_JLabel.setText("Full Name");
         fullName_JLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        firstPage.add(fullName_JLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(47, 6, 263, -1));
 
         fullName_JText.setBackground(new java.awt.Color(37, 41, 88));
         fullName_JText.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         fullName_JText.setForeground(new java.awt.Color(255, 255, 255));
         fullName_JText.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        fullName_JText.setText("Lian La-Fey");
+        fullName_JText.setText("Leyla Yılmaz");
         fullName_JText.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        fullName_JText.setOpaque(true);
+        firstPage.add(fullName_JText, new org.netbeans.lib.awtextra.AbsoluteConstraints(47, 27, 263, 35));
 
         jSeparator1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 7, 1, 7));
+        firstPage.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(47, 62, 263, 10));
 
         gender_JLabel.setBackground(new java.awt.Color(255, 255, 255));
         gender_JLabel.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
@@ -158,17 +154,20 @@ public class RegisterPanel extends javax.swing.JFrame {
         gender_JLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         gender_JLabel.setText("Gender");
         gender_JLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        firstPage.add(gender_JLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(47, 78, 263, -1));
 
         genderBtnGroup.add(female_JRadio);
         female_JRadio.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         female_JRadio.setForeground(new java.awt.Color(255, 255, 255));
         female_JRadio.setSelected(true);
         female_JRadio.setText("Female");
+        firstPage.add(female_JRadio, new org.netbeans.lib.awtextra.AbsoluteConstraints(97, 105, 75, -1));
 
         genderBtnGroup.add(male_JRadio);
         male_JRadio.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         male_JRadio.setForeground(new java.awt.Color(255, 255, 255));
         male_JRadio.setText("Male");
+        firstPage.add(male_JRadio, new org.netbeans.lib.awtextra.AbsoluteConstraints(178, 105, 75, -1));
 
         gender_JLabel1.setBackground(new java.awt.Color(255, 255, 255));
         gender_JLabel1.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
@@ -176,23 +175,26 @@ public class RegisterPanel extends javax.swing.JFrame {
         gender_JLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         gender_JLabel1.setText("Age");
         gender_JLabel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        firstPage.add(gender_JLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(47, 148, 263, -1));
 
         age_JText.setBackground(new java.awt.Color(37, 41, 88));
         age_JText.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         age_JText.setForeground(new java.awt.Color(255, 255, 255));
         age_JText.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        age_JText.setText("21");
+        age_JText.setText("27");
         age_JText.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        age_JText.setOpaque(true);
         age_JText.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 age_JTextKeyTyped(evt);
             }
         });
+        firstPage.add(age_JText, new org.netbeans.lib.awtextra.AbsoluteConstraints(47, 169, 263, 35));
 
         jSeparator3.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 7, 1, 7));
+        firstPage.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(47, 204, 263, 10));
 
         jSeparator4.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 7, 1, 7));
+        firstPage.add(jSeparator4, new org.netbeans.lib.awtextra.AbsoluteConstraints(47, 138, 263, 10));
 
         goNextPage_JLabel.setBackground(new java.awt.Color(255, 255, 255));
         goNextPage_JLabel.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
@@ -206,6 +208,7 @@ public class RegisterPanel extends javax.swing.JFrame {
                 goNextPage_JLabelMouseClicked(evt);
             }
         });
+        firstPage.add(goNextPage_JLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 520, 270, -1));
 
         chooseAvatar_JLabel.setBackground(new java.awt.Color(255, 255, 255));
         chooseAvatar_JLabel.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
@@ -219,6 +222,7 @@ public class RegisterPanel extends javax.swing.JFrame {
                 chooseAvatar_JLabelMouseClicked(evt);
             }
         });
+        firstPage.add(chooseAvatar_JLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(88, 253, 162, 30));
 
         phoneNum_JText.setBackground(new java.awt.Color(37, 41, 88));
         phoneNum_JText.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -226,12 +230,12 @@ public class RegisterPanel extends javax.swing.JFrame {
         phoneNum_JText.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         phoneNum_JText.setText("544 426 1267");
         phoneNum_JText.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        phoneNum_JText.setOpaque(true);
         phoneNum_JText.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 phoneNum_JTextKeyTyped(evt);
             }
         });
+        firstPage.add(phoneNum_JText, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 338, 263, 35));
 
         phoneNum_JLabel.setBackground(new java.awt.Color(255, 255, 255));
         phoneNum_JLabel.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
@@ -239,10 +243,13 @@ public class RegisterPanel extends javax.swing.JFrame {
         phoneNum_JLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         phoneNum_JLabel.setText("Phone Number");
         phoneNum_JLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        firstPage.add(phoneNum_JLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 311, 263, -1));
 
         jSeparator2.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 7, 1, 7));
+        firstPage.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 379, 263, 10));
 
         jSeparator5.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 7, 1, 7));
+        firstPage.add(jSeparator5, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 295, 270, 10));
 
         profileAvatar_JLabel.setBackground(new java.awt.Color(255, 255, 255));
         profileAvatar_JLabel.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
@@ -250,87 +257,31 @@ public class RegisterPanel extends javax.swing.JFrame {
         profileAvatar_JLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         profileAvatar_JLabel.setText("Select Profile Avatar");
         profileAvatar_JLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        firstPage.add(profileAvatar_JLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(47, 220, 263, -1));
 
-        javax.swing.GroupLayout firstPageLayout = new javax.swing.GroupLayout(firstPage);
-        firstPage.setLayout(firstPageLayout);
-        firstPageLayout.setHorizontalGroup(
-            firstPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(firstPageLayout.createSequentialGroup()
-                .addGroup(firstPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(firstPageLayout.createSequentialGroup()
-                        .addGap(40, 40, 40)
-                        .addGroup(firstPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(firstPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addGroup(firstPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(age_JText, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(profileAvatar_JLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGroup(firstPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(fullName_JText, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
-                                    .addComponent(jSeparator1)
-                                    .addComponent(fullName_JLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(gender_JLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(gender_JLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jSeparator4))
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, firstPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(phoneNum_JText, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jSeparator2)
-                                    .addComponent(phoneNum_JLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(goNextPage_JLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(jSeparator5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(firstPageLayout.createSequentialGroup()
-                                .addGap(57, 57, 57)
-                                .addComponent(female_JRadio, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(male_JRadio, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(firstPageLayout.createSequentialGroup()
-                        .addGap(88, 88, 88)
-                        .addComponent(chooseAvatar_JLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 42, Short.MAX_VALUE))
-        );
-        firstPageLayout.setVerticalGroup(
-            firstPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(firstPageLayout.createSequentialGroup()
-                .addGap(17, 17, 17)
-                .addComponent(fullName_JLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(fullName_JText, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(gender_JLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(firstPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(female_JRadio)
-                    .addComponent(male_JRadio))
-                .addGap(12, 12, 12)
-                .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(gender_JLabel1)
-                .addGap(0, 0, 0)
-                .addComponent(age_JText, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(profileAvatar_JLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(chooseAvatar_JLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addComponent(jSeparator5, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(phoneNum_JLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(phoneNum_JText, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(goNextPage_JLabel)
-                .addContainerGap(58, Short.MAX_VALUE))
-        );
+        lblHomeAdd.setBackground(new java.awt.Color(255, 255, 255));
+        lblHomeAdd.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
+        lblHomeAdd.setForeground(new java.awt.Color(250, 233, 60));
+        lblHomeAdd.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblHomeAdd.setText("Home Address");
+        lblHomeAdd.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        firstPage.add(lblHomeAdd, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 395, 263, -1));
+
+        tbxHomeAddr.setBackground(new java.awt.Color(46, 50, 72));
+        tbxHomeAddr.setColumns(20);
+        tbxHomeAddr.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        tbxHomeAddr.setForeground(new java.awt.Color(255, 255, 255));
+        tbxHomeAddr.setLineWrap(true);
+        tbxHomeAddr.setRows(5);
+        tbxHomeAddr.setText("Ayvalı Mah. Şehit Teğmen Kalmaz Cad. No:2 / 301, Altındağ / Ankara, Türkiye");
+        tbxHomeAddr.setWrapStyleWord(true);
+        tbxHomeAddr.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEtchedBorder(), javax.swing.BorderFactory.createEmptyBorder(3, 6, 3, 6)));
+        firstPage.add(tbxHomeAddr, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 422, 270, 90));
 
         page_JLayeredPane.add(firstPage, "card2");
 
         secondPage.setBackground(new java.awt.Color(37, 41, 88));
+        secondPage.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         userName_JLabel.setBackground(new java.awt.Color(255, 255, 255));
         userName_JLabel.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
@@ -338,6 +289,7 @@ public class RegisterPanel extends javax.swing.JFrame {
         userName_JLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         userName_JLabel.setText("User Name");
         userName_JLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        secondPage.add(userName_JLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(42, 6, 263, -1));
 
         userName_JText.setBackground(new java.awt.Color(37, 41, 88));
         userName_JText.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -345,9 +297,10 @@ public class RegisterPanel extends javax.swing.JFrame {
         userName_JText.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         userName_JText.setText("Lian La-Fey");
         userName_JText.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        userName_JText.setOpaque(true);
+        secondPage.add(userName_JText, new org.netbeans.lib.awtextra.AbsoluteConstraints(42, 30, 263, 35));
 
         jSeparator6.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 7, 1, 7));
+        secondPage.add(jSeparator6, new org.netbeans.lib.awtextra.AbsoluteConstraints(42, 68, 263, 10));
 
         email_JLabel.setBackground(new java.awt.Color(255, 255, 255));
         email_JLabel.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
@@ -355,6 +308,7 @@ public class RegisterPanel extends javax.swing.JFrame {
         email_JLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         email_JLabel.setText("Email");
         email_JLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        secondPage.add(email_JLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(131, 81, 80, -1));
 
         email_JText.setBackground(new java.awt.Color(37, 41, 88));
         email_JText.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -362,14 +316,15 @@ public class RegisterPanel extends javax.swing.JFrame {
         email_JText.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         email_JText.setText("ibr.glmz19@gmail.com");
         email_JText.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        email_JText.setOpaque(true);
         email_JText.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 email_JTextKeyReleased(evt);
             }
         });
+        secondPage.add(email_JText, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 105, 265, 35));
 
         jSeparator7.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 7, 1, 7));
+        secondPage.add(jSeparator7, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 143, 265, 10));
 
         pass_JPass.setBackground(new java.awt.Color(37, 41, 88));
         pass_JPass.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -377,7 +332,8 @@ public class RegisterPanel extends javax.swing.JFrame {
         pass_JPass.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         pass_JPass.setText("123456");
         pass_JPass.setBorder(javax.swing.BorderFactory.createEmptyBorder(7, 7, 7, 7));
-        pass_JPass.setOpaque(true);
+        secondPage.add(pass_JPass, new org.netbeans.lib.awtextra.AbsoluteConstraints(74, 181, 190, 35));
+        secondPage.add(jSeparator8, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 219, 265, 10));
 
         password_JLabel.setBackground(new java.awt.Color(255, 255, 255));
         password_JLabel.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
@@ -385,6 +341,7 @@ public class RegisterPanel extends javax.swing.JFrame {
         password_JLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         password_JLabel.setText("Password");
         password_JLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        secondPage.add(password_JLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 157, 265, -1));
 
         hideShowPass_Btn.setBackground(new java.awt.Color(37, 41, 88));
         hideShowPass_Btn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/closeEye2.png"))); // NOI18N
@@ -396,6 +353,7 @@ public class RegisterPanel extends javax.swing.JFrame {
                 hideShowPass_BtnİtemStateChanged(evt);
             }
         });
+        secondPage.add(hideShowPass_Btn, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 181, 35, 35));
 
         rstPasswrdQue_JLabel.setBackground(new java.awt.Color(255, 255, 255));
         rstPasswrdQue_JLabel.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
@@ -403,16 +361,18 @@ public class RegisterPanel extends javax.swing.JFrame {
         rstPasswrdQue_JLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         rstPasswrdQue_JLabel.setText("Reset Password Question");
         rstPasswrdQue_JLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        secondPage.add(rstPasswrdQue_JLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(42, 231, 263, -1));
 
         rstPasswrdQue_JText.setBackground(new java.awt.Color(37, 41, 88));
         rstPasswrdQue_JText.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         rstPasswrdQue_JText.setForeground(new java.awt.Color(255, 255, 255));
         rstPasswrdQue_JText.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        rstPasswrdQue_JText.setText("Your favorite film?");
+        rstPasswrdQue_JText.setText("Your Father's Name?");
         rstPasswrdQue_JText.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        rstPasswrdQue_JText.setOpaque(true);
+        secondPage.add(rstPasswrdQue_JText, new org.netbeans.lib.awtextra.AbsoluteConstraints(42, 258, 263, 35));
 
         jSeparator9.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 7, 1, 7));
+        secondPage.add(jSeparator9, new org.netbeans.lib.awtextra.AbsoluteConstraints(42, 299, 263, 10));
 
         password_JLabel2.setBackground(new java.awt.Color(255, 255, 255));
         password_JLabel2.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
@@ -420,14 +380,16 @@ public class RegisterPanel extends javax.swing.JFrame {
         password_JLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         password_JLabel2.setText("Reset Password Question");
         password_JLabel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        secondPage.add(password_JLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 315, 265, -1));
 
         rstPasswrdAns_JPass.setBackground(new java.awt.Color(37, 41, 88));
         rstPasswrdAns_JPass.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         rstPasswrdAns_JPass.setForeground(new java.awt.Color(255, 255, 255));
         rstPasswrdAns_JPass.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        rstPasswrdAns_JPass.setText("Shutter Island");
+        rstPasswrdAns_JPass.setText("Metin Yılmaz");
         rstPasswrdAns_JPass.setBorder(javax.swing.BorderFactory.createEmptyBorder(7, 7, 7, 7));
-        rstPasswrdAns_JPass.setOpaque(true);
+        secondPage.add(rstPasswrdAns_JPass, new org.netbeans.lib.awtextra.AbsoluteConstraints(72, 342, 190, 35));
+        secondPage.add(jSeparator11, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 383, 265, 10));
 
         hideShowPass_Btn2.setBackground(new java.awt.Color(37, 41, 88));
         hideShowPass_Btn2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/closeEye2.png"))); // NOI18N
@@ -439,6 +401,7 @@ public class RegisterPanel extends javax.swing.JFrame {
                 hideShowPass_Btn2İtemStateChanged(evt);
             }
         });
+        secondPage.add(hideShowPass_Btn2, new org.netbeans.lib.awtextra.AbsoluteConstraints(262, 342, 35, 35));
 
         goPreviousPage_JLabel.setBackground(new java.awt.Color(255, 255, 255));
         goPreviousPage_JLabel.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
@@ -452,6 +415,7 @@ public class RegisterPanel extends javax.swing.JFrame {
                 goPreviousPage_JLabelMouseClicked(evt);
             }
         });
+        secondPage.add(goPreviousPage_JLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 411, 263, -1));
 
         emailWarning_JLabel.setBackground(new java.awt.Color(255, 255, 255));
         emailWarning_JLabel.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
@@ -459,116 +423,21 @@ public class RegisterPanel extends javax.swing.JFrame {
         emailWarning_JLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         emailWarning_JLabel.setText("    ");
         emailWarning_JLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        secondPage.add(emailWarning_JLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(39, 81, 86, 21));
 
-        password_JLabel1.setBackground(new java.awt.Color(255, 255, 255));
-        password_JLabel1.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
-        password_JLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        password_JLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        password_JLabel1.setText("Complete");
-        password_JLabel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(250, 233, 60), 2, true));
-        password_JLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        password_JLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+        lblComplete.setBackground(new java.awt.Color(255, 255, 255));
+        lblComplete.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
+        lblComplete.setForeground(new java.awt.Color(255, 255, 255));
+        lblComplete.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblComplete.setText("Complete");
+        lblComplete.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(250, 233, 60), 2, true));
+        lblComplete.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblComplete.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                password_JLabel1MouseClicked(evt);
+                lblCompleteMouseClicked(evt);
             }
         });
-
-        javax.swing.GroupLayout secondPageLayout = new javax.swing.GroupLayout(secondPage);
-        secondPage.setLayout(secondPageLayout);
-        secondPageLayout.setHorizontalGroup(
-            secondPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, secondPageLayout.createSequentialGroup()
-                .addGroup(secondPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jSeparator7, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(secondPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, secondPageLayout.createSequentialGroup()
-                            .addGap(40, 40, 40)
-                            .addGroup(secondPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, secondPageLayout.createSequentialGroup()
-                                    .addGap(32, 32, 32)
-                                    .addComponent(rstPasswrdAns_JPass, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(0, 0, 0)
-                                    .addComponent(hideShowPass_Btn2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(jSeparator11, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(password_JLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(goPreviousPage_JLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(password_JLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGap(0, 0, Short.MAX_VALUE))
-                        .addGroup(secondPageLayout.createSequentialGroup()
-                            .addGap(0, 0, Short.MAX_VALUE)
-                            .addGroup(secondPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(email_JText, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jSeparator8, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(secondPageLayout.createSequentialGroup()
-                                    .addComponent(pass_JPass, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(hideShowPass_Btn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(secondPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(rstPasswrdQue_JText, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jSeparator9)
-                                    .addComponent(rstPasswrdQue_JLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(secondPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(userName_JText, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jSeparator6)
-                                    .addComponent(userName_JLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                .addGap(40, 40, 40))
-            .addGroup(secondPageLayout.createSequentialGroup()
-                .addGroup(secondPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(secondPageLayout.createSequentialGroup()
-                        .addGap(39, 39, 39)
-                        .addComponent(emailWarning_JLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(email_JLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(secondPageLayout.createSequentialGroup()
-                        .addGap(90, 90, 90)
-                        .addComponent(password_JLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        secondPageLayout.setVerticalGroup(
-            secondPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(secondPageLayout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addComponent(userName_JLabel)
-                .addGap(3, 3, 3)
-                .addComponent(userName_JText, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(3, 3, 3)
-                .addComponent(jSeparator6, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(3, 3, 3)
-                .addGroup(secondPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(email_JLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(emailWarning_JLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(3, 3, 3)
-                .addComponent(email_JText, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(3, 3, 3)
-                .addComponent(jSeparator7, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(4, 4, 4)
-                .addComponent(password_JLabel)
-                .addGap(3, 3, 3)
-                .addGroup(secondPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(hideShowPass_Btn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(pass_JPass, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(3, 3, 3)
-                .addComponent(jSeparator8, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(2, 2, 2)
-                .addComponent(rstPasswrdQue_JLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(rstPasswrdQue_JText, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator9, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(password_JLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(secondPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(rstPasswrdAns_JPass, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(hideShowPass_Btn2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator11, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(goPreviousPage_JLabel)
-                .addGap(18, 18, 18)
-                .addComponent(password_JLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(25, Short.MAX_VALUE))
-        );
+        secondPage.add(lblComplete, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 484, 160, 40));
 
         page_JLayeredPane.add(secondPage, "card3");
 
@@ -576,7 +445,7 @@ public class RegisterPanel extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(page_JLayeredPane, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(page_JLayeredPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
             .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -584,7 +453,7 @@ public class RegisterPanel extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(page_JLayeredPane))
+                .addComponent(page_JLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 560, Short.MAX_VALUE))
         );
 
         pack();
@@ -643,22 +512,65 @@ public class RegisterPanel extends javax.swing.JFrame {
         HelperMethods.changePage(firstPage, page_JLayeredPane);
     }//GEN-LAST:event_goPreviousPage_JLabelMouseClicked
 
-    private void password_JLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_password_JLabel1MouseClicked
+    private void lblCompleteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblCompleteMouseClicked
         // TODO add your handling code here:
-        boolean isSuccesful = RentCarSystem.addUserToDatabase(age_JText.getText(), email_JText.getText(), fullName_JText.getText(), 
-                                          getGender(), imgPath, phoneNum_JText.getText(), userName_JText.getText(), 
-                                          String.valueOf(pass_JPass.getPassword()), rstPasswrdQue_JText.getText(), 
-                                          String.valueOf(rstPasswrdAns_JPass.getPassword()));
+        boolean isSuccesful = false;
         
-        if ( isSuccesful )
-            dispose();
-        else
-            HelperMethods.showErrorMessage("We couldn't include you our database", "Unexpected Error");
-    }//GEN-LAST:event_password_JLabel1MouseClicked
+        try {
+            if ( RentCarSystem.isMailUsedAnyOtherUser( RentCarSystem.getMailByName(email_JText.getText()).getMail_id(), new Customer() ) ) {
+                throw new Exception("This mail is already in use");
+            } else if( !HelperMethods.controlPhoneNum( phoneNum_JText.getText(), userName_JText.getText() ) ) {
+                throw new Exception("This phone number is already in use");
+            } else if( RentCarSystem.isUserName_inUse( userName_JText.getText() ) ) {
+                throw new Exception("This user name is already in use");
+            } else if( imgPath == null ) {
+                throw new Exception("You didn't choose an image");
+            } else if( !HelperMethods.checkHomeAddress( tbxHomeAddr.getText() ) ) {
+                throw new Exception("The home address must innclude just one \", \" regex");
+            } else {
+                
+                String fullName = fullName_JText.getText();
+                String gender = getGender();
+                double totalCash = (int)(Math.random() * 500) + 100;
+                int age = Integer.parseInt( age_JText.getText() );
+                
+                if ( age < 18 )
+                    age = 18;
+                
+                String phoneNum = phoneNum_JText.getText();
+                
+                Mail mail = RentCarSystem.getMailByName( email_JText.getText() );
+                
+                if ( mail == null )
+                    throw new NullPointerException("We couldn't found your Email Address...");
+                
+                String userName = userName_JText.getText();
+                String homeAddress = tbxHomeAddr.getText();
+                String password = String.valueOf(pass_JPass.getPassword());
+                String resetPassQue = rstPasswrdQue_JText.getText();
+                String resetPassAns = String.valueOf(rstPasswrdAns_JPass.getPassword());
+                
+                Customer customer = new Customer(fullName, gender, age, imgPath, phoneNum, mail, userName, homeAddress, password, resetPassQue, resetPassAns, totalCash);
+                isSuccesful = RentCarSystem.addUserToDatabase( customer );
+            }
+            
+            if ( isSuccesful )
+                dispose();
+            else
+                HelperMethods.showErrorMessage("We couldn't include you our database", "Unexpected Error");
+            
+        } catch (NumberFormatException ex) {
+            HelperMethods.showErrorMessage("One of the field you didn't enter a number", "Not Number");
+        } catch (Exception ex) {
+            HelperMethods.showErrorMessage(ex.getMessage(), "Register Error");
+        }
+        
+        
+    }//GEN-LAST:event_lblCompleteMouseClicked
 
     private void age_JTextKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_age_JTextKeyTyped
         // TODO add your handling code here:
-         if ( (evt.getKeyChar() >= '0' &&  evt.getKeyChar() <= '9') ) {
+        if ( (evt.getKeyChar() >= '0' &&  evt.getKeyChar() <= '9') ) {
             
         } else {
             evt.consume();
@@ -705,11 +617,12 @@ public class RegisterPanel extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator7;
     private javax.swing.JSeparator jSeparator8;
     private javax.swing.JSeparator jSeparator9;
+    private javax.swing.JLabel lblComplete;
+    private javax.swing.JLabel lblHomeAdd;
     private javax.swing.JRadioButton male_JRadio;
     private javax.swing.JLayeredPane page_JLayeredPane;
     private javax.swing.JPasswordField pass_JPass;
     private javax.swing.JLabel password_JLabel;
-    private javax.swing.JLabel password_JLabel1;
     private javax.swing.JLabel password_JLabel2;
     private javax.swing.JLabel phoneNum_JLabel;
     private javax.swing.JTextField phoneNum_JText;
@@ -720,6 +633,7 @@ public class RegisterPanel extends javax.swing.JFrame {
     private javax.swing.JLabel rstPasswrdQue_JLabel;
     private javax.swing.JTextField rstPasswrdQue_JText;
     private javax.swing.JPanel secondPage;
+    private javax.swing.JTextArea tbxHomeAddr;
     private javax.swing.JLabel userName_JLabel;
     private javax.swing.JTextField userName_JText;
     // End of variables declaration//GEN-END:variables

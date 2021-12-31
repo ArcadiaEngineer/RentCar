@@ -1,13 +1,17 @@
 package Helper;
 
+import Business.RentCarSystem;
+import Entities.Abstract.User;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
 /**
@@ -39,6 +43,10 @@ public class HelperMethods {
         JOptionPane.showMessageDialog(null, str, title, JOptionPane.ERROR_MESSAGE);
     }
     
+    public static void showSuccessfulMessage(String str, String title) {
+        JOptionPane.showMessageDialog(null, str, title, JOptionPane.INFORMATION_MESSAGE);
+    }
+    
     public static void hideShowPass(java.awt.event.ItemEvent evt, JToggleButton btn, JPasswordField passwordField) {
         
         URL imageUrlOpenEye = null;
@@ -67,5 +75,58 @@ public class HelperMethods {
         return password.matches("^(?=\\S+$).{3,}$");
     }
     
+    public static void wirteOnlyNumber( java.awt.event.KeyEvent evt, JTextField textField) {
+        
+        if ( (evt.getKeyChar() >= '0' &&  evt.getKeyChar() <= '9') || evt.getKeyChar() == '.' ) {
+            
+        } else {
+            evt.consume();
+            
+        }
+
+        try {
+            while ( textField.getText().charAt(0) == '0' ) {
+                textField.setText( textField.getText().substring(1) );
+            }
+        } catch ( StringIndexOutOfBoundsException ex ) {
+            
+        }
+        
+        if ( textField.getText().isBlank() ||  textField.getText().isEmpty() ) {
+            textField.setText("0");
+        } 
+        
+        
+        
+        
+    }
+    
+    // 513 426 1358
+    public static boolean controlPhoneNum(String phoNum, String userName) {
+        ArrayList<User> users = RentCarSystem.getUserList();
+        // Blocking duplicate between customer and galleryOwner
+        for ( User user : users ) {
+            if ( user.getPhoneNumber().equals( phoNum ) && !user.getUsername().equals( userName ) ) 
+                throw new IllegalArgumentException("This phone number is already in use");
+        }
+        
+        if ( !phoNum.matches(("[1-9]\\d{2} [1-9]\\d{2} \\d{4}")) )
+            throw new IllegalArgumentException("Not valid phone number! Check your style!");
+        
+        return true;
+    }
+    
+    public static boolean checkHomeAddress(String homeAddress) {
+        int countRegex = 0;
+        for ( int i = 0; i < homeAddress.length() - 2; i++ ) {
+            if ( homeAddress.substring(i, i + 2).equals(", ") )
+                countRegex++;
+        }
+        
+        if ( countRegex == 1 )
+            return true;
+        else
+            return false;
+    }
     
 }

@@ -1,6 +1,7 @@
 package Entities.Concrete;
 
 import Entities.Abstract.User;
+import GUI.Bill;
 
 public class Customer extends User {
     
@@ -10,12 +11,16 @@ public class Customer extends User {
     private static int total_customer = 0;
     public static int current_database_customer_id;
 
-    public Customer(String fullName, String gender, int age, String imgPath, String phoneNumber, 
-            Mail mailAdress, String Username, String Password, String resetPasswordQuestion, 
-            String resetPasswordAnswer, double totalCash) 
-    {    
-        super(fullName, gender, age, imgPath, phoneNumber, mailAdress, Username, Password, resetPasswordQuestion, resetPasswordAnswer);
-        this.customer_id = current_database_customer_id;
+    public Customer(String fullName, String gender, int age, String imgPath, String phoneNumber, Mail mailAdress, String Username, String homeAddress, String Password, String resetPasswordQuestion, String resetPasswordAnswer, double totalCash) {
+        super(fullName, gender, age, imgPath, phoneNumber, mailAdress, Username, homeAddress, Password, resetPasswordQuestion, resetPasswordAnswer);
+        this.customer_id = current_database_customer_id++;
+        this.totalCash = totalCash;
+        total_customer++;
+    }
+    
+    public Customer() {
+        super("", "", 0, "", "", new Mail(), "", "", "", "", "");
+        this.customer_id = current_database_customer_id++;
         this.totalCash = totalCash;
         total_customer++;
     }
@@ -43,8 +48,10 @@ public class Customer extends User {
     }
 
     @Override
-    public void printOrder() {
-        
+    public void printOrder(Order order) {
+        Bill frameBill = new Bill( order );
+        frameBill.setVisible( true );
+        frameBill.setLocationRelativeTo( null );
     }
     
 }

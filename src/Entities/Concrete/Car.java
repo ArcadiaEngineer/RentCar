@@ -44,6 +44,38 @@ public class Car implements Comparable<Object> {
         total_id++;
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setFuelType(String fuelType) {
+        this.fuelType = fuelType;
+    }
+
+    public void setTransmissionType(String transmissionType) {
+        this.transmissionType = transmissionType;
+    }
+
+    public void setFuelCapacity(double fuelCapacity) {
+        this.fuelCapacity = fuelCapacity;
+    }
+
+    public void setTrunkVolume(double trunkVolume) {
+        this.trunkVolume = trunkVolume;
+    }
+
+    public void setSmall_imgPath(String small_imgPath) {
+        this.small_imgPath = small_imgPath;
+    }
+
+    public void setLarge_imgPath(String large_imgPath) {
+        this.large_imgPath = large_imgPath;
+    }
+
+    public static void setTotal_id(int total_id) {
+        Car.total_id = total_id;
+    }
+
     public int getGalleryId() {
         return galleryId;
     }
