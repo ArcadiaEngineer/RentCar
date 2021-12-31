@@ -170,6 +170,20 @@ public class RentCarSystem {
         
         return true;
     }
+    public static void updateCustomerCash(int customerId, double amount){
+        try {
+                
+                
+                String query = "UPDATE customer SET total_cash = " + amount + " WHERE customer_id = " + customerId;
+            
+                st = connection.createStatement();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                preparedStatement.executeUpdate(); 
+                
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+    }
     
     public static boolean updateGalleryOwnerPassword(String mailName, String newPassword) throws IllegalArgumentException {
         
@@ -244,15 +258,20 @@ public class RentCarSystem {
     public static boolean createOrder(String promotionCode, String fullName, String phoneNumber,
             String brand ,String model,
             String rentDate, String returnDate, 
-            double amountPaid, int galleryId, int customerId, String imgCarPath, int totalDay, double dailyPrice){
+            double amountPaid, int galleryId, int customerId, String imgCarPath, int totalDay, double dailyPrice, double totalCash){
+        
         PromotionCode promotionCodeforCheckCode = getPromotionCodeByCode(promotionCode);
+        
         if(promotionCodeforCheckCode!=null && isUsed(promotionCodeforCheckCode)==false){
+            
             amountPaid = totalDay*dailyPrice - promotionCodeforCheckCode.getDiscount()*totalDay*dailyPrice;
             if(!fullName.isBlank() && !fullName.isEmpty() && !phoneNumber.isEmpty() && !phoneNumber.isBlank() && !brand.isBlank() && !brand.isEmpty() && !model.isBlank() && !model.isEmpty() && !rentDate.isBlank() && !rentDate.isEmpty() && !returnDate.isBlank() && !returnDate.isEmpty()){
+                
                 Order order = new Order(Order.getTotal_id(), promotionCodeforCheckCode.getPromotionCode_str(), fullName, phoneNumber, brand, model, rentDate, returnDate, amountPaid, galleryId, customerId, imgCarPath,totalDay,dailyPrice);
                 var result = addOrderToDabase(order);
                 if(result){
                     orders.add(order);
+                    updateCustomerCash(customerId,totalCash - amountPaid);
                     promotionCodeforCheckCode.setIsUsed(true);
                     updatePromotion(promotionCodeforCheckCode);
                     return true;
@@ -264,11 +283,14 @@ public class RentCarSystem {
     public static void createOrder(String fullName, String phoneNumber,
             String brand ,String model,
             String rentDate, String returnDate, 
-            double amountPaid, int galleryId, int customerId , String imgCarPath, int totalDay, double dailyPrice){
+            double amountPaid, int galleryId, int customerId , String imgCarPath, int totalDay, double dailyPrice, double totalCash){
+        
+        amountPaid = totalDay * dailyPrice;
         Order order = new Order(Order.getTotal_id(), fullName, phoneNumber, brand, model, rentDate, returnDate, amountPaid, galleryId, customerId , imgCarPath, totalDay,dailyPrice);
         var result = addOrderToDabase(order);
         if(result){
             orders.add(order);
+            updateCustomerCash(customerId,totalCash - amountPaid);
         }
     }
     public static boolean addOrderToDabase(Order order){

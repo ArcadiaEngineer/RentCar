@@ -1349,6 +1349,11 @@ public final class CustomerWindow extends javax.swing.JFrame {
         btnUserDepositCash.setForeground(new java.awt.Color(122, 72, 255));
         btnUserDepositCash.setText("Deposit Cash");
         btnUserDepositCash.setToolTipText("");
+        btnUserDepositCash.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUserDepositCashActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnlUserBankInformationLayout = new javax.swing.GroupLayout(pnlUserBankInformation);
         pnlUserBankInformation.setLayout(pnlUserBankInformationLayout);
@@ -1804,20 +1809,31 @@ public final class CustomerWindow extends javax.swing.JFrame {
 
     private void btnApproveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnApproveActionPerformed
         var totalDay = (int)(returnDate_JDatechooser.getDate().getTime() - pick_upDate_JDatechooser.getDate().getTime()) / 86_400_000;
-        if(!textPromotionCode.getText().isBlank() && !textPromotionCode.getText().isEmpty()){
+        if(!textPromotionCode.getText().isBlank() && !textPromotionCode.getText().isEmpty() && Double.parseDouble(lblTotalCashAfterRentalOfUser.getText())>=0){
             var result = RentCarSystem.createOrder(textPromotionCode.getText(), customer.getFullName(), customer.getPhoneNumber(), currentCar.getBrand(), currentCar.getModel(),
                     pick_upDate_JDatechooser.getDate().toString(), returnDate_JDatechooser.getDate().toString(), Double.parseDouble(lblTotalPaymentOfUser.getText()),
-                    customer.getCustomerId(),currentCar.getGalleryId(),currentCar.getSmall_imgPath(),totalDay,currentCar.getPrice());
+                    customer.getCustomerId(),currentCar.getGalleryId(),currentCar.getSmall_imgPath(),totalDay,currentCar.getPrice(),customer.getTotalCash());
             if(!result){
                 //Promotion exception
             }else{
+            
+                double amountPaid = totalDay * currentCar.getPrice() - totalDay * currentCar.getPrice() * RentCarSystem.getPromotionCodeByCode(textPromotionCode.getText()).getDiscount();
                 setOrderList(RentCarSystem.getOrders());
+                customer.setTotalCash(customer.getTotalCash() - amountPaid);
+                fulfillUserCashInformation();
+                lblCurrentCashOfUser.setText(String.valueOf(customer.getTotalCash()));
             }
-        }else{
+        }else if(Double.parseDouble(lblTotalCashAfterRentalOfUser.getText())>=0){
+             
             RentCarSystem.createOrder(customer.getFullName(), customer.getPhoneNumber(), currentCar.getBrand(), currentCar.getModel(),
                     pick_upDate_JDatechooser.getDate().toString(), returnDate_JDatechooser.getDate().toString(), Double.parseDouble(lblTotalPaymentOfUser.getText()),
-                    customer.getCustomerId(),currentCar.getGalleryId(), currentCar.getSmall_imgPath(),totalDay,currentCar.getPrice());
+                    customer.getCustomerId(),currentCar.getGalleryId(), currentCar.getSmall_imgPath(),totalDay,currentCar.getPrice(),customer.getTotalCash());
+            
             setOrderList(RentCarSystem.getOrders());
+            double amountPaid = totalDay * currentCar.getPrice();
+            customer.setTotalCash(customer.getTotalCash() - amountPaid);
+            fulfillUserCashInformation();
+            lblCurrentCashOfUser.setText(String.valueOf(customer.getTotalCash()));
         }
         
         
@@ -1831,6 +1847,7 @@ public final class CustomerWindow extends javax.swing.JFrame {
             if(pc!=null && RentCarSystem.isUsed(pc)==false && !lblTotalPaymentOfUser.getText().isEmpty()){
                 double totalPayment = totalDay * currentCar.getPrice() - totalDay *  pc.getDiscount() * currentCar.getPrice() ;
                 lblTotalPaymentOfUser.setText(String.valueOf(totalPayment));
+                lblTotalCashAfterRentalOfUser.setText(String.valueOf(customer.getTotalCash()- totalPayment));
                 isChecked = true;
             }
         }
@@ -1913,6 +1930,17 @@ public final class CustomerWindow extends javax.swing.JFrame {
         frameBill.setVisible( true );
         frameBill.setLocationRelativeTo( null );
     }//GEN-LAST:event_btnDeleteOrder1ActionPerformed
+
+    private void btnUserDepositCashActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUserDepositCashActionPerformed
+        double toBeDepositedCash = -1;
+        toBeDepositedCash = checkValidInput(tbxDepositedCash, toBeDepositedCash);
+        if(toBeDepositedCash!=-1){
+            RentCarSystem.updateCustomerCash(customer.getCustomerId(),customer.getTotalCash() + toBeDepositedCash);
+            customer.setTotalCash(customer.getTotalCash() + toBeDepositedCash);
+            fulfillUserCashInformation();
+            lblCurrentCashOfUser.setText(String.valueOf(customer.getTotalCash()));
+        }
+    }//GEN-LAST:event_btnUserDepositCashActionPerformed
 
     
 
@@ -2051,6 +2079,7 @@ public final class CustomerWindow extends javax.swing.JFrame {
         initOrderFields();
         fulfillGalleryCbx();
         fulfillGalleryOrderedCbx();
+        fulfillUserCashInformation();
         
     }
     
@@ -2220,6 +2249,24 @@ public final class CustomerWindow extends javax.swing.JFrame {
         }
         return intValue;
     }
+    private double checkValidInput(JTextField tbxMax,double doubleValue) {
+        
+        
+        if(!tbxMax.getText().isBlank() && !tbxMax.getText().isEmpty()){
+            try {
+                doubleValue = Double.parseDouble(tbxMax.getText());
+                if(doubleValue<0){
+                    doubleValue = -1;
+                    throw new Exception();
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();//Entered not digit
+            } catch (Exception ex) {
+                ex.printStackTrace();//Invalid input
+            }
+        }
+        return doubleValue;
+    }
 
     private void initCarFields() {
         RentCarSystem.getFilteredCarList().addAll(RentCarSystem.getCars());
@@ -2234,6 +2281,10 @@ public final class CustomerWindow extends javax.swing.JFrame {
             setOrderDetails(currentOrder);
             setOrderList(RentCarSystem.getOrders());
         }
+    }
+
+    private void fulfillUserCashInformation() {
+        lblUserCurrentCashValue.setText(String.valueOf(customer.getTotalCash()));
     }
 
     

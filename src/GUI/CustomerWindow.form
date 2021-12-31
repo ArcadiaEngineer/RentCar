@@ -2622,6 +2622,9 @@
                             <Property name="text" type="java.lang.String" value="Deposit Cash"/>
                             <Property name="toolTipText" type="java.lang.String" value=""/>
                           </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnUserDepositCashActionPerformed"/>
+                          </Events>
                         </Component>
                       </SubComponents>
                     </Container>
