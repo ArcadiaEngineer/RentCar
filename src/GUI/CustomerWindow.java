@@ -1307,6 +1307,11 @@ public final class CustomerWindow extends javax.swing.JFrame {
         btnUserDepositCash.setForeground(new java.awt.Color(122, 72, 255));
         btnUserDepositCash.setText("Deposit Cash");
         btnUserDepositCash.setToolTipText("");
+        btnUserDepositCash.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUserDepositCashActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnlUserBankInformationLayout = new javax.swing.GroupLayout(pnlUserBankInformation);
         pnlUserBankInformation.setLayout(pnlUserBankInformationLayout);
@@ -2064,6 +2069,19 @@ public final class CustomerWindow extends javax.swing.JFrame {
         HelperMethods.wirteOnlyNumber(evt, tbxDepositedCash);
     }//GEN-LAST:event_tbxDepositedCashKeyTyped
 
+    private void btnUserDepositCashActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUserDepositCashActionPerformed
+        double toBeAddedCash = Double.parseDouble(tbxDepositedCash.getText());
+        customer.setTotalCash(toBeAddedCash + customer.getTotalCash());
+        try {
+            RentCarSystem.updateUserInDatabase(customer,"customer");
+        } catch (SQLException ex) {
+            //Logger.getLogger(CustomerWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        lblUserCurrentCashValue.setText("$" + String.valueOf(customer.getTotalCash()));
+        lblCurrentCashOfUser.setText("$" + String.valueOf(customer.getTotalCash()));
+        
+    }//GEN-LAST:event_btnUserDepositCashActionPerformed
+
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -2336,15 +2354,6 @@ public final class CustomerWindow extends javax.swing.JFrame {
     }
     
     private void fulfillGalleryCbx() {
-        /*
-        String [] galleryIds =  new String[RentCarSystem.getGalleries().size()+ 1];
-        galleryIds[0] = "All";
-        for (int i = 1; i < RentCarSystem.getGalleries().size(); i++) {
-            galleryIds[i] = String.valueOf(RentCarSystem.getGalleryById(i).getId());
-        }
-        cbxGallery.setModel(new javax.swing.DefaultComboBoxModel<>(galleryIds));
-        cbxOrderGalery.setModel(new javax.swing.DefaultComboBoxModel<>(galleryIds));
-        */
         
         ArrayList<Gallery> galleries = new ArrayList<>( RentCarSystem.getGalleries() );
         for ( Gallery gallery : galleries ) {
