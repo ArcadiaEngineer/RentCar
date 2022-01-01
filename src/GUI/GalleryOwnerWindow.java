@@ -6,7 +6,6 @@ import Entities.Concrete.Gallery;
 import Entities.Concrete.GalleryOwner;
 import Entities.Concrete.Mail;
 import Entities.Concrete.Order;
-import Helper.CustomFileFilter;
 import Helper.HelperMethods;
 import Helper.MyCellRenderer;
 import java.awt.Color;
@@ -43,7 +42,7 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
     private String largeImgPath;
     private String profPictPath;
     
-    private JFileChooser chooser = new JFileChooser();
+    private JFileChooser chooser = new JFileChooser( new File("").getAbsolutePath() + "\\src\\images\\" );
     
     private int currentGalleryIndex = 0;
     private int currentOrderIndex = 0;
@@ -52,7 +51,6 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
         this.galleryOwner = galleryOwner;
         initComponents();
         initializeFields();
-        chooser.setFileFilter( new CustomFileFilter() );
     }
     
     public void initializeFields() {
@@ -3098,7 +3096,6 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
             largeImgPath = "";
             chooser.setBackground( new Color(51, 51, 51) );
             chooser.showOpenDialog( null );
-            chooser.setCurrentDirectory(chooser.getCurrentDirectory());
             File f = chooser.getSelectedFile();
             largeImgPath = f.getName();
             largeImgPath = "/images/" + largeImgPath;
@@ -3113,7 +3110,6 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
             smallImgPath = "";
             chooser.setBackground( new Color(51, 51, 51) );
             chooser.showOpenDialog( null );
-            chooser.setCurrentDirectory(chooser.getCurrentDirectory());
             File f = chooser.getSelectedFile();
             smallImgPath = f.getName();
             smallImgPath = "/images/" + smallImgPath;

@@ -466,7 +466,7 @@ public class RegisterPanel extends javax.swing.JFrame {
 
     private void chooseAvatar_JLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_chooseAvatar_JLabelMouseClicked
         // TODO add your handling code here:
-        JFileChooser chooser = new JFileChooser();
+        JFileChooser chooser = new JFileChooser( new File("").getAbsolutePath() + "\\src\\images\\" );
         chooser.showOpenDialog( null );
         File f = chooser.getSelectedFile();
         imgPath = f.getName();

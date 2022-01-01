@@ -19,7 +19,9 @@ public abstract class User extends Person {
     protected String resetPasswordQuestion;
     protected String resetPasswordAnswer;
 
-    public User(String fullName, String gender, int age, String imgPath, String phoneNumber, Mail mailAdress, String Username, String homeAddress, String Password, String resetPasswordQuestion, String resetPasswordAnswer) {
+    public User(String fullName, String gender, int age, String imgPath, String phoneNumber, 
+            Mail mailAdress, String Username, String homeAddress, 
+            String Password, String resetPasswordQuestion, String resetPasswordAnswer) {
         super(fullName);
         this.gender = gender;
         this.age = age;
@@ -49,25 +51,13 @@ public abstract class User extends Person {
         return resetPasswordQuestion;
     }
 
-    public void setResetPasswordQuestion(String resetPasswordQuestion) {
-        this.resetPasswordQuestion = resetPasswordQuestion;
-    }
-
     public String getResetPasswordAnswer() {
         return resetPasswordAnswer;
-    }
-
-    public void setResetPasswordAnswer(String resetPasswordAnswer) {
-        this.resetPasswordAnswer = resetPasswordAnswer;
     }
 
     
     public String getUsername() {
         return Username;
-    }
-
-    public void setUsername(String Username) {
-        this.Username = Username;
     }
 
     public String getHomeAddress() {
@@ -90,24 +80,13 @@ public abstract class User extends Person {
         return fullName;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
 
     public String getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
     public int getAge() {
         return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
     }
 
     public String getImgPath() {
