@@ -69,10 +69,10 @@ public final class CustomerWindow extends javax.swing.JFrame {
     
     public CustomerWindow(Customer customer) {
         this.customer = customer;
+        RentCarSystem.getOrdersFromDatabase(customer.getCustomerId());
         initComponents();
         initializeFields();
         designColorsAndComponents();
-        
     }
     
     public CustomerWindow(Registerable visitor) {
@@ -1607,7 +1607,7 @@ public final class CustomerWindow extends javax.swing.JFrame {
     private void lblProfileColorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblProfileColorMouseClicked
         // TODO add your handling code here:
         HelperMethods.changePage(pnlLayeredProfile, pnlLayered);
-        RentCarSystem.getOrdersFromDatabase();
+        //RentCarSystem.getOrdersFromDatabase();
     }//GEN-LAST:event_lblProfileColorMouseClicked
 
     private void lblExitColorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblExitColorMouseClicked
@@ -1900,6 +1900,7 @@ public final class CustomerWindow extends javax.swing.JFrame {
         
         RentCarSystem.getFilteredOrderList().clear();
         RentCarSystem.getFilteredOrderList().addAll(RentCarSystem.getOrders());
+        
         sortOrders(comparetorType);
         
         if(min != -1){
@@ -1918,12 +1919,14 @@ public final class CustomerWindow extends javax.swing.JFrame {
             currentOrder = RentCarSystem.getFilteredOrderList().get(currentOrderIndex);
             setOrderDetails(currentOrder);
             setOrderList(RentCarSystem.getFilteredOrderList());
-        }else{
+        }else if(RentCarSystem.getOrders().size()>0){
             isOrdersFiltered = false;
             currentOrderIndex = 0;
             currentOrder = RentCarSystem.getOrders().get(currentOrderIndex);
             setOrderDetails(currentOrder);
             setOrderList(RentCarSystem.getOrders());
+        }else{
+            HelperMethods.showErrorMessage("You dont have any orders", "Empty order list");
         }
     }//GEN-LAST:event_btnFilterOrdersActionPerformed
 
@@ -2393,7 +2396,5 @@ public final class CustomerWindow extends javax.swing.JFrame {
             setOrderList(RentCarSystem.getOrders());
         }
     }
-
-    
     
 }
