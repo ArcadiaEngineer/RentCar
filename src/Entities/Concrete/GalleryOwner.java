@@ -3,7 +3,7 @@ package Entities.Concrete;
 
 import Business.RentCarSystem;
 import Entities.Abstract.User;
-import GUI.Bill;
+import GUI.SaleSheet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -12,25 +12,32 @@ public class GalleryOwner extends User{
     private int galleryOwner_id;
     private ArrayList<Gallery> galleries = new ArrayList<>();
     
+    private static int totalGallOwner = 0;
+    
     public GalleryOwner(int galleryOwner_id,
             String fullName, String gender, int age, String imgPath, String phoneNumber, Mail mailAdress,
-            String Username, String homeAddress, String Password, String resetPasswordQuestion, String resetPasswordAnswer)
-    {
+            String Username, String homeAddress, String Password, String resetPasswordQuestion, String resetPasswordAnswer) {
         super(fullName, gender, age, imgPath, phoneNumber, mailAdress, Username, homeAddress, Password, resetPasswordQuestion, resetPasswordAnswer);
         this.galleryOwner_id = galleryOwner_id;
+        totalGallOwner++;
+    }
+    
+    public GalleryOwner() {
+        super("", "", 0, "", "", new Mail(), "", "", "", "", "");
     }
 
+    public static int getTotalGallOwner() {
+        return totalGallOwner;
+    }
+    
     public int getGalleryOwner_id() {
         return galleryOwner_id;
     }
 
-
-
     public ArrayList<Gallery> getGalleries() {
         return galleries;
     }
-    
-    
+
     
     public boolean addGallery(String galleryName) throws SQLException {
         
@@ -96,14 +103,14 @@ public class GalleryOwner extends User{
 
     @Override
     public void printOrder(Order order) {
-        Bill frameBill = new Bill( order );
-        frameBill.setVisible( true );
-        frameBill.setLocationRelativeTo( null );
+        SaleSheet saleSheet = new SaleSheet(order, this.getFullName());
+        saleSheet.setVisible( true );
+        saleSheet.setLocationRelativeTo( null );
     }
 
     @Override
     public String toString() {
-        return super.toString();
+        return super.toString() + " GalleryOwner{" + "galleryOwner_id=" + galleryOwner_id + ", galleries=" + galleries + '}';
     }
     
 }

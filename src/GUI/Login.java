@@ -2,6 +2,7 @@ package GUI;
 
 import Business.RentCarSystem;
 import Entities.Abstract.User;
+import Entities.Concrete.Administrator;
 import Entities.Concrete.Customer;
 import Entities.Concrete.GalleryOwner;
 import Entities.Concrete.Visitor;
@@ -64,7 +65,7 @@ public class Login extends javax.swing.JFrame {
         mail_JText.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         mail_JText.setForeground(new java.awt.Color(255, 255, 255));
         mail_JText.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        mail_JText.setText("ibr.glmz19@gmail.com");
+        mail_JText.setText("admin@protonmail.com");
         mail_JText.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         mail_JText.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -76,7 +77,7 @@ public class Login extends javax.swing.JFrame {
         pass_JPass.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         pass_JPass.setForeground(new java.awt.Color(255, 255, 255));
         pass_JPass.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        pass_JPass.setText("12345");
+        pass_JPass.setText("123456");
         pass_JPass.setBorder(javax.swing.BorderFactory.createEmptyBorder(7, 7, 7, 7));
 
         hideShowPass_Btn.setBackground(new java.awt.Color(50, 45, 44));
@@ -92,6 +93,7 @@ public class Login extends javax.swing.JFrame {
         register_btn.setBackground(new java.awt.Color(51, 204, 0));
         register_btn.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         register_btn.setText("REGISTER");
+        register_btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         register_btn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 register_btnActionPerformed(evt);
@@ -101,6 +103,7 @@ public class Login extends javax.swing.JFrame {
         login_btn.setBackground(new java.awt.Color(51, 204, 255));
         login_btn.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         login_btn.setText("LOGIN");
+        login_btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         login_btn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 login_btnActionPerformed(evt);
@@ -110,6 +113,7 @@ public class Login extends javax.swing.JFrame {
         resetPassword_btn.setBackground(new java.awt.Color(255, 102, 102));
         resetPassword_btn.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         resetPassword_btn.setText("RESET PASSWORD");
+        resetPassword_btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         resetPassword_btn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 resetPassword_btnActionPerformed(evt);
@@ -333,6 +337,18 @@ public class Login extends javax.swing.JFrame {
 
     private void login_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_login_btnActionPerformed
         // TODO add your handling code here:
+        boolean isAdminEntered = false;
+        System.out.println("" + RentCarSystem.getUserList());
+        if (  mail_JText.getText().equals( Administrator.getAdminMail() ) && 
+              String.valueOf(pass_JPass.getPassword()).equals( Administrator.getAdminPass() ) ) {
+            
+            isAdminEntered = true;
+            Admin adminPanel = new Admin();
+            adminPanel.setVisible( isAdminEntered );
+            adminPanel.setLocationRelativeTo( null );
+            
+        }
+        
         User user = RentCarSystem.getUserByMailName_and_Password(mail_JText.getText(), String.valueOf(pass_JPass.getPassword()) );
         
         if ( user instanceof Customer ) {
@@ -345,7 +361,7 @@ public class Login extends javax.swing.JFrame {
             galleryOwnerWindow.setVisible( true );
             galleryOwnerWindow.setLocationRelativeTo( null );
             dispose();
-        } else {
+        } else if ( !isAdminEntered ) {
             HelperMethods.showErrorMessage("Wrong answer or email", "Login Error");
         }
         

@@ -7,15 +7,22 @@ package GUI;
 
 import Business.RentCarSystem;
 import Entities.Abstract.User;
+import Entities.Concrete.Administrator;
 import Entities.Concrete.Car;
 import Entities.Concrete.Customer;
 import Entities.Concrete.Gallery;
 import Entities.Concrete.GalleryOwner;
+import Entities.Concrete.Mail;
 import Entities.Concrete.Order;
 import Helper.HelperMethods;
+import java.awt.Color;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
+import java.awt.event.MouseEvent;
+import java.io.File;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPasswordField;
 
 /**
  *
@@ -28,12 +35,21 @@ public class Admin extends javax.swing.JFrame {
      */
     
     private int currentUserIndex = 0;
-    private ArrayList<User> users = new ArrayList<>( RentCarSystem.getUserList() );
+    private User currentUser;
+    
+    private int currentCarIndex = 0;
+    private Car currentCar;
+    
+    private ImageIcon closeEye24 = new ImageIcon(getClass().getResource("/images/closeEye24.png"));
+    private ImageIcon openEye24 = new ImageIcon(getClass().getResource("/images/openEye24.png"));
+    
+    String imgPath;
     
     public Admin() {
         initComponents();
         initializeAppInfo();
-        
+        tbxPass.setEchoChar((char)'\u2022');
+        tbxRstPassAns.setEchoChar((char)'\u2022');
     }
 
     /**
@@ -45,6 +61,7 @@ public class Admin extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        btnGroupGender = new javax.swing.ButtonGroup();
         pnlParent = new javax.swing.JPanel();
         pnlLeft = new javax.swing.JPanel();
         pnlExit = new javax.swing.JPanel();
@@ -70,19 +87,19 @@ public class Admin extends javax.swing.JFrame {
         lblAdminBackground2 = new javax.swing.JLabel();
         layerPnl = new javax.swing.JLayeredPane();
         pnlHome = new javax.swing.JPanel();
-        pnlViewUsers = new javax.swing.JPanel();
+        pnlOne = new javax.swing.JPanel();
         lblViewUsers = new javax.swing.JLabel();
         lblViewUsersIcon = new javax.swing.JLabel();
         lblBackgroundViewUsers = new javax.swing.JLabel();
-        pnlViewOrders = new javax.swing.JPanel();
+        pnlTwo = new javax.swing.JPanel();
         lblViewOrders = new javax.swing.JLabel();
         lblViewOrdersIcon = new javax.swing.JLabel();
         lblBackgroundViewOrders = new javax.swing.JLabel();
-        pnlAddGalleryOwner = new javax.swing.JPanel();
+        pnlThree = new javax.swing.JPanel();
         lblAddGalleryOwner = new javax.swing.JLabel();
         lblAddGalleryOwnerIcon = new javax.swing.JLabel();
         lblBackgroundAddGalOwn = new javax.swing.JLabel();
-        pnlViewCars = new javax.swing.JPanel();
+        pnlFour = new javax.swing.JPanel();
         lblViewCars = new javax.swing.JLabel();
         lblViewCarsIcon = new javax.swing.JLabel();
         lblBackgroundViewCars = new javax.swing.JLabel();
@@ -100,16 +117,78 @@ public class Admin extends javax.swing.JFrame {
         lblMail = new javax.swing.JLabel();
         lblUserNameVal = new javax.swing.JLabel();
         lblUserName = new javax.swing.JLabel();
-        lblUserName1 = new javax.swing.JLabel();
-        lblUserNameVal1 = new javax.swing.JLabel();
+        lblUserHomAdr = new javax.swing.JLabel();
+        lblUserHomAdrVal = new javax.swing.JLabel();
         lblTotalOrder = new javax.swing.JLabel();
         lblTotalOrderVal = new javax.swing.JLabel();
         lblUserBg1 = new javax.swing.JLabel();
         lblUserBg2 = new javax.swing.JLabel();
+        lblPrevious = new javax.swing.JLabel();
+        lblNext = new javax.swing.JLabel();
+        pnlAddGallOwn = new javax.swing.JPanel();
+        lblUserFullName1 = new javax.swing.JLabel();
+        lblUserGender1 = new javax.swing.JLabel();
+        lblUserAge1 = new javax.swing.JLabel();
+        lblPhoneNum1 = new javax.swing.JLabel();
+        tbxFullName = new javax.swing.JTextField();
+        tbxAge = new javax.swing.JTextField();
+        tbxPhoNum = new javax.swing.JTextField();
+        male_JRadio = new javax.swing.JRadioButton();
+        female_JRadio = new javax.swing.JRadioButton();
+        lblUserFullName2 = new javax.swing.JLabel();
+        lblUserGender2 = new javax.swing.JLabel();
+        lblUserAge2 = new javax.swing.JLabel();
+        lblPhoneNum2 = new javax.swing.JLabel();
+        tbxUserName = new javax.swing.JTextField();
+        tbxMail = new javax.swing.JTextField();
+        lblChoose = new javax.swing.JLabel();
+        lblChooseBackground = new javax.swing.JLabel();
+        lblUserGender3 = new javax.swing.JLabel();
+        tbxRstPassQue = new javax.swing.JTextField();
+        lblUserAge3 = new javax.swing.JLabel();
+        lblRstPassIcon = new javax.swing.JLabel();
+        lblPassIcon = new javax.swing.JLabel();
+        tbxPass = new javax.swing.JPasswordField();
+        tbxRstPassAns = new javax.swing.JPasswordField();
+        tbxHomeAddr = new javax.swing.JTextArea();
+        lblPhoneNum3 = new javax.swing.JLabel();
+        lblUserFullName3 = new javax.swing.JLabel();
+        lblComplete = new javax.swing.JLabel();
+        lblCompleteBackground = new javax.swing.JLabel();
+        pnlShowCars = new javax.swing.JPanel();
+        lblCarBrandModel = new javax.swing.JLabel();
+        lblCarTypeVal = new javax.swing.JLabel();
+        lblCarType = new javax.swing.JLabel();
+        lblCarYear = new javax.swing.JLabel();
+        lblCarYearVal = new javax.swing.JLabel();
+        lblCarBg1 = new javax.swing.JLabel();
+        lblCarFuelType = new javax.swing.JLabel();
+        lblCarFuelTypeVal = new javax.swing.JLabel();
+        lblCarFuelCap = new javax.swing.JLabel();
+        lblCarFuelCapVal = new javax.swing.JLabel();
+        lblCarTransmission = new javax.swing.JLabel();
+        lblCarTransmissionVal = new javax.swing.JLabel();
+        lblCarKm = new javax.swing.JLabel();
+        lblCarKmVal = new javax.swing.JLabel();
+        lblCarBg2 = new javax.swing.JLabel();
+        lblCarDailyPrice = new javax.swing.JLabel();
+        lblCarDailyPriceVal = new javax.swing.JLabel();
+        lblCarTrunkVol = new javax.swing.JLabel();
+        lblCarTrunkVolVal = new javax.swing.JLabel();
+        lblCarGallery = new javax.swing.JLabel();
+        lblCarGalleryVal = new javax.swing.JLabel();
+        lblCarOwner = new javax.swing.JLabel();
+        lblCarOwnerVal = new javax.swing.JLabel();
+        lblCarBg3 = new javax.swing.JLabel();
+        lblCarPrevious = new javax.swing.JLabel();
+        lblCarPic = new javax.swing.JLabel();
+        lblCarNext = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
 
         pnlParent.setBackground(new java.awt.Color(255, 255, 255));
+        pnlParent.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(214, 200, 241), 3, true));
         pnlParent.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         pnlLeft.setBackground(new java.awt.Color(255, 255, 255));
@@ -154,7 +233,7 @@ public class Admin extends javax.swing.JFrame {
 
         lblTotalCust.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lblTotalCust.setForeground(new java.awt.Color(30, 107, 255));
-        lblTotalCust.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblTotalCust.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblTotalCust.setText("Total Customers: ");
         pnlLeft.add(lblTotalCust, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 60, 150, 30));
 
@@ -172,13 +251,13 @@ public class Admin extends javax.swing.JFrame {
 
         lblTotalGalOwn.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lblTotalGalOwn.setForeground(new java.awt.Color(30, 107, 255));
-        lblTotalGalOwn.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblTotalGalOwn.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblTotalGalOwn.setText("Total Gal. Owners:");
         pnlLeft.add(lblTotalGalOwn, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 90, 150, 30));
 
         lblTotalGalleries.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lblTotalGalleries.setForeground(new java.awt.Color(30, 107, 255));
-        lblTotalGalleries.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblTotalGalleries.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblTotalGalleries.setText("Total Galleries:");
         pnlLeft.add(lblTotalGalleries, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 120, 150, 30));
 
@@ -190,7 +269,7 @@ public class Admin extends javax.swing.JFrame {
 
         lblTotalCars.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lblTotalCars.setForeground(new java.awt.Color(30, 107, 255));
-        lblTotalCars.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblTotalCars.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblTotalCars.setText("Total Cars:");
         pnlLeft.add(lblTotalCars, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 150, 150, 30));
 
@@ -202,8 +281,8 @@ public class Admin extends javax.swing.JFrame {
 
         lblTotalOrders.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lblTotalOrders.setForeground(new java.awt.Color(30, 107, 255));
-        lblTotalOrders.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblTotalOrders.setText("Total Orders");
+        lblTotalOrders.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblTotalOrders.setText("Total Orders:");
         pnlLeft.add(lblTotalOrders, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 180, 150, 30));
 
         lblTotalOrdersVal.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -239,32 +318,32 @@ public class Admin extends javax.swing.JFrame {
 
         lblAdminIconBackground.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblAdminIconBackground.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/backgroundColor96.png"))); // NOI18N
-        pnlParent.add(lblAdminIconBackground, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 10, 96, 96));
+        pnlParent.add(lblAdminIconBackground, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 10, 90, 96));
 
         lblAdminBackground2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblAdminBackground2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/backgroundColor930.png"))); // NOI18N
         lblAdminBackground2.setToolTipText("");
-        pnlParent.add(lblAdminBackground2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 30, 930, 60));
+        pnlParent.add(lblAdminBackground2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 30, 927, 60));
 
         layerPnl.setLayout(new java.awt.CardLayout());
 
         pnlHome.setBackground(new java.awt.Color(255, 255, 255));
 
-        pnlViewUsers.setBackground(new java.awt.Color(255, 255, 255));
-        pnlViewUsers.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(240, 235, 250), 3, true));
-        pnlViewUsers.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        pnlViewUsers.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        pnlOne.setBackground(new java.awt.Color(255, 255, 255));
+        pnlOne.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(240, 235, 250), 3, true));
+        pnlOne.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        pnlOne.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblViewUsers.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         lblViewUsers.setForeground(new java.awt.Color(30, 107, 255));
         lblViewUsers.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblViewUsers.setText("View Users");
-        pnlViewUsers.add(lblViewUsers, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 115, 220, 50));
+        pnlOne.add(lblViewUsers, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 115, 220, 50));
 
         lblViewUsersIcon.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         lblViewUsersIcon.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblViewUsersIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/people100.png"))); // NOI18N
-        pnlViewUsers.add(lblViewUsersIcon, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 14, 220, 115));
+        pnlOne.add(lblViewUsersIcon, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 14, 220, 115));
 
         lblBackgroundViewUsers.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/white220_165.png"))); // NOI18N
         lblBackgroundViewUsers.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -278,23 +357,23 @@ public class Admin extends javax.swing.JFrame {
                 lblBackgroundViewUsersMouseExited(evt);
             }
         });
-        pnlViewUsers.add(lblBackgroundViewUsers, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 5, 210, 155));
+        pnlOne.add(lblBackgroundViewUsers, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 5, 210, 155));
 
-        pnlViewOrders.setBackground(new java.awt.Color(255, 255, 255));
-        pnlViewOrders.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(240, 235, 250), 3, true));
-        pnlViewOrders.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        pnlViewOrders.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        pnlTwo.setBackground(new java.awt.Color(255, 255, 255));
+        pnlTwo.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(240, 235, 250), 3, true));
+        pnlTwo.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        pnlTwo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblViewOrders.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         lblViewOrders.setForeground(new java.awt.Color(30, 107, 255));
         lblViewOrders.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblViewOrders.setText("View Orders");
-        pnlViewOrders.add(lblViewOrders, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 115, 220, 50));
+        pnlTwo.add(lblViewOrders, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 115, 220, 50));
 
         lblViewOrdersIcon.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         lblViewOrdersIcon.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblViewOrdersIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/ordersIcon100.png"))); // NOI18N
-        pnlViewOrders.add(lblViewOrdersIcon, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 14, 220, 115));
+        pnlTwo.add(lblViewOrdersIcon, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 14, 220, 115));
 
         lblBackgroundViewOrders.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/white220_165.png"))); // NOI18N
         lblBackgroundViewOrders.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -305,26 +384,29 @@ public class Admin extends javax.swing.JFrame {
                 lblBackgroundViewOrdersMouseExited(evt);
             }
         });
-        pnlViewOrders.add(lblBackgroundViewOrders, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 5, 210, 155));
+        pnlTwo.add(lblBackgroundViewOrders, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 5, 210, 155));
 
-        pnlAddGalleryOwner.setBackground(new java.awt.Color(255, 255, 255));
-        pnlAddGalleryOwner.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(240, 235, 250), 3, true));
-        pnlAddGalleryOwner.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        pnlAddGalleryOwner.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        pnlThree.setBackground(new java.awt.Color(255, 255, 255));
+        pnlThree.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(240, 235, 250), 3, true));
+        pnlThree.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        pnlThree.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblAddGalleryOwner.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         lblAddGalleryOwner.setForeground(new java.awt.Color(30, 107, 255));
         lblAddGalleryOwner.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblAddGalleryOwner.setText("Add Gallery Owner");
-        pnlAddGalleryOwner.add(lblAddGalleryOwner, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 105, 220, 60));
+        pnlThree.add(lblAddGalleryOwner, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 105, 220, 60));
 
         lblAddGalleryOwnerIcon.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         lblAddGalleryOwnerIcon.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblAddGalleryOwnerIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/addGalleryOwnerIcon100.png"))); // NOI18N
-        pnlAddGalleryOwner.add(lblAddGalleryOwnerIcon, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 15, 220, -1));
+        pnlThree.add(lblAddGalleryOwnerIcon, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 15, 220, -1));
 
         lblBackgroundAddGalOwn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/white220_165.png"))); // NOI18N
         lblBackgroundAddGalOwn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblBackgroundAddGalOwnMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 lblBackgroundAddGalOwnMouseEntered(evt);
             }
@@ -332,26 +414,29 @@ public class Admin extends javax.swing.JFrame {
                 lblBackgroundAddGalOwnMouseExited(evt);
             }
         });
-        pnlAddGalleryOwner.add(lblBackgroundAddGalOwn, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 5, 210, 155));
+        pnlThree.add(lblBackgroundAddGalOwn, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 5, 210, 155));
 
-        pnlViewCars.setBackground(new java.awt.Color(255, 255, 255));
-        pnlViewCars.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(240, 235, 250), 3, true));
-        pnlViewCars.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        pnlViewCars.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        pnlFour.setBackground(new java.awt.Color(255, 255, 255));
+        pnlFour.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(240, 235, 250), 3, true));
+        pnlFour.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        pnlFour.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblViewCars.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         lblViewCars.setForeground(new java.awt.Color(30, 107, 255));
         lblViewCars.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblViewCars.setText("View Cars");
-        pnlViewCars.add(lblViewCars, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 115, 220, 50));
+        pnlFour.add(lblViewCars, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 115, 220, 50));
 
         lblViewCarsIcon.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         lblViewCarsIcon.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblViewCarsIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/carsIcon100.png"))); // NOI18N
-        pnlViewCars.add(lblViewCarsIcon, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 14, 220, 115));
+        pnlFour.add(lblViewCarsIcon, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 14, 220, 115));
 
         lblBackgroundViewCars.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/white220_165.png"))); // NOI18N
         lblBackgroundViewCars.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblBackgroundViewCarsMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 lblBackgroundViewCarsMouseEntered(evt);
             }
@@ -359,7 +444,7 @@ public class Admin extends javax.swing.JFrame {
                 lblBackgroundViewCarsMouseExited(evt);
             }
         });
-        pnlViewCars.add(lblBackgroundViewCars, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 5, 210, 155));
+        pnlFour.add(lblBackgroundViewCars, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 5, 210, 155));
 
         javax.swing.GroupLayout pnlHomeLayout = new javax.swing.GroupLayout(pnlHome);
         pnlHome.setLayout(pnlHomeLayout);
@@ -368,12 +453,12 @@ public class Admin extends javax.swing.JFrame {
             .addGroup(pnlHomeLayout.createSequentialGroup()
                 .addGap(44, 44, 44)
                 .addGroup(pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlAddGalleryOwner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(pnlViewUsers, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(pnlThree, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(pnlOne, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(89, 89, 89)
                 .addGroup(pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(pnlViewCars, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(pnlViewOrders, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(pnlFour, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(pnlTwo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(37, Short.MAX_VALUE))
         );
         pnlHomeLayout.setVerticalGroup(
@@ -381,12 +466,12 @@ public class Admin extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlHomeLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(pnlViewOrders, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pnlViewUsers, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(pnlTwo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pnlOne, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(pnlViewCars, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(pnlAddGalleryOwner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(pnlFour, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(pnlThree, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -397,7 +482,7 @@ public class Admin extends javax.swing.JFrame {
 
         lblProfilePic.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblProfilePic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/guest.png"))); // NOI18N
-        pnlShowUsers.add(lblProfilePic, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 10, 150, 150));
+        pnlShowUsers.add(lblProfilePic, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 10, 150, 150));
 
         lblUserFullName.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         lblUserFullName.setForeground(new java.awt.Color(30, 107, 255));
@@ -477,18 +562,18 @@ public class Admin extends javax.swing.JFrame {
         lblUserName.setText("User Name:");
         pnlShowUsers.add(lblUserName, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 210, 130, 30));
 
-        lblUserName1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        lblUserName1.setForeground(new java.awt.Color(30, 107, 255));
-        lblUserName1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblUserName1.setText("Home Address:");
-        pnlShowUsers.add(lblUserName1, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 270, 130, 30));
+        lblUserHomAdr.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblUserHomAdr.setForeground(new java.awt.Color(30, 107, 255));
+        lblUserHomAdr.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblUserHomAdr.setText("Home Address:");
+        pnlShowUsers.add(lblUserHomAdr, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 270, 130, 30));
 
-        lblUserNameVal1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        lblUserNameVal1.setForeground(new java.awt.Color(30, 107, 255));
-        lblUserNameVal1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lblUserNameVal1.setText("val");
-        lblUserNameVal1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 4, 1, 1));
-        pnlShowUsers.add(lblUserNameVal1, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 270, 160, 30));
+        lblUserHomAdrVal.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        lblUserHomAdrVal.setForeground(new java.awt.Color(30, 107, 255));
+        lblUserHomAdrVal.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblUserHomAdrVal.setText("val");
+        lblUserHomAdrVal.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 4, 1, 1));
+        pnlShowUsers.add(lblUserHomAdrVal, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 270, 160, 30));
 
         lblTotalOrder.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         lblTotalOrder.setForeground(new java.awt.Color(30, 107, 255));
@@ -515,7 +600,474 @@ public class Admin extends javax.swing.JFrame {
         lblUserBg2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/backgroundColor930.png"))); // NOI18N
         pnlShowUsers.add(lblUserBg2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 270, 610, 30));
 
+        lblPrevious.setBackground(new java.awt.Color(255, 255, 255));
+        lblPrevious.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblPrevious.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/previousIcon64.png"))); // NOI18N
+        lblPrevious.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblPrevious.setOpaque(true);
+        lblPrevious.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblPreviousMouseClicked(evt);
+            }
+        });
+        pnlShowUsers.add(lblPrevious, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 60, 64, 64));
+
+        lblNext.setBackground(new java.awt.Color(255, 255, 255));
+        lblNext.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/nextIcon64.png"))); // NOI18N
+        lblNext.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblNext.setOpaque(true);
+        lblNext.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblNextMouseClicked(evt);
+            }
+        });
+        pnlShowUsers.add(lblNext, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 60, 64, 64));
+
         layerPnl.add(pnlShowUsers, "card3");
+
+        pnlAddGallOwn.setBackground(new java.awt.Color(255, 255, 255));
+        pnlAddGallOwn.setOpaque(false);
+        pnlAddGallOwn.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lblUserFullName1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblUserFullName1.setForeground(new java.awt.Color(30, 107, 255));
+        lblUserFullName1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblUserFullName1.setText("Full Name:");
+        pnlAddGallOwn.add(lblUserFullName1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 60, 100, 30));
+
+        lblUserGender1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblUserGender1.setForeground(new java.awt.Color(30, 107, 255));
+        lblUserGender1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblUserGender1.setText("Gender:");
+        pnlAddGallOwn.add(lblUserGender1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 100, 30));
+
+        lblUserAge1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblUserAge1.setForeground(new java.awt.Color(30, 107, 255));
+        lblUserAge1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblUserAge1.setText("Age:");
+        pnlAddGallOwn.add(lblUserAge1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 140, 100, 30));
+
+        lblPhoneNum1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblPhoneNum1.setForeground(new java.awt.Color(30, 107, 255));
+        lblPhoneNum1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblPhoneNum1.setText("Phone Number:");
+        pnlAddGallOwn.add(lblPhoneNum1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 180, 100, 30));
+
+        tbxFullName.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        tbxFullName.setForeground(new java.awt.Color(42, 67, 114));
+        tbxFullName.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxFullName.setText("Natasha Petrovic");
+        tbxFullName.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(214, 200, 241), 2, true), javax.swing.BorderFactory.createEmptyBorder(2, 4, 2, 2)));
+        pnlAddGallOwn.add(tbxFullName, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 60, 140, 30));
+
+        tbxAge.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        tbxAge.setForeground(new java.awt.Color(42, 67, 114));
+        tbxAge.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxAge.setText("27");
+        tbxAge.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(214, 200, 241), 2, true), javax.swing.BorderFactory.createEmptyBorder(2, 4, 2, 2)));
+        pnlAddGallOwn.add(tbxAge, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 140, 140, 30));
+
+        tbxPhoNum.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        tbxPhoNum.setForeground(new java.awt.Color(42, 67, 114));
+        tbxPhoNum.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxPhoNum.setText("545 429 3686");
+        tbxPhoNum.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(214, 200, 241), 2, true), javax.swing.BorderFactory.createEmptyBorder(2, 4, 2, 2)));
+        pnlAddGallOwn.add(tbxPhoNum, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 180, 140, 30));
+
+        male_JRadio.setBackground(new java.awt.Color(255, 255, 255));
+        btnGroupGender.add(male_JRadio);
+        male_JRadio.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        male_JRadio.setForeground(new java.awt.Color(42, 67, 114));
+        male_JRadio.setText("Male");
+        male_JRadio.setBorder(null);
+        male_JRadio.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        pnlAddGallOwn.add(male_JRadio, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 100, 60, 30));
+
+        female_JRadio.setBackground(new java.awt.Color(255, 255, 255));
+        btnGroupGender.add(female_JRadio);
+        female_JRadio.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        female_JRadio.setForeground(new java.awt.Color(42, 67, 114));
+        female_JRadio.setSelected(true);
+        female_JRadio.setText("Female");
+        female_JRadio.setBorder(null);
+        female_JRadio.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        pnlAddGallOwn.add(female_JRadio, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 100, 70, 30));
+
+        lblUserFullName2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblUserFullName2.setForeground(new java.awt.Color(30, 107, 255));
+        lblUserFullName2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblUserFullName2.setText("Username:");
+        pnlAddGallOwn.add(lblUserFullName2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 220, 100, 30));
+
+        lblUserGender2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblUserGender2.setForeground(new java.awt.Color(30, 107, 255));
+        lblUserGender2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblUserGender2.setText("Email:");
+        pnlAddGallOwn.add(lblUserGender2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 260, 100, 30));
+
+        lblUserAge2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblUserAge2.setForeground(new java.awt.Color(30, 107, 255));
+        lblUserAge2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblUserAge2.setText("Password:");
+        pnlAddGallOwn.add(lblUserAge2, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 60, 100, 30));
+
+        lblPhoneNum2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblPhoneNum2.setForeground(new java.awt.Color(30, 107, 255));
+        lblPhoneNum2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblPhoneNum2.setText("Profile Picture:");
+        pnlAddGallOwn.add(lblPhoneNum2, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 180, 100, 30));
+
+        tbxUserName.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        tbxUserName.setForeground(new java.awt.Color(42, 67, 114));
+        tbxUserName.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxUserName.setText("Dea");
+        tbxUserName.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(214, 200, 241), 2, true), javax.swing.BorderFactory.createEmptyBorder(2, 4, 2, 2)));
+        pnlAddGallOwn.add(tbxUserName, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 220, 140, 30));
+
+        tbxMail.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        tbxMail.setForeground(new java.awt.Color(42, 67, 114));
+        tbxMail.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxMail.setText("natasha@gmail.com");
+        tbxMail.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(214, 200, 241), 2, true), javax.swing.BorderFactory.createEmptyBorder(2, 4, 2, 2)));
+        pnlAddGallOwn.add(tbxMail, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 260, 140, 30));
+
+        lblChoose.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblChoose.setForeground(new java.awt.Color(42, 67, 114));
+        lblChoose.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblChoose.setText("Choose");
+        lblChoose.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(214, 200, 241), 2, true));
+        lblChoose.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblChoose.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblChooseMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lblChooseMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lblChooseMouseExited(evt);
+            }
+        });
+        pnlAddGallOwn.add(lblChoose, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 180, 180, 30));
+
+        lblChooseBackground.setBackground(new java.awt.Color(255, 255, 255));
+        lblChooseBackground.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblChooseBackground.setForeground(new java.awt.Color(30, 107, 255));
+        lblChooseBackground.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblChooseBackground.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(214, 200, 241), 2, true));
+        lblChooseBackground.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        pnlAddGallOwn.add(lblChooseBackground, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 180, 180, 30));
+
+        lblUserGender3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblUserGender3.setForeground(new java.awt.Color(30, 107, 255));
+        lblUserGender3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblUserGender3.setText("Reset Pass Que:");
+        pnlAddGallOwn.add(lblUserGender3, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 100, 100, 30));
+
+        tbxRstPassQue.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        tbxRstPassQue.setForeground(new java.awt.Color(42, 67, 114));
+        tbxRstPassQue.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxRstPassQue.setText("Which City You Borned?");
+        tbxRstPassQue.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(214, 200, 241), 2, true), javax.swing.BorderFactory.createEmptyBorder(2, 4, 2, 2)));
+        pnlAddGallOwn.add(tbxRstPassQue, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 100, 180, 30));
+
+        lblUserAge3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblUserAge3.setForeground(new java.awt.Color(30, 107, 255));
+        lblUserAge3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblUserAge3.setText("Reset Pass Ans:");
+        pnlAddGallOwn.add(lblUserAge3, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 140, 100, 30));
+
+        lblRstPassIcon.setBackground(new java.awt.Color(255, 255, 255));
+        lblRstPassIcon.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblRstPassIcon.setForeground(new java.awt.Color(30, 107, 255));
+        lblRstPassIcon.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblRstPassIcon.setIcon( closeEye24 );
+        lblRstPassIcon.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblRstPassIcon.setOpaque(true);
+        lblRstPassIcon.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblRstPassIconMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lblRstPassIconMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lblRstPassIconMouseExited(evt);
+            }
+        });
+        pnlAddGallOwn.add(lblRstPassIcon, new org.netbeans.lib.awtextra.AbsoluteConstraints(563, 143, 24, 24));
+
+        lblPassIcon.setBackground(new java.awt.Color(255, 255, 255));
+        lblPassIcon.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblPassIcon.setForeground(new java.awt.Color(30, 107, 255));
+        lblPassIcon.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblPassIcon.setIcon( closeEye24 );
+        lblPassIcon.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblPassIcon.setOpaque(true);
+        lblPassIcon.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblPassIconMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lblPassIconMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lblPassIconMouseExited(evt);
+            }
+        });
+        pnlAddGallOwn.add(lblPassIcon, new org.netbeans.lib.awtextra.AbsoluteConstraints(563, 63, 24, 24));
+
+        tbxPass.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        tbxPass.setForeground(new java.awt.Color(42, 67, 114));
+        tbxPass.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxPass.setText("123456");
+        tbxPass.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(214, 200, 241), 2, true), javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 30)));
+        pnlAddGallOwn.add(tbxPass, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 60, 180, 30));
+
+        tbxRstPassAns.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        tbxRstPassAns.setForeground(new java.awt.Color(42, 67, 114));
+        tbxRstPassAns.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tbxRstPassAns.setText("Skopje");
+        tbxRstPassAns.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(214, 200, 241), 2, true), javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 30)));
+        pnlAddGallOwn.add(tbxRstPassAns, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 140, 180, 30));
+
+        tbxHomeAddr.setColumns(20);
+        tbxHomeAddr.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        tbxHomeAddr.setForeground(new java.awt.Color(42, 67, 114));
+        tbxHomeAddr.setLineWrap(true);
+        tbxHomeAddr.setRows(5);
+        tbxHomeAddr.setText("Cumhuriyet Mah. Namık Kemal Cad. No:24 / 301, Osmancık / Çorum");
+        tbxHomeAddr.setWrapStyleWord(true);
+        tbxHomeAddr.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEtchedBorder(), javax.swing.BorderFactory.createEmptyBorder(3, 6, 3, 6)));
+        pnlAddGallOwn.add(tbxHomeAddr, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 220, 180, 70));
+
+        lblPhoneNum3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblPhoneNum3.setForeground(new java.awt.Color(30, 107, 255));
+        lblPhoneNum3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblPhoneNum3.setText("Home Address:");
+        lblPhoneNum3.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        pnlAddGallOwn.add(lblPhoneNum3, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 220, 100, 30));
+
+        lblUserFullName3.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lblUserFullName3.setForeground(new java.awt.Color(42, 67, 114));
+        lblUserFullName3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblUserFullName3.setText("Gallery Owner Registration");
+        pnlAddGallOwn.add(lblUserFullName3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 610, 40));
+
+        lblComplete.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblComplete.setForeground(new java.awt.Color(42, 67, 114));
+        lblComplete.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblComplete.setText("Complete");
+        lblComplete.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(214, 200, 241), 2, true));
+        lblComplete.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblComplete.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblCompleteMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lblCompleteMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lblCompleteMouseExited(evt);
+            }
+        });
+        pnlAddGallOwn.add(lblComplete, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 310, 150, 40));
+
+        lblCompleteBackground.setBackground(new java.awt.Color(255, 255, 255));
+        lblCompleteBackground.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblCompleteBackground.setForeground(new java.awt.Color(30, 107, 255));
+        lblCompleteBackground.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCompleteBackground.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(214, 200, 241), 2, true));
+        lblCompleteBackground.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        pnlAddGallOwn.add(lblCompleteBackground, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 310, 150, 40));
+
+        layerPnl.add(pnlAddGallOwn, "card4");
+
+        pnlShowCars.setBackground(new java.awt.Color(255, 255, 255));
+        pnlShowCars.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lblCarBrandModel.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lblCarBrandModel.setForeground(new java.awt.Color(42, 67, 114));
+        lblCarBrandModel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        pnlShowCars.add(lblCarBrandModel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 610, 30));
+
+        lblCarTypeVal.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        lblCarTypeVal.setForeground(new java.awt.Color(42, 67, 114));
+        lblCarTypeVal.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblCarTypeVal.setText("val");
+        lblCarTypeVal.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 4, 1, 1));
+        pnlShowCars.add(lblCarTypeVal, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 200, 160, 30));
+
+        lblCarType.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblCarType.setForeground(new java.awt.Color(30, 107, 255));
+        lblCarType.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblCarType.setText("Type:");
+        pnlShowCars.add(lblCarType, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, 120, 30));
+
+        lblCarYear.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblCarYear.setForeground(new java.awt.Color(30, 107, 255));
+        lblCarYear.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblCarYear.setText("Year:");
+        pnlShowCars.add(lblCarYear, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 200, 130, 30));
+
+        lblCarYearVal.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        lblCarYearVal.setForeground(new java.awt.Color(42, 67, 114));
+        lblCarYearVal.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblCarYearVal.setText("val");
+        lblCarYearVal.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 4, 1, 1));
+        pnlShowCars.add(lblCarYearVal, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 200, 160, 30));
+
+        lblCarBg1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblCarBg1.setForeground(new java.awt.Color(30, 107, 255));
+        lblCarBg1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblCarBg1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/backgroundColor930.png"))); // NOI18N
+        pnlShowCars.add(lblCarBg1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 200, 610, 30));
+
+        lblCarFuelType.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblCarFuelType.setForeground(new java.awt.Color(30, 107, 255));
+        lblCarFuelType.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblCarFuelType.setText("Fuel Type:");
+        pnlShowCars.add(lblCarFuelType, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 230, 120, 30));
+
+        lblCarFuelTypeVal.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        lblCarFuelTypeVal.setForeground(new java.awt.Color(42, 67, 114));
+        lblCarFuelTypeVal.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblCarFuelTypeVal.setText("val");
+        lblCarFuelTypeVal.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 4, 1, 1));
+        pnlShowCars.add(lblCarFuelTypeVal, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 230, 160, 30));
+
+        lblCarFuelCap.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblCarFuelCap.setForeground(new java.awt.Color(30, 107, 255));
+        lblCarFuelCap.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblCarFuelCap.setText("Fuel Capacity:");
+        pnlShowCars.add(lblCarFuelCap, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 230, 130, 30));
+
+        lblCarFuelCapVal.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        lblCarFuelCapVal.setForeground(new java.awt.Color(42, 67, 114));
+        lblCarFuelCapVal.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblCarFuelCapVal.setText("val");
+        lblCarFuelCapVal.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 4, 1, 1));
+        pnlShowCars.add(lblCarFuelCapVal, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 230, 160, 30));
+
+        lblCarTransmission.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblCarTransmission.setForeground(new java.awt.Color(30, 107, 255));
+        lblCarTransmission.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblCarTransmission.setText("Transmission Type:");
+        pnlShowCars.add(lblCarTransmission, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 120, 30));
+
+        lblCarTransmissionVal.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        lblCarTransmissionVal.setForeground(new java.awt.Color(42, 67, 114));
+        lblCarTransmissionVal.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblCarTransmissionVal.setText("val");
+        lblCarTransmissionVal.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 4, 1, 1));
+        pnlShowCars.add(lblCarTransmissionVal, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 260, 160, 30));
+
+        lblCarKm.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblCarKm.setForeground(new java.awt.Color(30, 107, 255));
+        lblCarKm.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblCarKm.setText("Kilometer:");
+        pnlShowCars.add(lblCarKm, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 260, 130, 30));
+
+        lblCarKmVal.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        lblCarKmVal.setForeground(new java.awt.Color(42, 67, 114));
+        lblCarKmVal.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblCarKmVal.setText("val");
+        lblCarKmVal.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 4, 1, 1));
+        pnlShowCars.add(lblCarKmVal, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 260, 160, 30));
+
+        lblCarBg2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblCarBg2.setForeground(new java.awt.Color(30, 107, 255));
+        lblCarBg2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblCarBg2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/backgroundColor930.png"))); // NOI18N
+        pnlShowCars.add(lblCarBg2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 260, 610, 30));
+
+        lblCarDailyPrice.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblCarDailyPrice.setForeground(new java.awt.Color(30, 107, 255));
+        lblCarDailyPrice.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblCarDailyPrice.setText("Daily Price:");
+        pnlShowCars.add(lblCarDailyPrice, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 290, 120, 30));
+
+        lblCarDailyPriceVal.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        lblCarDailyPriceVal.setForeground(new java.awt.Color(42, 67, 114));
+        lblCarDailyPriceVal.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblCarDailyPriceVal.setText("val");
+        lblCarDailyPriceVal.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 4, 1, 1));
+        pnlShowCars.add(lblCarDailyPriceVal, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 290, 160, 30));
+
+        lblCarTrunkVol.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblCarTrunkVol.setForeground(new java.awt.Color(30, 107, 255));
+        lblCarTrunkVol.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblCarTrunkVol.setText("Trunk Volume:");
+        pnlShowCars.add(lblCarTrunkVol, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 290, 130, 30));
+
+        lblCarTrunkVolVal.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        lblCarTrunkVolVal.setForeground(new java.awt.Color(42, 67, 114));
+        lblCarTrunkVolVal.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblCarTrunkVolVal.setText("val");
+        lblCarTrunkVolVal.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 4, 1, 1));
+        pnlShowCars.add(lblCarTrunkVolVal, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 290, 160, 30));
+
+        lblCarGallery.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblCarGallery.setForeground(new java.awt.Color(30, 107, 255));
+        lblCarGallery.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblCarGallery.setText("Gallery Name:");
+        pnlShowCars.add(lblCarGallery, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 320, 120, 30));
+
+        lblCarGalleryVal.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        lblCarGalleryVal.setForeground(new java.awt.Color(42, 67, 114));
+        lblCarGalleryVal.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblCarGalleryVal.setText("val");
+        lblCarGalleryVal.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 4, 1, 1));
+        pnlShowCars.add(lblCarGalleryVal, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 320, 160, 30));
+
+        lblCarOwner.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblCarOwner.setForeground(new java.awt.Color(30, 107, 255));
+        lblCarOwner.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblCarOwner.setText("Kilometer:");
+        pnlShowCars.add(lblCarOwner, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 320, 130, 30));
+
+        lblCarOwnerVal.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        lblCarOwnerVal.setForeground(new java.awt.Color(42, 67, 114));
+        lblCarOwnerVal.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblCarOwnerVal.setText("val");
+        lblCarOwnerVal.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 4, 1, 1));
+        pnlShowCars.add(lblCarOwnerVal, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 320, 160, 30));
+
+        lblCarBg3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblCarBg3.setForeground(new java.awt.Color(30, 107, 255));
+        lblCarBg3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblCarBg3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/backgroundColor930.png"))); // NOI18N
+        pnlShowCars.add(lblCarBg3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 320, 610, 30));
+
+        lblCarPrevious.setBackground(new java.awt.Color(255, 255, 255));
+        lblCarPrevious.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCarPrevious.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/previousIcon64.png"))); // NOI18N
+        lblCarPrevious.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblCarPrevious.setOpaque(true);
+        lblCarPrevious.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblCarPreviousMouseClicked(evt);
+            }
+        });
+        pnlShowCars.add(lblCarPrevious, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 60, 64, 64));
+
+        lblCarPic.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        pnlShowCars.add(lblCarPic, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 30, 203, 166));
+
+        lblCarNext.setBackground(new java.awt.Color(255, 255, 255));
+        lblCarNext.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCarNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/nextIcon64.png"))); // NOI18N
+        lblCarNext.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblCarNext.setOpaque(true);
+        lblCarNext.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblCarNextMouseClicked(evt);
+            }
+        });
+        pnlShowCars.add(lblCarNext, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 60, 64, 64));
+
+        layerPnl.add(pnlShowCars, "card5");
 
         pnlParent.add(layerPnl, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 104, 610, 360));
 
@@ -545,11 +1097,40 @@ public class Admin extends javax.swing.JFrame {
     }
     
     private void initializeUserInfo() {
-        lblUserFullNameVal.setText( users.get( currentUserIndex ).getFullName() );
-        lblUserGenderVal.setText( users.get( currentUserIndex ).getGender() );
-        lblUserAgeVal.setText( users.get( currentUserIndex ).getAge() + "" );
-        lblPhoneNumVal.setText( users.get( currentUserIndex ).getPhoneNumber() );
-        lblUserNameVal.setText( users.get( currentUserIndex ).getUsername() );
+        currentUser = RentCarSystem.getUserList().get( currentUserIndex );
+        lblUserFullNameVal.setText( currentUser.getFullName() );
+        lblUserGenderVal.setText( currentUser.getGender() );
+        lblUserAgeVal.setText( currentUser.getAge() + "" );
+        lblPhoneNumVal.setText( currentUser.getPhoneNumber() );
+        lblUserNameVal.setText( currentUser.getUsername() );
+        lblUserHomAdrVal.setText( currentUser.getHomeAddress().split(", ")[1] );
+        lblTotalOrderVal.setText( Administrator.findTotalOrder( currentUser ) + "" );
+        lblProfilePic.setIcon( new ImageIcon(getClass().getResource( currentUser.getImgPath() )) );
+        lblMailVal.setText( currentUser.getMailAdress().getName() );
+    }
+    
+    private void initialiazeCarInfo() {
+        currentCar = RentCarSystem.getCars().get( currentCarIndex );
+        int galleryOwner_id = 0;
+                Gallery gallery = RentCarSystem.getGalleryById( currentCar.getGalleryId() );
+                for ( User user : RentCarSystem.getUserList() ) {
+                    if ( user instanceof GalleryOwner ) {
+                        if (  ((GalleryOwner)(user)).getGalleries().contains( gallery ) )
+                            galleryOwner_id = ((GalleryOwner)(user)).getGalleryOwner_id();
+                    }
+                }
+        lblCarBrandModel.setText( currentCar.getBrand() + " " + currentCar.getModel() );
+        lblCarDailyPriceVal.setText( currentCar.getPrice() + "");
+        lblCarFuelCapVal.setText( currentCar.getFuelCapacity()+ "" );
+        lblCarFuelTypeVal.setText( currentCar.getFuelType() );
+        lblCarGalleryVal.setText( RentCarSystem.getGalleryById( currentCar.getGalleryId() ).getName() );
+        lblCarKmVal.setText( currentCar.getKm() + "" );
+        lblCarOwnerVal.setText( RentCarSystem.getGalleryOwnerById( galleryOwner_id ).getFullName() );
+        lblCarPic.setIcon( new ImageIcon(getClass().getResource( currentCar.getSmall_imgPath()) ) );
+        lblCarTransmissionVal.setText( currentCar.getTransmissionType() );
+        lblCarTrunkVolVal.setText( currentCar.getTrunkVolume() + "" );
+        lblCarTypeVal.setText( currentCar.getType() );
+        lblCarYearVal.setText( currentCar.getYear() + "" );
     }
     
     private void lblBackgroundViewUsersMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblBackgroundViewUsersMouseEntered
@@ -594,7 +1175,7 @@ public class Admin extends javax.swing.JFrame {
 
     private void lblExitColorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblExitColorMouseClicked
         // TODO add your handling code here:
-        System.exit( 0 );
+        dispose();
     }//GEN-LAST:event_lblExitColorMouseClicked
 
     private void lblExitColorMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblExitColorMouseEntered
@@ -614,45 +1195,211 @@ public class Admin extends javax.swing.JFrame {
 
     private void lblBackgroundViewUsersMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblBackgroundViewUsersMouseClicked
         // TODO add your handling code here:
-        HelperMethods.changePage(pnlShowUsers, layerPnl);
+        if ( RentCarSystem.getUserList().size() > 0 ) {
+            HelperMethods.changePage(pnlShowUsers, layerPnl);
+            initializeUserInfo();
+        } else {
+            HelperMethods.showErrorMessage("There is no one registered to the application", "Empty User List");
+        }
     }//GEN-LAST:event_lblBackgroundViewUsersMouseClicked
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Admin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Admin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Admin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Admin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void lblPreviousMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblPreviousMouseClicked
+        currentUserIndex--;
+            
+        if ( currentUserIndex == -1 )
+            currentUserIndex = RentCarSystem.getUserList().size() - 1;
+        
+        initializeUserInfo();
+    }//GEN-LAST:event_lblPreviousMouseClicked
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Admin().setVisible(true);
+    private void lblNextMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblNextMouseClicked
+        currentUserIndex++;
+            
+        if ( currentUserIndex == RentCarSystem.getUserList().size() )
+            currentUserIndex = 0;
+        
+        initializeUserInfo();
+    }//GEN-LAST:event_lblNextMouseClicked
+
+    private void lblBackgroundAddGalOwnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblBackgroundAddGalOwnMouseClicked
+        // TODO add your handling code here:
+        HelperMethods.changePage(pnlAddGallOwn, layerPnl);
+    }//GEN-LAST:event_lblBackgroundAddGalOwnMouseClicked
+
+    private void lblChooseMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblChooseMouseEntered
+        // TODO add your handling code here:
+        lblChooseBackground.setIcon( new ImageIcon(getClass().getResource( "/images/color1.png" )));
+    }//GEN-LAST:event_lblChooseMouseEntered
+
+    private void lblChooseMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblChooseMouseExited
+        // TODO add your handling code here:
+        lblChooseBackground.setIcon( new ImageIcon() );
+    }//GEN-LAST:event_lblChooseMouseExited
+
+    private void lblPassIconMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblPassIconMouseClicked
+        // TODO add your handling code here:
+        hideShowPass(tbxPass, lblPassIcon);
+    }//GEN-LAST:event_lblPassIconMouseClicked
+
+    private void lblRstPassIconMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblRstPassIconMouseClicked
+        // TODO add your handling code here:
+        hideShowPass(tbxRstPassAns, lblRstPassIcon);
+    }//GEN-LAST:event_lblRstPassIconMouseClicked
+
+    private void lblPassIconMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblPassIconMouseEntered
+        // TODO add your handling code here:
+        lblPassIcon.setBackground( new Color(242, 237, 251) );
+                
+    }//GEN-LAST:event_lblPassIconMouseEntered
+
+    private void lblPassIconMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblPassIconMouseExited
+        // TODO add your handling code here:
+        lblPassIcon.setBackground( new Color(255, 255, 255) );
+    }//GEN-LAST:event_lblPassIconMouseExited
+
+    private void lblRstPassIconMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblRstPassIconMouseEntered
+        // TODO add your handling code here:
+        lblRstPassIcon.setBackground( new Color(242, 237, 251) );
+    }//GEN-LAST:event_lblRstPassIconMouseEntered
+
+    private void lblRstPassIconMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblRstPassIconMouseExited
+        // TODO add your handling code here:
+        lblRstPassIcon.setBackground( new Color(255, 255, 255) );
+    }//GEN-LAST:event_lblRstPassIconMouseExited
+
+    private void lblCompleteMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblCompleteMouseEntered
+        // TODO add your handling code here:
+        lblCompleteBackground.setIcon( new ImageIcon(getClass().getResource( "/images/color1.png" )) );
+    }//GEN-LAST:event_lblCompleteMouseEntered
+
+    private void lblCompleteMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblCompleteMouseExited
+        // TODO add your handling code here:
+        lblCompleteBackground.setIcon( new ImageIcon() );
+    }//GEN-LAST:event_lblCompleteMouseExited
+
+    private void lblCompleteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblCompleteMouseClicked
+        // TODO add your handling code here:
+        boolean isSuccesful = false;
+        
+        try {
+            if ( RentCarSystem.isMailUsedAnyOtherUser( RentCarSystem.getMailByName(tbxMail.getText()).getMail_id(), new GalleryOwner() ) ) {
+                throw new Exception("This mail is already in use");
+            } else if( !HelperMethods.controlPhoneNum( tbxPhoNum.getText(), tbxUserName.getText() ) ) {
+                throw new Exception("This phone number is already in use");
+            } else if( RentCarSystem.isUserName_inUse( tbxUserName.getText() ) ) {
+                throw new Exception("This user name is already in use");
+            } else if( imgPath == null ) {
+                throw new Exception("You didn't choose an image");
+            } else if( !HelperMethods.checkHomeAddress( tbxHomeAddr.getText() ) ) {
+                throw new Exception("The home address must innclude just one \", \" regex");
+            } else {
+                
+                String fullName = tbxFullName.getText();
+                String gender = getGender();
+                int age = Integer.parseInt( tbxAge.getText() );
+                
+                if ( age < 18 )
+                    age = 18;
+                
+                String phoneNum = tbxPhoNum.getText();
+                
+                Mail mail = RentCarSystem.getMailByName( tbxMail.getText() );
+                
+                if ( mail == null )
+                    throw new NullPointerException("We couldn't found your Email Address...");
+                
+                String userName = tbxUserName.getText();
+                String homeAddress = tbxHomeAddr.getText();
+                String password = String.valueOf(tbxPass.getPassword());
+                String resetPassQue = tbxRstPassQue.getText();
+                String resetPassAns = String.valueOf(tbxRstPassAns.getPassword());
+                
+                GalleryOwner galleryOwner = new GalleryOwner(GalleryOwner.getTotalGallOwner() + 1, fullName, gender, age, imgPath, phoneNum, mail, userName, 
+                                                             homeAddress, password, resetPassQue, resetPassAns);
+                isSuccesful = RentCarSystem.addUserToDatabase( galleryOwner );
             }
-        });
+            
+            if ( isSuccesful )
+                dispose();
+            else
+                HelperMethods.showErrorMessage("We couldn't include you our database", "Unexpected Error");
+            
+        } catch (NumberFormatException ex) {
+            HelperMethods.showErrorMessage("One of the field you didn't enter a number", "Not Number");
+            ex.printStackTrace();
+        } catch (Exception ex) {
+            HelperMethods.showErrorMessage(ex.getMessage(), "Register Error");
+            ex.printStackTrace();
+        }
+    }//GEN-LAST:event_lblCompleteMouseClicked
+
+    private void lblChooseMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblChooseMouseClicked
+        JFileChooser chooser = new JFileChooser(new File("").getAbsolutePath() + "\\src\\images\\");
+        chooser.showOpenDialog( null );
+        File f = chooser.getSelectedFile();
+        imgPath = f.getName();
+        imgPath = "/images/" + imgPath;
+        
+        System.out.println(imgPath );
+    }//GEN-LAST:event_lblChooseMouseClicked
+
+    private void lblBackgroundViewCarsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblBackgroundViewCarsMouseClicked
+        // TODO add your handling code here:
+        if ( RentCarSystem.getCars().size() > 0 ) {
+            HelperMethods.changePage(pnlShowCars, layerPnl);
+            initialiazeCarInfo();
+        } else {
+            HelperMethods.showErrorMessage("There is no Car in the application", "Empty Car List");
+        }
+        
+    }//GEN-LAST:event_lblBackgroundViewCarsMouseClicked
+
+    private void lblCarPreviousMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblCarPreviousMouseClicked
+        // TODO add your handling code here:
+        currentCarIndex--;
+            
+        if ( currentCarIndex == -1 )
+            currentCarIndex = RentCarSystem.getCars().size() - 1;
+        
+        initialiazeCarInfo();
+    }//GEN-LAST:event_lblCarPreviousMouseClicked
+
+    private void lblCarNextMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblCarNextMouseClicked
+        // TODO add your handling code here:
+        currentCarIndex++;
+            
+        if ( currentCarIndex == RentCarSystem.getCars().size() )
+            currentCarIndex = 0;
+        
+        initialiazeCarInfo();
+    }//GEN-LAST:event_lblCarNextMouseClicked
+
+    private void hideShowPass( JPasswordField jPasswordField, JLabel label) {
+        
+        if ( label.getIcon().equals( closeEye24 ) ) {
+            jPasswordField.setEchoChar( (char) 0 );
+            label.setIcon( openEye24 );
+        } else if ( label.getIcon().equals( openEye24 ) ) {
+            jPasswordField.setEchoChar((char)'\u2022');
+            label.setIcon( closeEye24 );
+        }
+        
+    }
+    
+    private String getGender() {
+        String gender = "";
+        if ( female_JRadio.isSelected() ) {
+            gender = female_JRadio.getText();
+        }else {
+            gender = male_JRadio.getText();
+        }
+        
+        return gender;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup btnGroupGender;
+    private javax.swing.JRadioButton female_JRadio;
     private javax.swing.JLayeredPane layerPnl;
     private javax.swing.JLabel lblAddGalleryOwner;
     private javax.swing.JLabel lblAddGalleryOwnerIcon;
@@ -664,15 +1411,53 @@ public class Admin extends javax.swing.JFrame {
     private javax.swing.JLabel lblBackgroundViewCars;
     private javax.swing.JLabel lblBackgroundViewOrders;
     private javax.swing.JLabel lblBackgroundViewUsers;
+    private javax.swing.JLabel lblCarBg1;
+    private javax.swing.JLabel lblCarBg2;
+    private javax.swing.JLabel lblCarBg3;
+    private javax.swing.JLabel lblCarBrandModel;
+    private javax.swing.JLabel lblCarDailyPrice;
+    private javax.swing.JLabel lblCarDailyPriceVal;
+    private javax.swing.JLabel lblCarFuelCap;
+    private javax.swing.JLabel lblCarFuelCapVal;
+    private javax.swing.JLabel lblCarFuelType;
+    private javax.swing.JLabel lblCarFuelTypeVal;
+    private javax.swing.JLabel lblCarGallery;
+    private javax.swing.JLabel lblCarGalleryVal;
+    private javax.swing.JLabel lblCarKm;
+    private javax.swing.JLabel lblCarKmVal;
+    private javax.swing.JLabel lblCarNext;
+    private javax.swing.JLabel lblCarOwner;
+    private javax.swing.JLabel lblCarOwnerVal;
+    private javax.swing.JLabel lblCarPic;
+    private javax.swing.JLabel lblCarPrevious;
+    private javax.swing.JLabel lblCarTransmission;
+    private javax.swing.JLabel lblCarTransmissionVal;
+    private javax.swing.JLabel lblCarTrunkVol;
+    private javax.swing.JLabel lblCarTrunkVolVal;
+    private javax.swing.JLabel lblCarType;
+    private javax.swing.JLabel lblCarTypeVal;
+    private javax.swing.JLabel lblCarYear;
+    private javax.swing.JLabel lblCarYearVal;
+    private javax.swing.JLabel lblChoose;
+    private javax.swing.JLabel lblChooseBackground;
+    private javax.swing.JLabel lblComplete;
+    private javax.swing.JLabel lblCompleteBackground;
     private javax.swing.JLabel lblExitColor;
     private javax.swing.JLabel lblExitIcon;
     private javax.swing.JLabel lblExitText;
     private javax.swing.JLabel lblLeftPnlBackground;
     private javax.swing.JLabel lblMail;
     private javax.swing.JLabel lblMailVal;
+    private javax.swing.JLabel lblNext;
+    private javax.swing.JLabel lblPassIcon;
     private javax.swing.JLabel lblPhoneNum;
+    private javax.swing.JLabel lblPhoneNum1;
+    private javax.swing.JLabel lblPhoneNum2;
+    private javax.swing.JLabel lblPhoneNum3;
     private javax.swing.JLabel lblPhoneNumVal;
+    private javax.swing.JLabel lblPrevious;
     private javax.swing.JLabel lblProfilePic;
+    private javax.swing.JLabel lblRstPassIcon;
     private javax.swing.JLabel lblSimpleHomeIcon;
     private javax.swing.JLabel lblTitle;
     private javax.swing.JLabel lblTotalCars;
@@ -688,31 +1473,52 @@ public class Admin extends javax.swing.JFrame {
     private javax.swing.JLabel lblTotalOrders;
     private javax.swing.JLabel lblTotalOrdersVal;
     private javax.swing.JLabel lblUserAge;
+    private javax.swing.JLabel lblUserAge1;
+    private javax.swing.JLabel lblUserAge2;
+    private javax.swing.JLabel lblUserAge3;
     private javax.swing.JLabel lblUserAgeVal;
     private javax.swing.JLabel lblUserBg1;
     private javax.swing.JLabel lblUserBg2;
     private javax.swing.JLabel lblUserFullName;
+    private javax.swing.JLabel lblUserFullName1;
+    private javax.swing.JLabel lblUserFullName2;
+    private javax.swing.JLabel lblUserFullName3;
     private javax.swing.JLabel lblUserFullNameVal;
     private javax.swing.JLabel lblUserGender;
+    private javax.swing.JLabel lblUserGender1;
+    private javax.swing.JLabel lblUserGender2;
+    private javax.swing.JLabel lblUserGender3;
     private javax.swing.JLabel lblUserGenderVal;
+    private javax.swing.JLabel lblUserHomAdr;
+    private javax.swing.JLabel lblUserHomAdrVal;
     private javax.swing.JLabel lblUserName;
-    private javax.swing.JLabel lblUserName1;
     private javax.swing.JLabel lblUserNameVal;
-    private javax.swing.JLabel lblUserNameVal1;
     private javax.swing.JLabel lblViewCars;
     private javax.swing.JLabel lblViewCarsIcon;
     private javax.swing.JLabel lblViewOrders;
     private javax.swing.JLabel lblViewOrdersIcon;
     private javax.swing.JLabel lblViewUsers;
     private javax.swing.JLabel lblViewUsersIcon;
-    private javax.swing.JPanel pnlAddGalleryOwner;
+    private javax.swing.JRadioButton male_JRadio;
+    private javax.swing.JPanel pnlAddGallOwn;
     private javax.swing.JPanel pnlExit;
+    private javax.swing.JPanel pnlFour;
     private javax.swing.JPanel pnlHome;
     private javax.swing.JPanel pnlLeft;
+    private javax.swing.JPanel pnlOne;
     private javax.swing.JPanel pnlParent;
+    private javax.swing.JPanel pnlShowCars;
     private javax.swing.JPanel pnlShowUsers;
-    private javax.swing.JPanel pnlViewCars;
-    private javax.swing.JPanel pnlViewOrders;
-    private javax.swing.JPanel pnlViewUsers;
+    private javax.swing.JPanel pnlThree;
+    private javax.swing.JPanel pnlTwo;
+    private javax.swing.JTextField tbxAge;
+    private javax.swing.JTextField tbxFullName;
+    private javax.swing.JTextArea tbxHomeAddr;
+    private javax.swing.JTextField tbxMail;
+    private javax.swing.JPasswordField tbxPass;
+    private javax.swing.JTextField tbxPhoNum;
+    private javax.swing.JPasswordField tbxRstPassAns;
+    private javax.swing.JTextField tbxRstPassQue;
+    private javax.swing.JTextField tbxUserName;
     // End of variables declaration//GEN-END:variables
 }

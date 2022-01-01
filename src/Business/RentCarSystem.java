@@ -89,6 +89,31 @@ public class RentCarSystem {
         return true;
     }
     
+    public static boolean addUserToDatabase(GalleryOwner galleryOwner) throws SQLException {
+        
+        String query = "INSERT INTO galleryowner" + "(fullName, gender, age, imgPath, phoneNum, mail_id, username, homeAddress, password, resetPasswordQue, resetPasswordAns, galleryOwner_id) VALUES" + 
+                       "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        st = connection.createStatement();
+        PreparedStatement preparedStatement = connection.prepareStatement( query );
+        preparedStatement.setString(1, galleryOwner.getFullName());
+        preparedStatement.setString(2, galleryOwner.getGender());
+        preparedStatement.setInt(3, galleryOwner.getAge());
+        preparedStatement.setString(4, galleryOwner.getImgPath());
+        preparedStatement.setString(5, galleryOwner.getPhoneNumber());
+        preparedStatement.setInt(6, galleryOwner.getMailAdress().getMail_id());
+        preparedStatement.setString(7, galleryOwner.getUsername());
+        preparedStatement.setString(8, galleryOwner.getHomeAddress());
+        preparedStatement.setString(9, galleryOwner.getPassword());
+        preparedStatement.setString(10, galleryOwner.getResetPasswordQuestion());
+        preparedStatement.setString(11, galleryOwner.getResetPasswordAnswer());
+        preparedStatement.setInt(12, galleryOwner.getGalleryOwner_id() );
+            
+        preparedStatement.executeUpdate();
+        
+        return true;
+    }
+    
     public static User getUserByMailName( String mailName ) {
         for ( User user : userList ) {
             if ( user.getMailAdress().getName().equals( mailName ) ) {
@@ -178,6 +203,15 @@ public class RentCarSystem {
     public static GalleryOwner getGalleryOwnerById(int id) {
         for ( User user : userList ) {
             if ( user instanceof GalleryOwner && ((GalleryOwner)user).getGalleryOwner_id() == id ) 
+                return (GalleryOwner) user;
+        }
+        
+        return null;
+    }
+    
+    public static GalleryOwner getGalleryOwnerByPhoneNum(String phoneNum) {
+        for ( User user : userList ) {
+            if ( user instanceof GalleryOwner && ((GalleryOwner)user).getPhoneNumber().equals( phoneNum ) ) 
                 return (GalleryOwner) user;
         }
         

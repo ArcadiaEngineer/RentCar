@@ -5,6 +5,8 @@
  */
 package GUI;
 
+import Entities.Concrete.*;
+
 /**
  *
  * @author Lian La-Fey
@@ -14,8 +16,36 @@ public class SaleSheet extends javax.swing.JFrame {
     /**
      * Creates new form SaleSheet
      */
-    public SaleSheet() {
+    
+    Order order;
+    String[] tokens;
+    String galOwnName;
+    
+    public SaleSheet(Order order, String galOwnName) {
+        this.order = order;
+        this.galOwnName = galOwnName;
         initComponents();
+        initializeFields();
+    }
+    
+    private void initializeFields() {
+        tokens = order.getCust_homeAddress().split(", ");
+        lblCustomerName.setText( order.getFullName() );
+        lblCustomerPhoNum.setText( order.getCust_PhoneNumber() );
+        lblCustomerAddr.setText( tokens[0] );
+        lblCustomerTownCenter.setText( tokens[1] );
+        
+        tokens = order.getGallOwn_homeAddress().split(", ");
+        lblGalOwnName.setText( galOwnName );
+        lblGalOwnPhoNum.setText( order.getGallOwn_PhoneNumber() );
+        lblGalOwnAddr.setText( tokens[0] );
+        lblGalOwnTownCenter.setText( tokens[1] );
+        
+        lblCarFeatures.setText( order.getBrand() + "" + order.getModel() );
+        lblRentDate.setText( order.getRentDate() );
+        lblReturnDate.setText( order.getReturnDate() );
+        lblTotalDay.setText( order.getTotalDay() + "" );
+        lblTotalPrice.setText( order.getAmountPaid() + "" );
     }
 
     /**
@@ -28,34 +58,136 @@ public class SaleSheet extends javax.swing.JFrame {
     private void initComponents() {
 
         pnlParent = new javax.swing.JPanel();
+        lblCustomerName = new javax.swing.JLabel();
+        lblCustomerPhoNum = new javax.swing.JLabel();
+        lblCustomerAddr = new javax.swing.JLabel();
+        lblCustomerTownCenter = new javax.swing.JLabel();
+        lblGalOwnName = new javax.swing.JLabel();
+        lblGalOwnPhoNum = new javax.swing.JLabel();
+        lblGalOwnAddr = new javax.swing.JLabel();
+        lblGalOwnTownCenter = new javax.swing.JLabel();
+        lblCarFeatures = new javax.swing.JLabel();
+        lblRentDate = new javax.swing.JLabel();
+        lblReturnDate = new javax.swing.JLabel();
+        lblTotalDay = new javax.swing.JLabel();
+        lblTotalPrice = new javax.swing.JLabel();
+        lblOwnerSign = new javax.swing.JLabel();
+        lblOwnerSign1 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jSeparator1 = new javax.swing.JSeparator();
         jLabel3 = new javax.swing.JLabel();
         seal_icon = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        closeIcon = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
         jTextField1 = new javax.swing.JTextField();
         jTextField2 = new javax.swing.JTextField();
         jTextField3 = new javax.swing.JTextField();
         jTextField4 = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
         jTextField5 = new javax.swing.JTextField();
         jTextField6 = new javax.swing.JTextField();
         jTextField7 = new javax.swing.JTextField();
         jTextField8 = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
         jTextField9 = new javax.swing.JTextField();
         jTextField12 = new javax.swing.JTextField();
         jTextField13 = new javax.swing.JTextField();
         jTextField10 = new javax.swing.JTextField();
         jTextField11 = new javax.swing.JTextField();
-        closeIcon = new javax.swing.JLabel();
         jTextField14 = new javax.swing.JTextField();
         jTextField15 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
 
         pnlParent.setBackground(new java.awt.Color(255, 255, 255));
         pnlParent.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lblCustomerName.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+        lblCustomerName.setForeground(new java.awt.Color(59, 78, 135));
+        lblCustomerName.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCustomerName.setText(" ");
+        pnlParent.add(lblCustomerName, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 170, 220, 40));
+
+        lblCustomerPhoNum.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+        lblCustomerPhoNum.setForeground(new java.awt.Color(59, 78, 135));
+        lblCustomerPhoNum.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCustomerPhoNum.setText(" ");
+        pnlParent.add(lblCustomerPhoNum, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 190, 140, 20));
+
+        lblCustomerAddr.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+        lblCustomerAddr.setForeground(new java.awt.Color(59, 78, 135));
+        lblCustomerAddr.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblCustomerAddr.setText(" ");
+        pnlParent.add(lblCustomerAddr, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 210, 400, 40));
+
+        lblCustomerTownCenter.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+        lblCustomerTownCenter.setForeground(new java.awt.Color(59, 78, 135));
+        lblCustomerTownCenter.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblCustomerTownCenter.setText(" ");
+        pnlParent.add(lblCustomerTownCenter, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 250, 370, 40));
+
+        lblGalOwnName.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+        lblGalOwnName.setForeground(new java.awt.Color(59, 78, 135));
+        lblGalOwnName.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblGalOwnName.setText(" ");
+        pnlParent.add(lblGalOwnName, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 320, 180, 40));
+
+        lblGalOwnPhoNum.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+        lblGalOwnPhoNum.setForeground(new java.awt.Color(59, 78, 135));
+        lblGalOwnPhoNum.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblGalOwnPhoNum.setText(" ");
+        pnlParent.add(lblGalOwnPhoNum, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 340, 140, 20));
+
+        lblGalOwnAddr.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+        lblGalOwnAddr.setForeground(new java.awt.Color(59, 78, 135));
+        lblGalOwnAddr.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblGalOwnAddr.setText(" ");
+        pnlParent.add(lblGalOwnAddr, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 360, 390, 40));
+
+        lblGalOwnTownCenter.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+        lblGalOwnTownCenter.setForeground(new java.awt.Color(59, 78, 135));
+        lblGalOwnTownCenter.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblGalOwnTownCenter.setText(" ");
+        pnlParent.add(lblGalOwnTownCenter, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 400, 370, 40));
+
+        lblCarFeatures.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+        lblCarFeatures.setForeground(new java.awt.Color(59, 78, 135));
+        lblCarFeatures.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCarFeatures.setText(" ");
+        pnlParent.add(lblCarFeatures, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 470, 340, 40));
+
+        lblRentDate.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+        lblRentDate.setForeground(new java.awt.Color(59, 78, 135));
+        lblRentDate.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblRentDate.setText(" ");
+        pnlParent.add(lblRentDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 510, 240, 40));
+
+        lblReturnDate.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+        lblReturnDate.setForeground(new java.awt.Color(59, 78, 135));
+        lblReturnDate.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblReturnDate.setText(" ");
+        pnlParent.add(lblReturnDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 550, 240, 40));
+
+        lblTotalDay.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+        lblTotalDay.setForeground(new java.awt.Color(59, 78, 135));
+        lblTotalDay.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblTotalDay.setText(" ");
+        pnlParent.add(lblTotalDay, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 510, 80, 40));
+
+        lblTotalPrice.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+        lblTotalPrice.setForeground(new java.awt.Color(59, 78, 135));
+        lblTotalPrice.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblTotalPrice.setText(" ");
+        pnlParent.add(lblTotalPrice, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 550, 80, 40));
+
+        lblOwnerSign.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblOwnerSign.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/galOwnSign_140x50.png"))); // NOI18N
+        pnlParent.add(lblOwnerSign, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 610, 140, 50));
+
+        lblOwnerSign1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblOwnerSign1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/custSignature_140x50.png"))); // NOI18N
+        pnlParent.add(lblOwnerSign1, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 660, 140, 50));
 
         jLabel1.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(51, 51, 51));
@@ -68,7 +200,6 @@ public class SaleSheet extends javax.swing.JFrame {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Bill of Sale");
         pnlParent.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 110, 400, 40));
-        pnlParent.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 100, 230, 10));
 
         jLabel3.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(51, 51, 51));
@@ -80,27 +211,6 @@ public class SaleSheet extends javax.swing.JFrame {
         seal_icon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/saleSeal128.png"))); // NOI18N
         pnlParent.add(seal_icon, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 610, 128, 128));
 
-        jTextField1.setText("Renter Name");
-        jTextField1.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 10, 15, 1)));
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
-            }
-        });
-        pnlParent.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 170, 320, 40));
-
-        jTextField2.setText("Phone Number");
-        jTextField2.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 10, 15, 1)));
-        pnlParent.add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 170, 150, 40));
-
-        jTextField3.setText("Address");
-        jTextField3.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 10, 15, 1)));
-        pnlParent.add(jTextField3, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 210, 470, 40));
-
-        jTextField4.setText("Town Center");
-        jTextField4.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 10, 15, 1)));
-        pnlParent.add(jTextField4, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 250, 470, 40));
-
         jLabel5.setBackground(new java.awt.Color(59, 78, 135));
         jLabel5.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(51, 51, 51));
@@ -108,48 +218,12 @@ public class SaleSheet extends javax.swing.JFrame {
         jLabel5.setOpaque(true);
         pnlParent.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 290, 470, 30));
 
-        jTextField5.setText("Gallery Owner Name");
-        jTextField5.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 10, 15, 1)));
-        pnlParent.add(jTextField5, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 320, 320, 40));
-
-        jTextField6.setText("Phone Number");
-        jTextField6.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 10, 15, 1)));
-        pnlParent.add(jTextField6, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 320, 150, 40));
-
-        jTextField7.setText("Address");
-        jTextField7.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 10, 15, 1)));
-        pnlParent.add(jTextField7, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 360, 470, 40));
-
-        jTextField8.setText("Town Center");
-        jTextField8.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 10, 15, 1)));
-        pnlParent.add(jTextField8, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 400, 470, 40));
-
         jLabel6.setBackground(new java.awt.Color(59, 78, 135));
         jLabel6.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(51, 51, 51));
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel6.setOpaque(true);
         pnlParent.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 440, 470, 30));
-
-        jTextField9.setText("Features of the Car");
-        jTextField9.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 10, 15, 1)));
-        pnlParent.add(jTextField9, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 470, 470, 40));
-
-        jTextField12.setText("Rent Date");
-        jTextField12.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 10, 15, 1)));
-        pnlParent.add(jTextField12, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 510, 320, 40));
-
-        jTextField13.setText("Total Day");
-        jTextField13.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 10, 15, 1)));
-        pnlParent.add(jTextField13, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 510, 150, 40));
-
-        jTextField10.setText("Return Date");
-        jTextField10.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 10, 15, 1)));
-        pnlParent.add(jTextField10, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 550, 320, 40));
-
-        jTextField11.setText("Total Price");
-        jTextField11.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 10, 15, 1)));
-        pnlParent.add(jTextField11, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 550, 150, 40));
 
         closeIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/close32.png"))); // NOI18N
         closeIcon.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -159,13 +233,116 @@ public class SaleSheet extends javax.swing.JFrame {
             }
         });
         pnlParent.add(closeIcon, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 0, -1, -1));
+        pnlParent.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 100, 230, 10));
 
-        jTextField14.setText("Owner Signature");
-        jTextField14.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 10, 15, 1)));
+        jTextField1.setEditable(false);
+        jTextField1.setBackground(new java.awt.Color(255, 255, 255));
+        jTextField1.setFont(new java.awt.Font("Times New Roman", 0, 13)); // NOI18N
+        jTextField1.setText("Renter Name");
+        jTextField1.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 8, 17, 1)));
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField1ActionPerformed(evt);
+            }
+        });
+        pnlParent.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 170, 320, 40));
+
+        jTextField2.setEditable(false);
+        jTextField2.setBackground(new java.awt.Color(255, 255, 255));
+        jTextField2.setFont(new java.awt.Font("Times New Roman", 0, 13)); // NOI18N
+        jTextField2.setText("Phone Number");
+        jTextField2.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 8, 17, 1)));
+        pnlParent.add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 170, 150, 40));
+
+        jTextField3.setEditable(false);
+        jTextField3.setBackground(new java.awt.Color(255, 255, 255));
+        jTextField3.setFont(new java.awt.Font("Times New Roman", 0, 13)); // NOI18N
+        jTextField3.setText("Address");
+        jTextField3.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 8, 17, 1)));
+        pnlParent.add(jTextField3, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 210, 470, 40));
+
+        jTextField4.setEditable(false);
+        jTextField4.setBackground(new java.awt.Color(255, 255, 255));
+        jTextField4.setFont(new java.awt.Font("Times New Roman", 0, 13)); // NOI18N
+        jTextField4.setText("Town Center");
+        jTextField4.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 8, 17, 1)));
+        pnlParent.add(jTextField4, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 250, 470, 40));
+
+        jTextField5.setEditable(false);
+        jTextField5.setBackground(new java.awt.Color(255, 255, 255));
+        jTextField5.setFont(new java.awt.Font("Times New Roman", 0, 13)); // NOI18N
+        jTextField5.setText("Gallery Owner Name");
+        jTextField5.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 8, 17, 1)));
+        pnlParent.add(jTextField5, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 320, 320, 40));
+
+        jTextField6.setEditable(false);
+        jTextField6.setBackground(new java.awt.Color(255, 255, 255));
+        jTextField6.setFont(new java.awt.Font("Times New Roman", 0, 13)); // NOI18N
+        jTextField6.setText("Phone Number");
+        jTextField6.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 8, 17, 1)));
+        pnlParent.add(jTextField6, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 320, 150, 40));
+
+        jTextField7.setEditable(false);
+        jTextField7.setBackground(new java.awt.Color(255, 255, 255));
+        jTextField7.setFont(new java.awt.Font("Times New Roman", 0, 13)); // NOI18N
+        jTextField7.setText("Address");
+        jTextField7.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 8, 17, 1)));
+        pnlParent.add(jTextField7, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 360, 470, 40));
+
+        jTextField8.setEditable(false);
+        jTextField8.setBackground(new java.awt.Color(255, 255, 255));
+        jTextField8.setFont(new java.awt.Font("Times New Roman", 0, 13)); // NOI18N
+        jTextField8.setText("Town Center");
+        jTextField8.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 8, 17, 1)));
+        pnlParent.add(jTextField8, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 400, 470, 40));
+
+        jTextField9.setEditable(false);
+        jTextField9.setBackground(new java.awt.Color(255, 255, 255));
+        jTextField9.setFont(new java.awt.Font("Times New Roman", 0, 13)); // NOI18N
+        jTextField9.setText("Features of the Car");
+        jTextField9.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 8, 17, 1)));
+        pnlParent.add(jTextField9, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 470, 470, 40));
+
+        jTextField12.setEditable(false);
+        jTextField12.setBackground(new java.awt.Color(255, 255, 255));
+        jTextField12.setFont(new java.awt.Font("Times New Roman", 0, 13)); // NOI18N
+        jTextField12.setText("Rent Date");
+        jTextField12.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 8, 17, 1)));
+        pnlParent.add(jTextField12, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 510, 320, 40));
+
+        jTextField13.setEditable(false);
+        jTextField13.setBackground(new java.awt.Color(255, 255, 255));
+        jTextField13.setFont(new java.awt.Font("Times New Roman", 0, 13)); // NOI18N
+        jTextField13.setText("Total Day");
+        jTextField13.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 8, 17, 1)));
+        pnlParent.add(jTextField13, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 510, 150, 40));
+
+        jTextField10.setEditable(false);
+        jTextField10.setBackground(new java.awt.Color(255, 255, 255));
+        jTextField10.setFont(new java.awt.Font("Times New Roman", 0, 13)); // NOI18N
+        jTextField10.setText("Return Date");
+        jTextField10.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 8, 17, 1)));
+        pnlParent.add(jTextField10, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 550, 320, 40));
+
+        jTextField11.setEditable(false);
+        jTextField11.setBackground(new java.awt.Color(255, 255, 255));
+        jTextField11.setFont(new java.awt.Font("Times New Roman", 0, 13)); // NOI18N
+        jTextField11.setText("Total Price");
+        jTextField11.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 8, 17, 1)));
+        pnlParent.add(jTextField11, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 550, 150, 40));
+
+        jTextField14.setEditable(false);
+        jTextField14.setBackground(new java.awt.Color(255, 255, 255));
+        jTextField14.setFont(new java.awt.Font("Times New Roman", 0, 13)); // NOI18N
+        jTextField14.setText("Owner Sign:");
+        jTextField14.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 7, 18, 1)));
         pnlParent.add(jTextField14, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 610, 220, 50));
 
-        jTextField15.setText("Renter Signature");
-        jTextField15.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 10, 15, 1)));
+        jTextField15.setEditable(false);
+        jTextField15.setBackground(new java.awt.Color(255, 255, 255));
+        jTextField15.setFont(new java.awt.Font("Times New Roman", 0, 13)); // NOI18N
+        jTextField15.setText(" Renter Sign:");
+        jTextField15.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 7, 18, 1)));
         pnlParent.add(jTextField15, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 660, 220, 50));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -180,6 +357,7 @@ public class SaleSheet extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
@@ -221,7 +399,7 @@ public class SaleSheet extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new SaleSheet().setVisible(true);
+                //new SaleSheet().setVisible(true);
             }
         });
     }
@@ -249,6 +427,21 @@ public class SaleSheet extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField7;
     private javax.swing.JTextField jTextField8;
     private javax.swing.JTextField jTextField9;
+    private javax.swing.JLabel lblCarFeatures;
+    private javax.swing.JLabel lblCustomerAddr;
+    private javax.swing.JLabel lblCustomerName;
+    private javax.swing.JLabel lblCustomerPhoNum;
+    private javax.swing.JLabel lblCustomerTownCenter;
+    private javax.swing.JLabel lblGalOwnAddr;
+    private javax.swing.JLabel lblGalOwnName;
+    private javax.swing.JLabel lblGalOwnPhoNum;
+    private javax.swing.JLabel lblGalOwnTownCenter;
+    private javax.swing.JLabel lblOwnerSign;
+    private javax.swing.JLabel lblOwnerSign1;
+    private javax.swing.JLabel lblRentDate;
+    private javax.swing.JLabel lblReturnDate;
+    private javax.swing.JLabel lblTotalDay;
+    private javax.swing.JLabel lblTotalPrice;
     private javax.swing.JPanel pnlParent;
     private javax.swing.JLabel seal_icon;
     // End of variables declaration//GEN-END:variables
