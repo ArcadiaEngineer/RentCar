@@ -413,10 +413,10 @@ public class RentCarSystem {
     }
     ////////////////////////////////////////////////////////////////////////////
     
-    public static void getOrdersFromDatabase() {
+    public static void getOrdersFromDatabase(int id) {
         
         orders.clear();
-        
+        int customerId;
         try {
             st = connection.createStatement();
             rs = st.executeQuery("SELECT * FROM orders");
@@ -426,9 +426,10 @@ public class RentCarSystem {
                 Order order = new Order( rs.getInt("order_id"),rs.getString("promotionCode"),rs.getString("fullName"),rs.getString("gallOwn_PhoneNumber"),
                 rs.getString("cust_PhoneNumber"),rs.getString("gallOwn_homeAddress"),rs.getString("cust_homeAddress"),
                 rs.getString("brand"), rs.getString("model"),rs.getString("rentDate"), rs.getString("returnDate"), rs.getDouble("amountPaid"), rs.getInt("galleryId"), 
-                rs.getInt("customerId"), rs.getInt("carId"), rs.getString("carImgPath"), rs.getInt("totalDay"), rs.getDouble("dailyPrice") );
-                orders.add(order);
-                
+                (customerId = rs.getInt("customerId")), rs.getInt("carId"), rs.getString("carImgPath"), rs.getInt("totalDay"), rs.getDouble("dailyPrice") );
+                if(customerId == id){
+                    orders.add(order);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
