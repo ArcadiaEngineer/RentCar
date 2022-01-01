@@ -41,11 +41,11 @@ public class SaleSheet extends javax.swing.JFrame {
         lblGalOwnAddr.setText( tokens[0] );
         lblGalOwnTownCenter.setText( tokens[1] );
         
-        lblCarFeatures.setText( order.getBrand() + "" + order.getModel() );
-        lblRentDate.setText( order.getRentDate() );
-        lblReturnDate.setText( order.getReturnDate() );
+        lblCarFeatures.setText( order.getBrand() + " " + order.getModel() );
+        lblRentDate.setText( order.getRentDate().substring(0, 11 ) +  order.getRentDate().substring( order.getRentDate().length() - 4 ) );
+        lblReturnDate.setText( order.getReturnDate().substring(0, 11 ) + order.getReturnDate().substring( order.getRentDate().length() - 4 ) );
         lblTotalDay.setText( order.getTotalDay() + "" );
-        lblTotalPrice.setText( order.getAmountPaid() + "" );
+        lblTotalPrice.setText( String.format("$%.4f", order.getAmountPaid() ) );
     }
 
     /**
@@ -101,6 +101,7 @@ public class SaleSheet extends javax.swing.JFrame {
         setUndecorated(true);
 
         pnlParent.setBackground(new java.awt.Color(255, 255, 255));
+        pnlParent.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(59, 78, 135), 3, true));
         pnlParent.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblCustomerName.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
@@ -369,40 +370,7 @@ public class SaleSheet extends javax.swing.JFrame {
         dispose();
     }//GEN-LAST:event_closeIconMouseClicked
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SaleSheet.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SaleSheet.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SaleSheet.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(SaleSheet.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                //new SaleSheet().setVisible(true);
-            }
-        });
-    }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel closeIcon;

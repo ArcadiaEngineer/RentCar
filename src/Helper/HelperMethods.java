@@ -2,11 +2,14 @@ package Helper;
 
 import Business.RentCarSystem;
 import Entities.Abstract.User;
+import java.awt.Color;
+import java.awt.Font;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -40,7 +43,7 @@ public class HelperMethods {
     }
     
     public static void showErrorMessage(String str, String title) {
-        JOptionPane.showMessageDialog(null, str, title, JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, str, title, JOptionPane.ERROR_MESSAGE); 
     }
     
     public static void showSuccessfulMessage(String str, String title) {

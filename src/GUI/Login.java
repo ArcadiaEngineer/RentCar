@@ -383,7 +383,7 @@ public class Login extends javax.swing.JFrame {
                 int i = 2;
                 while ( true ) {
                     try {
-                        Thread.sleep(4000);
+                        Thread.sleep(2000);
                     } catch (InterruptedException ex) {
                         System.out.println(ex);
                     }

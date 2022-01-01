@@ -65,7 +65,6 @@ public final class CustomerWindow extends javax.swing.JFrame {
     boolean isChecked = false;
     
     private String profPictPath;
-    private JFileChooser chooser = new JFileChooser();
     
     public CustomerWindow(Customer customer) {
         this.customer = customer;
@@ -1951,10 +1950,8 @@ public final class CustomerWindow extends javax.swing.JFrame {
         // TODO add your handling code here:
         if ( jTogg_btn_modifyAcc.isSelected() ) {
             try {
-                profPictPath = "";
-                chooser.setBackground( new Color(51, 51, 51) );
+                JFileChooser chooser = new JFileChooser( new File("").getAbsolutePath() + "\\src\\images\\" );
                 chooser.showOpenDialog( null );
-                chooser.setCurrentDirectory(chooser.getCurrentDirectory());
                 File f = chooser.getSelectedFile();
                 profPictPath = f.getName();
                 profPictPath = "/images/" + profPictPath;
@@ -1997,6 +1994,10 @@ public final class CustomerWindow extends javax.swing.JFrame {
             Mail mail = RentCarSystem.getMailByName( tbxUserEmail.getText() );
             String phoneNum = tbxNewPhoneNum.getText();
             String homeAddress = tbxHomeAddr.getText();
+            
+            if( !HelperMethods.checkHomeAddress( tbxHomeAddr.getText() ) ) {
+                throw new Exception("The home address must innclude just one \", \" regex");
+            }
             
             HelperMethods.controlPhoneNum(phoneNum, customer.getUsername());
             

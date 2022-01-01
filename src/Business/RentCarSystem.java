@@ -622,7 +622,7 @@ public class RentCarSystem {
             PreparedStatement preparedStatement = connection.prepareStatement( query );
             
             preparedStatement.setString(1, car.getBrand());
-            preparedStatement.setString(2, car.getBrand());
+            preparedStatement.setString(2, car.getModel());
             preparedStatement.setString(3, car.getType());
             preparedStatement.setString(4, car.getFuelType());
             preparedStatement.setString(5, car.getTransmissionType());

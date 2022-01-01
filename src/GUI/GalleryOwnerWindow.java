@@ -2592,6 +2592,9 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
         
         fillTheTable();
         fillTheCars();
+        
+        if ( galleryOwnerCars.isEmpty() )
+            HelperMethods.showErrorMessage("There is nothing to sort...", "Empty car list...");
     }//GEN-LAST:event_btnFilterActionPerformed
 
     private void tbxMinKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tbxMinKeyTyped
@@ -2668,7 +2671,7 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
             car.setGalleryId( RentCarSystem.getGalleryByName( cbxGalleryNameUpdate.getSelectedItem().toString() ).getId() );
             car.setSmall_imgPath(smallImgPath);
             car.setLarge_imgPath(largeImgPath);
-            RentCarSystem.updateCarDatabase(car);
+            galleryOwner.updateCar(car);
             HelperMethods.showSuccessfulMessage("Updating car is successful!", "Successful Update");
             fillTheTable();
         } catch ( NumberFormatException ex ) {
@@ -2836,6 +2839,11 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
         try{
             Mail mail = RentCarSystem.getMailByName( tbxUserEmail.getText() );
             String phoneNum = tbxNewPhoneNum.getText();
+            
+            if( !HelperMethods.checkHomeAddress( tbxHomeAddr.getText() ) ) {
+                throw new Exception("The home address must include just one \", \" regex");
+            }
+            
             String homeAddress = tbxHomeAddr.getText();
             
             HelperMethods.controlPhoneNum(phoneNum, galleryOwner.getUsername());
@@ -2998,7 +3006,7 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
 
     private void lblPrintIconMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblPrintIconMouseClicked
         // TODO add your handling code here:
-        if ( !listOrders.isSelectionEmpty() ) {
+        if ( listOrders.getModel().getSize() > 0 ) {
             Order order = galleryOwnerOrders.get( currentOrderIndex );
             galleryOwner.printOrder( order );
         } else {
@@ -3136,7 +3144,7 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
             }
 
             lblListGalleryOrderNumber.setText( numOfOrder + "");
-            lblListEarnedMoneyFromGallery.setText( String.format("%.2f", earnedMoney) );
+            lblListEarnedMoneyFromGallery.setText( String.format("$%.2f", earnedMoney) );
         }
         
     }

@@ -466,13 +466,16 @@ public class RegisterPanel extends javax.swing.JFrame {
 
     private void chooseAvatar_JLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_chooseAvatar_JLabelMouseClicked
         // TODO add your handling code here:
-        JFileChooser chooser = new JFileChooser( new File("").getAbsolutePath() + "\\src\\images\\" );
-        chooser.showOpenDialog( null );
-        File f = chooser.getSelectedFile();
-        imgPath = f.getName();
-        imgPath = "/images/" + imgPath;
-        
-        System.out.println(imgPath );
+        try {
+            JFileChooser chooser = new JFileChooser( new File("").getAbsolutePath() + "\\src\\images\\" );
+            chooser.showOpenDialog( null );
+            File f = chooser.getSelectedFile();
+            imgPath = f.getName();
+            imgPath = "/images/" + imgPath;
+            System.out.println(imgPath);
+        } catch( NullPointerException ex ) {
+            HelperMethods.showErrorMessage("You didn't choose a picture", "Not Selected Picture");
+        }
     }//GEN-LAST:event_chooseAvatar_JLabelMouseClicked
 
     private void phoneNum_JTextKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_phoneNum_JTextKeyTyped

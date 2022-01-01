@@ -60,8 +60,8 @@ public final class Bill extends javax.swing.JFrame {
         tbxDate.setText( date.toString().substring(0, 11 ) + date.toString().substring( order.getRentDate().length() - 4) );
         tbxOrderID.setText( "" + order.getOrderId() );
         tbxCustımerID.setText( "" + order.getCustomerId() );
-        lblPickUpDateValue.setText( order.getRentDate().substring(0, 11 ) +  order.getRentDate().substring( order.getRentDate().length() - 4 ));
-        lblReturnDateValue.setText( order.getReturnDate().substring(0, 11 ) + order.getReturnDate().substring( order.getRentDate().length() - 4 ));
+        lblPickUpDateValue.setText( order.getRentDate().substring(0, 11 ) +  order.getRentDate().substring( order.getRentDate().length() - 4 ) );
+        lblReturnDateValue.setText( order.getReturnDate().substring(0, 11 ) + order.getReturnDate().substring( order.getRentDate().length() - 4 ) );
         lblSubTotalValue.setText( String.format("$%.4f", order.getTotalDay() * order.getDailyPrice()) );
         
         if ( order.getPromotionCodeId() != null ) {
@@ -152,6 +152,7 @@ public final class Bill extends javax.swing.JFrame {
         setUndecorated(true);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(59, 78, 135), 3, true));
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
 

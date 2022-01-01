@@ -28,7 +28,7 @@ public final class Administrator {
             }
             
             if ( user instanceof GalleryOwner ) {
-                if ( ((GalleryOwner)user).getGalleries().contains( RentCarSystem.getGalleryById( order.getCarId() ) ) )
+                if ( ((GalleryOwner)user).getGalleries().contains( RentCarSystem.getGalleryById( order.getGalleryId()) ) )
                     totalOrder++;
             }
         }

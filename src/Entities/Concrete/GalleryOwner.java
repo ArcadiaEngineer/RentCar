@@ -77,6 +77,12 @@ public class GalleryOwner extends User{
         return false;
     }
     
+    public void updateCar(Car car) throws SQLException {
+        if ( car.getSmall_imgPath() == null || car.getSmall_imgPath() == null )
+            throw new IllegalArgumentException("You didn't choose one of the car image...");
+        RentCarSystem.updateCarDatabase(car);
+    }
+    
     public boolean deleteCar(int carID) throws SQLException {
         Car car = RentCarSystem.getCarById(carID);
         
