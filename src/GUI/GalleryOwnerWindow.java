@@ -2741,7 +2741,7 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
             fillTheTable();
             String message = "Deleting gallery is successful!\n" +
                              "However, if you do not update the galleries of the cars in the deleted gallery,\n" + 
-                             "these cars will be inaccessible when you reopen the program.";
+                             "these cars will be inaccessible when you filter the cars and reopen the program.";
             HelperMethods.showSuccessfulMessage(message, "Successful Delete");
         } catch ( NullPointerException ex ) {
             HelperMethods.showErrorMessage("We couldn't find this gallery!", "Not Found Gallery");
