@@ -84,13 +84,35 @@ public final class CustomerWindow extends javax.swing.JFrame {
         pnlProfile.setVisible( false );
         pnlLayeredProfile.setVisible( false );
         lblCurrentCash.setVisible( false );
-        lblTotalPayment1.setVisible( false );
         lblTotalCashAfterRental.setVisible( false );
         
         lblRent.addMouseListener( new MouseAdapter(){
             @Override
             public void mouseClicked(MouseEvent e) {
-                visitorNotPermitedAction();
+                isChecked = false;
+                try {
+                    if ( pick_upDate_JDatechooser.getDate() == null || returnDate_JDatechooser.getDate() == null ) {
+                        System.out.println(""+ pick_upDate_JDatechooser.getDate() );
+                        System.out.println(""+ returnDate_JDatechooser.getDate());
+                        throw new NullPointerException();
+                    }
+
+                    if(  ((JTextField)pick_upDate_JDatechooser.getDateEditor()).getText().equalsIgnoreCase( ((JTextField)returnDate_JDatechooser.getDateEditor()).getText())  ) {
+                        throw new IllegalArgumentException("Pick-Up Date and Return Date cannot be same!!");
+                    } else if ( pick_upDate_JDatechooser.getDate().getTime() > returnDate_JDatechooser.getDate().getTime()  ){
+                        throw new IllegalArgumentException( "Pick-Up Date cannot be later than Return Date!!" );
+                    }
+
+                    double totalPayment = ((returnDate_JDatechooser.getDate().getTime() - pick_upDate_JDatechooser.getDate().getTime()) / 86_400_000) * currentCar.getPrice();
+                    lblTotalPaymentOfUser.setText(String.format("$%.2f", totalPayment));
+
+                } catch( NullPointerException ex ) {
+                    HelperMethods.showErrorMessage("One of the Date is not choosen", "Date Confusion");
+                } catch ( IllegalArgumentException ex ) {
+                    HelperMethods.showErrorMessage(ex.getMessage(), "Date Confusion");
+                }
+                
+                
             }
             
         });
@@ -98,10 +120,32 @@ public final class CustomerWindow extends javax.swing.JFrame {
         btnApprove.addActionListener( new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                visitorNotPermitedAction();
+                try {
+                    
+                    if(  ((JTextField)pick_upDate_JDatechooser.getDateEditor()).getText().equalsIgnoreCase( ((JTextField)returnDate_JDatechooser.getDateEditor()).getText())  ) {
+                        throw new IllegalArgumentException("Pick-Up Date and Return Date cannot be same!!");
+                    } else if ( pick_upDate_JDatechooser.getDate().getTime() > returnDate_JDatechooser.getDate().getTime()  ){
+                        throw new IllegalArgumentException( "Pick-Up Date cannot be later than Return Date!!" );
+                    }
+                    
+                    int totalDay = (int) ((returnDate_JDatechooser.getDate().getTime() - pick_upDate_JDatechooser.getDate().getTime()) / 86_400_000L);
+                    double totalPayment = totalDay * currentCar.getPrice();
+                    lblTotalPaymentOfUser.setText(String.format("$%.2f", totalPayment));
+                    
+                    visitorNotPermitedAction();
+                } catch ( NullPointerException ex ) {
+                    HelperMethods.showErrorMessage("One of the Date is not choosen", "Date Confusion");
+                } catch ( IllegalArgumentException ex ) {
+                    HelperMethods.showErrorMessage( ex.getMessage() , "Date Confusion");
+                }
+                
+                
             }
             
         });
+        
+        initCarFields();
+        fulfillGalleryCbx();
         
         //tableCar.getTableHeader().setDefaultRenderer( new Helper.HeaderColor());
         //tableCar.setDefaultRenderer(Object.class, centerRenderer);
@@ -1785,9 +1829,11 @@ public final class CustomerWindow extends javax.swing.JFrame {
             
             
         } catch( NullPointerException ex ) {
-            HelperMethods.showErrorMessage("One of the Date is not choosen...", "Date Confusion");
+            if ( visitor == null )
+                HelperMethods.showErrorMessage("One of the Date is not choosen...", "Date Confusion");
         } catch ( IllegalArgumentException ex ) {
-            HelperMethods.showErrorMessage(ex.getMessage(), "Date Confusion");
+            if ( visitor == null )
+                HelperMethods.showErrorMessage(ex.getMessage(), "Date Confusion");
         }
     }//GEN-LAST:event_lblRentMouseClicked
 
@@ -1799,6 +1845,12 @@ public final class CustomerWindow extends javax.swing.JFrame {
 
             if ( totalCashAfterRental <= 0 )
                 throw new IllegalArgumentException("Sir, you don't have enough money...");
+            
+            if(  ((JTextField)pick_upDate_JDatechooser.getDateEditor()).getText().equalsIgnoreCase( ((JTextField)returnDate_JDatechooser.getDateEditor()).getText())  ) {
+                throw new IllegalArgumentException("Pick-Up Date and Return Date cannot be same!!");
+            } else if ( pick_upDate_JDatechooser.getDate().getTime() > returnDate_JDatechooser.getDate().getTime()  ){
+                throw new IllegalArgumentException( "Pick-Up Date cannot be later than Return Date!!" );
+            }
 
             int galleyOwner_id = 0;
                 Gallery gallery = RentCarSystem.getGalleryById( currentCar.getGalleryId() );
@@ -1853,11 +1905,14 @@ public final class CustomerWindow extends javax.swing.JFrame {
             lblUserCurrentCashValue.setText( "$" + customer.getTotalCash() );
             HelperMethods.showSuccessfulMessage("Renting the car is successful...", "Successful Rent");
         } catch( IllegalArgumentException ex ) {
-            HelperMethods.showErrorMessage( ex.getMessage(), "Insufficient Balance");
+            if ( visitor == null )
+                HelperMethods.showErrorMessage( ex.getMessage(), "Insufficient Balance");
         } catch ( NullPointerException ex ) {
-            HelperMethods.showErrorMessage(ex.getMessage(), "Order couldn't be created...");
+            if ( visitor == null )
+                HelperMethods.showErrorMessage(ex.getMessage(), "Order couldn't be created...");
         } catch (SQLException ex) {
-            HelperMethods.showErrorMessage("Order couldn't be created..", "Databse Error");
+            if ( visitor == null )
+                HelperMethods.showErrorMessage("Order couldn't be created..", "Databse Error");
             ex.printStackTrace();
         }
         
@@ -2384,14 +2439,6 @@ public final class CustomerWindow extends javax.swing.JFrame {
             cbxOrderGalery.addItem( gallery.getName() );
             cbxGallery.addItem( gallery.getName() );
         }
-    }
-    private void fulfillGalleryOrderedCbx(){
-        String [] galleryIds =  new String[RentCarSystem.getOrders().size()+ 1];
-        galleryIds[0] = "All";
-        for (int i = 1; i < RentCarSystem.getOrders().size(); i++) {
-            galleryIds[i] = String.valueOf(RentCarSystem.getOrders().get(i).getGalleryId());
-        }
-        cbxOrderGalery.setModel(new javax.swing.DefaultComboBoxModel<>(galleryIds));
     }
     
     private int checkValidInput(JTextField tbxMax,int intValue) {
