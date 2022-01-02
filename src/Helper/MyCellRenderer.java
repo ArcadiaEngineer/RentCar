@@ -19,11 +19,14 @@ import javax.swing.SwingConstants;
  *
  * @author Lian La-Fey
  */
+
+// https://docs.oracle.com/javase/7/docs/api/javax/swing/ListCellRenderer.html
 public class MyCellRenderer extends JLabel implements ListCellRenderer<Object> {
      public MyCellRenderer() {
          setOpaque(true);
      }
 
+     @Override
      public Component getListCellRendererComponent(JList<?> list,
                                                    Object value,
                                                    int index,

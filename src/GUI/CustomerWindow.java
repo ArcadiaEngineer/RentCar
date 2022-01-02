@@ -1948,7 +1948,7 @@ public final class CustomerWindow extends javax.swing.JFrame {
             setOrderDetails(currentOrder);
             setOrderList(RentCarSystem.getOrders());
         }else{
-            HelperMethods.showErrorMessage("You dont have any orders", "Empty order list");
+            HelperMethods.showErrorMessage("You dont have any orders to sort", "Empty order list");
         }
     }//GEN-LAST:event_btnFilterOrdersActionPerformed
 
@@ -1962,6 +1962,9 @@ public final class CustomerWindow extends javax.swing.JFrame {
         setOrderList(RentCarSystem.getFilteredOrderList());
         tbxMaxPrice.setText("0");
         tbxMinPrice.setText("10000");
+        
+        if ( !(RentCarSystem.getFilteredOrderList().size() > 0) )
+            HelperMethods.showErrorMessage("You dont have any orders to sort", "Empty order list");
     }//GEN-LAST:event_btnClearFilterOfOrderActionPerformed
 
     private void lblChangePicMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblChangePicMouseClicked
@@ -2061,6 +2064,8 @@ public final class CustomerWindow extends javax.swing.JFrame {
         // TODO add your handling code here:
         if ( currentOrder != null ) 
             customer.printOrder(currentOrder);
+        else 
+            HelperMethods.showErrorMessage("There is nothing to show!", "Not Selected Order");
     }//GEN-LAST:event_lblPrintIconMouseClicked
 
     private void tbxMinKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tbxMinKeyTyped
