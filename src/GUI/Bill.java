@@ -617,6 +617,7 @@ public final class Bill extends javax.swing.JFrame {
 
         jPanel1.add(jPanel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(565, 245, 297, -1));
 
+        closeIcon.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         closeIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/close32.png"))); // NOI18N
         closeIcon.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         closeIcon.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -624,13 +625,13 @@ public final class Bill extends javax.swing.JFrame {
                 closeIconMouseClicked(evt);
             }
         });
-        jPanel1.add(closeIcon, new org.netbeans.lib.awtextra.AbsoluteConstraints(893, 3, -1, -1));
+        jPanel1.add(closeIcon, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 0, 32, 32));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
