@@ -1660,7 +1660,12 @@ public final class CustomerWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_lblRentMouseExited
 
     private void textPromotionCodeKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textPromotionCodeKeyTyped
-        lblTotalPaymentOfUser.setText(String.valueOf(currentCar.getPrice() *(int)(returnDate_JDatechooser.getDate().getTime() - pick_upDate_JDatechooser.getDate().getTime()) / 86_400_000));
+        if ( pick_upDate_JDatechooser.getDate() != null && returnDate_JDatechooser.getDate() != null ) {
+            double total = ((returnDate_JDatechooser.getDate().getTime() - pick_upDate_JDatechooser.getDate().getTime()) / 86_400_000) * currentCar.getPrice();
+            if ( total > 0.0D )
+                lblTotalPaymentOfUser.setText(String.valueOf( total ) );
+        }
+            
         isChecked = false;
         ((JTextFieldDateEditor)pick_upDate_JDatechooser.getDateEditor()).setForeground(new Color(204, 204, 204));
         ((JTextFieldDateEditor)returnDate_JDatechooser.getDateEditor()).setForeground(new Color(204, 204, 204));
@@ -1759,7 +1764,7 @@ public final class CustomerWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_btnClearFilterActionPerformed
 
     private void lblRentMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblRentMouseClicked
-        
+        isChecked = false;
         try {
             lblCurrentCashOfUser.setText("$" + String.valueOf(customer.getTotalCash()));
             if ( pick_upDate_JDatechooser.getDate() == null || returnDate_JDatechooser.getDate() == null ) {
@@ -1859,16 +1864,29 @@ public final class CustomerWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_btnApproveActionPerformed
 
     private void btnCheckPromotionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCheckPromotionActionPerformed
-        if(!isChecked){
-            var totalDay = (int)(returnDate_JDatechooser.getDate().getTime() - pick_upDate_JDatechooser.getDate().getTime()) / 86_400_000;
-            if(!textPromotionCode.getText().isBlank() && !textPromotionCode.getText().isEmpty()){
-            PromotionCode pc = RentCarSystem.getPromotionCodeByCode(textPromotionCode.getText());
-            if(pc!=null && RentCarSystem.isUsed(pc)==false && !lblTotalPaymentOfUser.getText().isEmpty()){
-                double totalPayment = totalDay * currentCar.getPrice() - totalDay *  pc.getDiscount() * currentCar.getPrice() ;
-                lblTotalPaymentOfUser.setText(String.valueOf(totalPayment));
-                isChecked = true;
+        try {
+            if(!isChecked){
+                int totalDay = (int)(returnDate_JDatechooser.getDate().getTime() - pick_upDate_JDatechooser.getDate().getTime()) / 86_400_000;
+                if(!textPromotionCode.getText().isBlank() && !textPromotionCode.getText().isEmpty()){
+                    PromotionCode pc = RentCarSystem.getPromotionCodeByCode(textPromotionCode.getText());
+
+                    if ( pc == null )
+                        throw new NullPointerException("There is no such a that promotion code...");
+
+                    if ( pc.isIsUsed() )
+                        throw new Exception("This promotion code is used!! Please try another one...");
+
+                    if(pc!=null && RentCarSystem.isUsed(pc)==false && !lblTotalPaymentOfUser.getText().isEmpty()){
+                        double totalPayment = totalDay * currentCar.getPrice() - totalDay *  pc.getDiscount() * currentCar.getPrice() ;
+                        lblTotalPaymentOfUser.setText(String.valueOf(totalPayment));
+                        isChecked = true;
+                    }
+                }
             }
-        }
+        } catch( NullPointerException ex ) {
+            HelperMethods.showErrorMessage(ex.getMessage(), "Invalid Promotion Code");
+        } catch ( Exception ex ) {
+            HelperMethods.showErrorMessage(ex.getMessage(), "Used Promotion Code");
         }
     }//GEN-LAST:event_btnCheckPromotionActionPerformed
 
