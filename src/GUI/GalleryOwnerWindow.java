@@ -2757,8 +2757,7 @@ public final class GalleryOwnerWindow extends javax.swing.JFrame {
         try {
             int carID = Integer.parseInt( tbxCarID_Delete.getText() );
             
-            if ( !galleryOwner.deleteCar( carID ) ) 
-                throw new NullPointerException();
+            galleryOwner.deleteCar( carID );
             
             galleryOwnerCars.clear();
             fillTheCars();

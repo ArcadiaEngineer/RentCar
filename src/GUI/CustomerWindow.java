@@ -1414,6 +1414,11 @@ public final class CustomerWindow extends javax.swing.JFrame {
         btnDeleteUser.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         btnDeleteUser.setForeground(new java.awt.Color(122, 72, 255));
         btnDeleteUser.setText("Delete Account");
+        btnDeleteUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteUserActionPerformed(evt);
+            }
+        });
         pnlUserInformation.add(btnDeleteUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(499, 267, 155, 46));
 
         lblUserName.setBackground(new java.awt.Color(242, 243, 244));
@@ -1934,6 +1939,7 @@ public final class CustomerWindow extends javax.swing.JFrame {
                     if(pc!=null && RentCarSystem.isUsed(pc)==false && !lblTotalPaymentOfUser.getText().isEmpty()){
                         double totalPayment = totalDay * currentCar.getPrice() - totalDay *  pc.getDiscount() * currentCar.getPrice() ;
                         lblTotalPaymentOfUser.setText(String.valueOf(totalPayment));
+                        lblTotalCashAfterRentalOfUser.setText(String.valueOf(customer.getTotalCash() - totalPayment));
                         isChecked = true;
                     }
                 }
@@ -2008,18 +2014,24 @@ public final class CustomerWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_btnFilterOrdersActionPerformed
 
     private void btnClearFilterOfOrderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearFilterOfOrderActionPerformed
-        isOrdersFiltered = false;
-        RentCarSystem.getFilteredOrderList().clear();
-        RentCarSystem.getFilteredOrderList().addAll(RentCarSystem.getOrders());
-        currentOrderIndex = 0;
-        currentOrder = RentCarSystem.getOrders().get(currentOrderIndex);
-        setOrderDetails(currentOrder);
-        setOrderList(RentCarSystem.getFilteredOrderList());
-        tbxMaxPrice.setText("0");
-        tbxMinPrice.setText("10000");
         
         if ( !(RentCarSystem.getFilteredOrderList().size() > 0) )
             HelperMethods.showErrorMessage("You dont have any orders to sort", "Empty order list");
+        else if ( RentCarSystem.getOrders().size() > 0 ) {
+            isOrdersFiltered = false;
+            RentCarSystem.getFilteredOrderList().clear();
+            RentCarSystem.getFilteredOrderList().addAll(RentCarSystem.getOrders());
+            currentOrderIndex = 0;
+            currentOrder = RentCarSystem.getOrders().get(currentOrderIndex);
+            setOrderDetails(currentOrder);
+            setOrderList(RentCarSystem.getFilteredOrderList());
+            tbxMaxPrice.setText("0");
+            tbxMinPrice.setText("10000");
+        } else {
+            HelperMethods.showErrorMessage("You don't have any orders...", "Empty List");
+        }
+        
+        
     }//GEN-LAST:event_btnClearFilterOfOrderActionPerformed
 
     private void lblChangePicMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblChangePicMouseClicked
@@ -2160,6 +2172,18 @@ public final class CustomerWindow extends javax.swing.JFrame {
         lblCurrentCashOfUser.setText("$" + String.valueOf(customer.getTotalCash()));
         
     }//GEN-LAST:event_btnUserDepositCashActionPerformed
+
+    private void btnDeleteUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteUserActionPerformed
+        // TODO add your handling code here:
+        try {
+            RentCarSystem.deleteUserFromDatabase(customer, "customer");
+            RentCarSystem.getUserList().remove( customer );
+            HelperMethods.showSuccessfulMessage("You have been successfully deleted.", "Successful Delete");
+            dispose();
+        } catch (SQLException ex) {
+            HelperMethods.showErrorMessage("We couldn not delete you from database", "Database Error");
+        }
+    }//GEN-LAST:event_btnDeleteUserActionPerformed
 
     
 
