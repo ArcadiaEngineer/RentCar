@@ -111,6 +111,8 @@ public class RentCarSystem {
             
         preparedStatement.executeUpdate();
         
+        RentCarSystem.addUserToList( galleryOwner );
+        
         return true;
     }
     
